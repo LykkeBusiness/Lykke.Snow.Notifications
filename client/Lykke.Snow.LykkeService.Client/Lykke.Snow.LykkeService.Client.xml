@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Lykke.Snow.LykkeService.Client</name>
+    </assembly>
+    <members>
+        <member name="T:Lykke.Snow.LykkeService.Client.ILykkeServiceApi">
+            <summary>
+            LykkeService client API interface.
+            </summary>
+        </member>
+        <member name="T:Lykke.Snow.LykkeService.Client.ILykkeServiceClient">
+            <summary>
+            LykkeService client interface.
+            </summary>
+        </member>
+        <member name="P:Lykke.Snow.LykkeService.Client.ILykkeServiceClient.Api">
+            <summary>Application Api interface</summary>
+        </member>
+    </members>
+</doc>

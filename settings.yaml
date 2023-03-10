@@ -1,0 +1,25 @@
+LykkeServiceService:
+    Db:
+        LogsConnString:
+            settings-key: LykkeServiceService-LogsConnString
+            types:
+              - AzureTableStorage
+  Rabbit:
+    ConnectionString:
+      settings-key: ConnectionString
+      types:
+        - RabbitMq
+    ExchangeName:
+      settings-key: ExchangeName
+SlackNotifications:
+    AzureQueue:
+        ConnectionString:
+            settings-key: SlackNotificationsConnString
+            types:
+                - AzureTableStorage
+        QueueName:
+            settings-key: SlackQueueName
+MonitoringServiceClient:
+    MonitoringServiceUrl:
+        settings-key: MonitoringServiceUrl
+
