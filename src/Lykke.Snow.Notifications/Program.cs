@@ -9,6 +9,7 @@ using Lykke.Logs.Serilog;
 using Lykke.Middlewares;
 using Lykke.SettingsReader;
 using Lykke.Snow.Common.Startup;
+using Lykke.Snow.Common.Startup.ApiKey;
 using Lykke.Snow.Notifications.Modules;
 using Lykke.Snow.Notifications.Settings;
 using Microsoft.AspNetCore.Builder;
@@ -80,6 +81,7 @@ namespace Lykke.Snow.Notifications
                         .AddApiExplorer();
 
                     builder.Services.AddControllers();
+                    builder.Services.AddAuthorization();
                     builder.Services.AddApiKeyAuth(settings.NotificationServiceClient);
 
                     builder.Services.AddSwaggerGen(options =>
@@ -88,7 +90,8 @@ namespace Lykke.Snow.Notifications
                                 "v1",
                                 new OpenApiInfo { Version = "v1", Title = $"{ApiName}" });
 
-                            // Add api key awareness if required
+                            if (!string.IsNullOrWhiteSpace(settings.NotificationServiceClient?.ApiKey))
+                                options.AddApiKeyAwareness();
                         })
                         .AddSwaggerGenNewtonsoftSupport();
 
@@ -112,15 +115,20 @@ namespace Lykke.Snow.Notifications
                         app.UseHsts();
                     }
 
+                    app.UseAuthentication();
+                    app.UseAuthorization();
+
                     app.UseMiddleware<ExceptionHandlerMiddleware>();
 
                     app.UseSwagger();
                     app.UseSwaggerUI(a => a.SwaggerEndpoint("/swagger/v1/swagger.json", ApiName));
 
                     app.MapControllers();
+                    
+                    var startupManager = app.Services.GetRequiredService<StartupManager>();
+                    await startupManager.Start();
 
                     await app.RunAsync();
-                    
                 }
                 catch (Exception e)
                 {

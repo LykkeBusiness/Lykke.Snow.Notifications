@@ -3,6 +3,7 @@
 
 using Autofac;
 using Lykke.Middlewares.Mappers;
+using Microsoft.Extensions.Internal;
 
 namespace Lykke.Snow.Notifications.Modules
 {
@@ -16,6 +17,14 @@ namespace Lykke.Snow.Notifications.Modules
 
             builder.RegisterType<DefaultLogLevelMapper>()
                 .As<ILogLevelMapper>()
+                .SingleInstance();
+
+            builder.RegisterType<SystemClock>()
+                .As<ISystemClock>()
+                .SingleInstance();
+            
+            builder.RegisterType<StartupManager>()
+                .AsSelf()
                 .SingleInstance();
         }
     }
