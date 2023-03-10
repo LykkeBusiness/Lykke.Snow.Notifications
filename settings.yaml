@@ -1,7 +1,7 @@
-LykkeServiceService:
+NotificationsService:
     Db:
         LogsConnString:
-            settings-key: LykkeServiceService-LogsConnString
+            settings-key: NotificationsService-LogsConnString
             types:
               - AzureTableStorage
   Rabbit:

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Lykke.Snow.LykkeService.Client;
+using Lykke.Snow.Notifications.Client;
 using Refit;
 using Xunit;
 
-namespace Lykke.Snow.LykkeService.Tests
+namespace Lykke.Snow.Notifications.Tests
 {
     public class SensitiveDataTests
     {
@@ -19,7 +19,7 @@ namespace Lykke.Snow.LykkeService.Tests
         [Fact]
         public void CheckRoutesInControllersTest()
         {
-            var clientInterface = typeof(ILykkeServiceClient);
+            var clientInterface = typeof(INotificationsServiceClient);
 
             var apiInterfaces = clientInterface
                 .GetProperties()

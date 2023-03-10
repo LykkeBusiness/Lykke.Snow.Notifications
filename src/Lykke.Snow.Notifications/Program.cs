@@ -6,7 +6,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Lykke.Logs.Serilog;
 using Lykke.Middlewares;
-using Lykke.Snow.LykkeService.Modules;
+using Lykke.Snow.Notifications.Modules;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,7 +16,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Serilog;
 
-namespace Lykke.Snow.LykkeService
+namespace Lykke.Snow.Notifications
 {
     internal sealed class Program
     {

@@ -4,7 +4,7 @@
 using Autofac;
 using Lykke.Middlewares.Mappers;
 
-namespace Lykke.Snow.LykkeService.Modules
+namespace Lykke.Snow.Notifications.Modules
 {
     internal class ServiceModule : Module
     {

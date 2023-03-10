@@ -15,8 +15,8 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\client\Lykke.Snow.LykkeService.Client\Lykke.Snow.LykkeService.Client.csproj" />
-    <ProjectReference Include="..\..\src\Lykke.Snow.LykkeService\Lykke.Snow.LykkeService.csproj" />
-    <ProjectReference Include="..\..\src\Lykke.Snow.LykkeService.DomainServices\Lykke.Snow.LykkeService.DomainServices.csproj" />
+    <ProjectReference Include="..\..\client\Lykke.Snow.Notifications.Client\Lykke.Snow.Notifications.Client.csproj" />
+    <ProjectReference Include="..\..\src\Lykke.Snow.Notifications\Lykke.Snow.Notifications.csproj" />
+    <ProjectReference Include="..\..\src\Lykke.Snow.Notifications.DomainServices\Lykke.Snow.Notifications.DomainServices.csproj" />
   </ItemGroup>
 </Project>

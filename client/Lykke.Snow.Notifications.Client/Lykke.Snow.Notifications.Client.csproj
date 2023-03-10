@@ -4,12 +4,11 @@
     <Version>1.0.1</Version>
     <Authors>Lykke Business</Authors>
     <Company>Lykke Business</Company>
-    <Product>Lykke.Snow.LykkeService</Product>
-    <Description>Client for Lykke.Snow.LykkeService API</Description>
-    <PackageLicenseUrl>https://github.com/LykkeBusinessPlatform/Lykke.Snow.LykkeService/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/LykkeBusinessPlatform/Lykke.Snow.LykkeService</PackageProjectUrl>
-    <PackageIconUrl>https://avatars3.githubusercontent.com/u/14153330?v=3&amp;s=200</PackageIconUrl>
-    <RepositoryUrl>https://github.com/LykkeBusinessPlatform/Lykke.Snow.LykkeService.git</RepositoryUrl>
+    <Product>Lykke.Snow.Notifications</Product>
+    <Description>Client for Lykke.Snow.Notifications API</Description>
+    <PackageLicenseUrl>https://github.com/LykkeBusiness/Lykke.Snow.Notifications/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/LykkeBusiness/Lykke.Snow.Notifications</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/LykkeBusiness/Lykke.Snow.Notifications.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>LykkeBusiness</PackageTags>
     <!--
@@ -25,7 +24,7 @@
     <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Lykke.Snow.LykkeService.Client.xml" />
+    <None Remove="Lykke.Snow.Notifications.Client.xml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Lykke.HttpClientGenerator" Version="2.2.0" />

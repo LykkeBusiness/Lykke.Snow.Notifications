@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Lykke.Snow.Notifications.Client</name>
+    </assembly>
+    <members>
+        <member name="T:Lykke.Snow.Notifications.Client.INotificationsApi">
+            <summary>
+            Notifications client API interface.
+            </summary>
+        </member>
+        <member name="T:Lykke.Snow.Notifications.Client.INotificationsServiceClient">
+            <summary>
+            Notifications API client interface.
+            </summary>
+        </member>
+        <member name="P:Lykke.Snow.Notifications.Client.INotificationsServiceClient.Api">
+            <summary>Notifications Api interface</summary>
+        </member>
+    </members>
+</doc>
