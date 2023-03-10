@@ -101,6 +101,7 @@ namespace Lykke.Snow.Notifications
                         {
                             // register Autofac modules here
                             cBuilder.RegisterModule(new ServiceModule());
+                            cBuilder.RegisterModule(new CqrsModule(settings.Cqrs));
                         })
                         .UseSerilog((_, cfg) => cfg.ReadFrom.Configuration(configuration));
 

@@ -10,5 +10,6 @@ namespace Lykke.Snow.Notifications.Settings
 
         [Optional, CanBeNull]
         public ClientSettings NotificationServiceClient { get; set; }
+        public CqrsSettings Cqrs { get; set; }
     }
 }
