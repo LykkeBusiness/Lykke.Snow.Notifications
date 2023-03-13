@@ -19,7 +19,7 @@ namespace Lykke.Snow.Notifications.Tests
         [Fact]
         public void CheckRoutesInControllersTest()
         {
-            var clientInterface = typeof(INotificationsServiceClient);
+            var clientInterface = typeof(INotificationsApi);
 
             var apiInterfaces = clientInterface
                 .GetProperties()

@@ -359,3 +359,9 @@ MigrationBackup/
 !.vscode/launch.json
 !.vscode/extensions.json
 
+# Application Env Configuration
+appsettings.localhost.json
+appsettings.dev.json
+appsettings.test.json
+appsettings.prod.json
+
