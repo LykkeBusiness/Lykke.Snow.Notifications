@@ -25,8 +25,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="LykkeBiz.HttpClientGenerator" Version="5.5.0" />
-    <PackageReference Include="LykkeBiz.SettingsReader" Version="7.0.1" />
-    <PackageReference Include="Refit" Version="4.6.30" />
+    <PackageReference Include="LykkeBiz.SettingsReader" Version="7.1.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
