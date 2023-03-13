@@ -83,7 +83,6 @@ namespace Lykke.Snow.Notifications.Modules
 
             IRegistration[] registrations = new IRegistration[] 
             {
-                RegisterDefaultRouting(),
                 Register.DefaultEndpointResolver(rabbitMqConventionEndpointResolver),
                 RegisterContext(),
                 Register.CommandInterceptors(new DefaultCommandLoggingInterceptor(loggerFactory)),
@@ -107,15 +106,6 @@ namespace Lykke.Snow.Notifications.Modules
             return engine;
         }
 
-        private PublishingCommandsDescriptor<IDefaultRoutingRegistration> RegisterDefaultRouting()
-        {
-            return Register.DefaultRouting
-                .PublishingCommands(
-                )
-                .To(_contextNames.NotificationsService)
-                .With(DefaultPipeline);
-        }
-        
         private IRegistration RegisterContext()
         {
             var contextRegistration = Register.BoundedContext(_contextNames.NotificationsService)
@@ -124,7 +114,6 @@ namespace Lykke.Snow.Notifications.Modules
               
               RegisterActivitiesProjection(contextRegistration);
               
-
             return contextRegistration;
         }
 
