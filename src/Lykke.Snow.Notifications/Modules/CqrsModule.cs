@@ -5,7 +5,10 @@ using Lykke.Cqrs.Configuration;
 using Lykke.Cqrs.Configuration.Routing;
 using Lykke.Cqrs.Middleware.Logging;
 using Lykke.Messaging.Serialization;
+using Lykke.Snow.Common.Correlation;
 using Lykke.Snow.Common.Correlation.Cqrs;
+using Lykke.Snow.Common.Correlation.Http;
+using Lykke.Snow.Common.Correlation.RabbitMq;
 using Lykke.Snow.Cqrs;
 using Lykke.Snow.Notifications.Settings;
 using Microsoft.Extensions.Logging;
@@ -34,9 +37,25 @@ namespace Lykke.Snow.Notifications.Modules
             builder.Register(context => new AutofacDependencyResolver(context)).As<IDependencyResolver>()
                .SingleInstance();
 
+            builder.RegisterType<CqrsCorrelationManager>()
+               .AsSelf()
+               .SingleInstance();
+
+            builder.RegisterType<CorrelationContextAccessor>()
+               .AsSelf()
+               .SingleInstance();
+
+            builder.RegisterType<RabbitMqCorrelationManager>()
+               .AsSelf()
+               .SingleInstance();
+
+            builder.RegisterType<HttpCorrelationHandler>()
+               .AsSelf()
+               .InstancePerDependency();
+
             builder.Register(CreateEngine)
-                .As<ICqrsEngine>()
-                .SingleInstance();
+               .As<ICqrsEngine>()
+               .SingleInstance();
         }
         
         private CqrsEngine CreateEngine(IComponentContext ctx)
@@ -61,7 +80,6 @@ namespace Lykke.Snow.Notifications.Modules
                 Register.EventInterceptors(new DefaultEventLoggingInterceptor(loggerFactory))
             };
             
-            // TODO: consider upgrading lykkebiz.snow.cqrs v3
             var engine = new RabbitMqCqrsEngine(loggerFactory,
                 ctx.Resolve<IDependencyResolver>(),
                 new DefaultEndpointProvider(),
