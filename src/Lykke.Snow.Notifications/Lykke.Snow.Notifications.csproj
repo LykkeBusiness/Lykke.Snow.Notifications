@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Version>1.0.1</Version>
+    <LangVersion>8.0</LangVersion>
+    <UserSecretsId>6dda81c2-ad00-4dcc-8740-1aff19f684c3</UserSecretsId>
+    <WarningsAsErrors>
+      8597,8600,8601,8602,8603,8604,8605,8607,8608,8609,8610,8611,8612,8613,8614,8615,8616,8617,8618,8619,8620,8621,8622,8624,8625,8629,8631,8633,8634,8643,8644,8645,8655,8667,8670,8714,8762,8763,8764,8765,8766,8767,8768,8769,8770,8774,8775,8776,8777,8819,8824,8825,8847</WarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Update="Dockerfile">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lykke.Snow.Notifications.Domain\Lykke.Snow.Notifications.Domain.csproj" />
+    <ProjectReference Include="..\Lykke.Snow.Notifications.DomainServices\Lykke.Snow.Notifications.DomainServices.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="Lykke.Snow.Common.Startup" Version="3.6.0" />
+    <PackageReference Include="LykkeBiz.SettingsReader" Version="7.1.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.20.0" />
+    <PackageReference Include="Lykke.Middlewares" Version="3.6.1" />
+    <PackageReference Include="LykkeBiz.Logs.Serilog" Version="3.3.1" />
+    <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.3.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+</Project>
