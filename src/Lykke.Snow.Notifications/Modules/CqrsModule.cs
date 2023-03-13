@@ -1,15 +1,19 @@
 using System;
+using System.Linq;
 using Autofac;
 using Lykke.Cqrs;
 using Lykke.Cqrs.Configuration;
+using Lykke.Cqrs.Configuration.BoundedContext;
 using Lykke.Cqrs.Configuration.Routing;
 using Lykke.Cqrs.Middleware.Logging;
+using Lykke.MarginTrading.Activities.Contracts.Models;
 using Lykke.Messaging.Serialization;
 using Lykke.Snow.Common.Correlation;
 using Lykke.Snow.Common.Correlation.Cqrs;
 using Lykke.Snow.Common.Correlation.Http;
 using Lykke.Snow.Common.Correlation.RabbitMq;
 using Lykke.Snow.Cqrs;
+using Lykke.Snow.Notifications.DomainServices.Projections;
 using Lykke.Snow.Notifications.Settings;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
@@ -34,6 +38,11 @@ namespace Lykke.Snow.Notifications.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterAssemblyTypes(typeof(ActivityProjection).Assembly)
+               .Where(t => new[] { "Saga", "CommandsHandler", "Projection" }
+                   .Any(ending => t.Name.EndsWith(ending)))
+               .AsSelf();
+
             builder.Register(context => new AutofacDependencyResolver(context)).As<IDependencyResolver>()
                .SingleInstance();
 
@@ -75,6 +84,7 @@ namespace Lykke.Snow.Notifications.Modules
             IRegistration[] registrations = new IRegistration[] 
             {
                 RegisterDefaultRouting(),
+                Register.DefaultEndpointResolver(rabbitMqConventionEndpointResolver),
                 RegisterContext(),
                 Register.CommandInterceptors(new DefaultCommandLoggingInterceptor(loggerFactory)),
                 Register.EventInterceptors(new DefaultEventLoggingInterceptor(loggerFactory))
@@ -111,8 +121,20 @@ namespace Lykke.Snow.Notifications.Modules
             var contextRegistration = Register.BoundedContext(_contextNames.NotificationsService)
               .FailedCommandRetryDelay(_defaultRetryDelayMs)
               .ProcessingOptions(DefaultRoute).MultiThreaded(8).QueueCapacity(1024);
+              
+              RegisterActivitiesProjection(contextRegistration);
+              
 
             return contextRegistration;
+        }
+
+        private void RegisterActivitiesProjection(ProcessingOptionsDescriptor<IBoundedContextRegistration> context)
+        {
+            context.ListeningEvents(
+                typeof(ActivityEvent)
+            ).From(_settings.ContextNames.Activities)
+            .On(nameof(ActivityEvent))
+            .WithProjection(typeof(ActivityProjection), _settings.ContextNames.Activities);
         }
     }
 }
