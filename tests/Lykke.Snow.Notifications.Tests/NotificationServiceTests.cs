@@ -1,3 +1,4 @@
+using System;
 using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Services;
 using Lykke.Snow.Notifications.DomainServices.Services;
@@ -68,8 +69,21 @@ namespace Lykke.Snow.Notifications.Tests
                 sut.SendNotificationToSingleDevice(new DummyNotificationType("any-title", "any-body"), "any-device-token");
             });
         }
+        
+        [Fact]
+        public void AttemptingSendingNotification_WithoutProvidingDeviceToken_ShouldThrowException()
+        {
+            var sut = CreateSut();
+            
+            sut.Initialize(credentialsFilePath: "any-credentials-path");
+            
+            Assert.Throws<ArgumentNullException>(() => {
+                sut.SendNotificationToSingleDevice(new DummyNotificationType("any-title", "any-body"), null);
+                sut.SendNotificationToSingleDevice(new DummyNotificationType("any-title", "any-body"), string.Empty);
+            });
+        }
 
-        private INotificationService CreateSut(IFcmService fcmServiceArg = null, ILogger<NotificationService> loggerArg = null)
+        private NotificationService CreateSut(IFcmService fcmServiceArg = null, ILogger<NotificationService> loggerArg = null)
         {
             IFcmService fcmService = new Mock<IFcmService>().Object;
             ILogger<NotificationService> logger = new Mock<ILogger<NotificationService>>().Object;

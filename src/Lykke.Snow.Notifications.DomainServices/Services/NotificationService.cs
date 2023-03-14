@@ -31,6 +31,9 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             if(string.IsNullOrEmpty(message.Body))
                 throw new ArgumentNullException(nameof(message.Body));
             
+            if(string.IsNullOrEmpty(deviceToken))
+                throw new ArgumentNullException(nameof(deviceToken));
+            
             return _fcmService.SendNotificationToDevice(message, deviceToken); 
         }
 

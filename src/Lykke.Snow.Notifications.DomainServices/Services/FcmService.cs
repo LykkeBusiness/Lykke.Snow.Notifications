@@ -82,7 +82,7 @@ namespace Lykke.Snow.Notifications.DomainServices
                 throw new NotificationServiceNotInitializedException();
         }
         
-        private Message MapToFcmMessage(NotificationMessage notificationMessage, string deviceToken)
+        public Message MapToFcmMessage(NotificationMessage notificationMessage, string deviceToken)
         {
             return new Message()
             {

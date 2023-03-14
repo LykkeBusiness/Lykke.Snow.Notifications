@@ -26,10 +26,11 @@ namespace Lykke.Snow.Notifications.Domain.Model
         /// <value></value>
         public Dictionary<string, string> KeyValueBag { get; protected set; }
 
-        protected NotificationMessage(string title, string body) 
+        protected NotificationMessage(string title, string body, Dictionary<string, string> keyValueBag = null) 
         {
             Title = title;
             Body = body;
+            KeyValueBag = keyValueBag;
         }
     }
 }
