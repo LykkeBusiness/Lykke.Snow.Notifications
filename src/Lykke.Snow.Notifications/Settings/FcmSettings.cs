@@ -1,6 +1,6 @@
 namespace Lykke.Snow.Notifications.Settings
 {
-    public class FirebaseSettings
+    public class FcmSettings
     {
         public string CredentialFilePath { get; set; }
     }
