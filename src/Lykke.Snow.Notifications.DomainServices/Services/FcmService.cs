@@ -72,7 +72,7 @@ namespace Lykke.Snow.Notifications.DomainServices
             catch(FirebaseMessagingException e)
             {
                 //TODO: Handle different kinds of e.MessagingErrorCodes
-                throw new CannotSendNotificationException(notificationMessage: messageArg, fcmMessage: fcmMessage, innerException: e);
+                throw new CannotSendNotificationException(notificationMessage: messageArg, fcmMessage: fcmMessage, fcmErrorCode: e.MessagingErrorCode, innerException: e);
             }
         
         }
