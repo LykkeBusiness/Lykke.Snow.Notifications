@@ -29,7 +29,6 @@ namespace Lykke.Snow.Notifications
 
                 await app.Configure().RunAsync();
             });
-
         }
     }
 }
