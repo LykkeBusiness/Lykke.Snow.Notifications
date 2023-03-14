@@ -50,7 +50,7 @@ namespace Lykke.Snow.Notifications.Tests
         {
             var mockFcmService = new Mock<IFcmService>();
             mockFcmService.Setup(mock => mock.CreateApp(It.IsAny<string>()))
-                .Throws(new FirebaseAppAlreadyExistsException(null));
+                .Throws(new FirebaseAppAlreadyExistsException());
         
             var sut = CreateSut(mockFcmService.Object);
             
@@ -65,7 +65,7 @@ namespace Lykke.Snow.Notifications.Tests
             var sut = CreateSut();
             
             Assert.Throws<NotificationServiceNotInitializedException>(() => {
-                sut.SendNotification(new DummyNotificationType());
+                sut.SendNotificationToSingleDevice(new DummyNotificationType("any-title", "any-body"), "any-device-token");
             });
         }
 

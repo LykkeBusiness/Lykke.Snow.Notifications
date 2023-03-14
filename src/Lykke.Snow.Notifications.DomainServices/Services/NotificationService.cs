@@ -20,7 +20,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public Task SendNotification(NotificationMessageBase message)
+        public Task SendNotificationToSingleDevice(NotificationMessage message, string deviceToken)
         {
             if(!_isInitialized)
                 throw new NotificationServiceNotInitializedException();
@@ -31,7 +31,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             if(string.IsNullOrEmpty(message.Body))
                 throw new ArgumentNullException(nameof(message.Body));
             
-            return _fcmService.SendNotification(message);
+            return _fcmService.SendNotificationToDevice(message, deviceToken); 
         }
 
         public void Initialize(string credentialsFilePath)
