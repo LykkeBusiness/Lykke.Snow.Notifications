@@ -44,6 +44,7 @@ namespace Lykke.Snow.Notifications.Tests
             sut.Initialize();
             
             Assert.True(sut.IsInitialized);
+            mockFcmService.Verify(mock => mock.CreateApp(), Times.Once);
         }
         
         [Fact]
