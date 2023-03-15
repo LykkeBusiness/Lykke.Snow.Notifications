@@ -1,9 +1,11 @@
 using System.Threading.Tasks;
-using FirebaseAdmin.Messaging;
 using Lykke.Snow.Notifications.Domain.Model;
 
 namespace Lykke.Snow.Notifications.Domain.Services
 {
+    /// <summary>
+    /// FCM client interface. Communicates to Firebase services.
+    /// </summary>
     public interface IFcmService
     {
         /// <summary>

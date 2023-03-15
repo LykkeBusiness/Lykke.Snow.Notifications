@@ -22,14 +22,7 @@ namespace Lykke.Snow.Notifications.DomainServices
 
         public void CreateApp(string credentialsFilePath)
         {
-            if(string.IsNullOrEmpty(credentialsFilePath))
-                throw new ArgumentNullException(nameof(credentialsFilePath));
-            
-            if(!System.IO.File.Exists(credentialsFilePath))
-                throw new CredentialsFileNotFoundException(attemptedPath: credentialsFilePath);
-            
-            if(FirebaseMessaging.DefaultInstance != null)
-                throw new FirebaseAppAlreadyExistsException();
+            ThrowIfCannotInitialize(credentialsFilePath);
 
             try
             {
@@ -40,14 +33,24 @@ namespace Lykke.Snow.Notifications.DomainServices
             }
             catch(ArgumentException e)
             {
-                // Documentation states that ArgumentException is thrown 
-                // if default app instance already exists
                 throw new FirebaseAppAlreadyExistsException(e);
             }
             catch(Exception e)
             {
                 throw new FirebaseAppInitializationFailedException(e);
             }
+        }
+
+        private void ThrowIfCannotInitialize(string credentialsFilePath)
+        {
+            if(string.IsNullOrEmpty(credentialsFilePath))
+                throw new ArgumentNullException(nameof(credentialsFilePath));
+            
+            if(!System.IO.File.Exists(credentialsFilePath))
+                throw new CredentialsFileNotFoundException(attemptedPath: credentialsFilePath);
+            
+            if(FirebaseMessaging.DefaultInstance != null)
+                throw new FirebaseAppAlreadyExistsException();
         }
 
         public async Task SendNotificationToDevice(NotificationMessage messageArg, string deviceToken)

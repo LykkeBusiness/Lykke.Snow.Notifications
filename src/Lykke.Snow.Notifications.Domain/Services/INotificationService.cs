@@ -4,6 +4,9 @@ using Lykke.Snow.Notifications.Domain.Model;
 
 namespace Lykke.Snow.Notifications.Domain.Services
 {
+    /// <summary>
+    /// Handles notification concerns at application level.
+    /// </summary>
     public interface INotificationService
     {
         /// <summary>
