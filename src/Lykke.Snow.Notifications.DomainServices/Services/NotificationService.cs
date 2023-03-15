@@ -20,17 +20,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public Task SendNotificationToSingleDevice(NotificationMessage message, string deviceToken)
-        {
-            if(!_isInitialized)
-                throw new NotificationServiceNotInitializedException();
-            
-            if(string.IsNullOrEmpty(deviceToken))
-                throw new ArgumentNullException(nameof(deviceToken));
-            
-            return _fcmService.SendNotificationToDevice(message, deviceToken); 
-        }
-
         public void Initialize()
         {
             if(_isInitialized)
@@ -46,6 +35,22 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                 _logger.LogError(e, $"Could not initialize {nameof(NotificationService)}!");
                 throw;
             }
+        }
+
+        public Task SendNotificationToSingleDevice(NotificationMessage message, string deviceToken)
+        {
+            ThrowIfCannotSend(deviceToken);
+            
+            return _fcmService.SendNotificationToDevice(message, deviceToken); 
+        }
+        
+        private void ThrowIfCannotSend(string deviceToken)
+        {
+            if(!_isInitialized)
+                throw new NotificationServiceNotInitializedException();
+            
+            if(string.IsNullOrEmpty(deviceToken))
+                throw new ArgumentNullException(nameof(deviceToken));
         }
     }
 }

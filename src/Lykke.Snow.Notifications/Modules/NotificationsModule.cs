@@ -23,7 +23,7 @@ namespace Lykke.Snow.Notifications.Modules
 
 
             builder.RegisterType<FcmService>()
-                .WithParameter("_credentialsFilePath", serviceSettings.Fcm.CredentialFilePath)
+                .WithParameter("credentialsFilePath", serviceSettings.Fcm.CredentialFilePath)
                 .As<IFcmService>()
                 .SingleInstance();
         }
