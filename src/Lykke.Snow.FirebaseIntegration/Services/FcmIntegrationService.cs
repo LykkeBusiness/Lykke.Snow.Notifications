@@ -23,6 +23,9 @@ namespace Lykke.Snow.FirebaseIntegration.Services
 
         public void CreateApp()
         {
+            if(FirebaseMessaging.DefaultInstance != null)
+                return;
+
             ThrowIfCannotInitialize();
 
             try
@@ -49,9 +52,6 @@ namespace Lykke.Snow.FirebaseIntegration.Services
             
             if(!System.IO.File.Exists(_credentialsFilePath))
                 throw new FirebaseCredentialsFileNotFoundException(attemptedPath: _credentialsFilePath);
-            
-            if(FirebaseMessaging.DefaultInstance != null)
-                throw new FirebaseAppAlreadyExistsException();
         }
 
         public async Task SendNotificationToDevice(Message fcmMessage, string deviceToken)
