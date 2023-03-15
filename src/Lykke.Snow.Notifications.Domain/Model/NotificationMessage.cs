@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Lykke.MarginTrading.Activities.Contracts.Models;
 
@@ -28,6 +29,12 @@ namespace Lykke.Snow.Notifications.Domain.Model
 
         protected NotificationMessage(string title, string body, Dictionary<string, string> keyValueBag = null) 
         {
+            if(string.IsNullOrEmpty(title))
+                throw new ArgumentNullException(nameof(title));
+            
+            if(string.IsNullOrEmpty(body))
+                throw new ArgumentNullException(nameof(body));
+
             Title = title;
             Body = body;
             KeyValueBag = keyValueBag;

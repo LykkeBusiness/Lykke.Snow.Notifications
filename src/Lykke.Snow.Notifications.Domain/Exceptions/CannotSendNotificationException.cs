@@ -6,11 +6,13 @@ namespace Lykke.Snow.Notifications.Domain.Exceptions
 {
     public class CannotSendNotificationException : Exception
     {
+        private const string ErrorMsg = "FCM could not deliver the message";
+
         public CannotSendNotificationException(
             NotificationMessage notificationMessage, 
             Message fcmMessage, 
             MessagingErrorCode? fcmErrorCode, 
-            Exception innerException) : base("FCM could not deliver the message.", innerException)
+            Exception innerException) : base(ErrorMsg, innerException)
         {
             Data.Add(nameof(notificationMessage), notificationMessage);
             Data.Add(nameof(fcmMessage), fcmMessage);

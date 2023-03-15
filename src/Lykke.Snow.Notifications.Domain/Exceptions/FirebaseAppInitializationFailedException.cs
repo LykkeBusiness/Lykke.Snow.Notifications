@@ -4,7 +4,9 @@ namespace Lykke.Snow.Notifications.Domain.Exceptions
 {
     public class FirebaseAppInitializationFailedException : Exception
     {
-        public FirebaseAppInitializationFailedException(Exception innerException) : base("Couldn't initialize the Firebase App", innerException)
+        private const string ErrorMsg = "Couldn't initialize the Firebase app.";
+
+        public FirebaseAppInitializationFailedException(Exception innerException) : base(ErrorMsg, innerException)
         { 
         }
     }

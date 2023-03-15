@@ -1,12 +1,12 @@
 using System;
-using Lykke.Snow.Notifications.Domain.Services;
 
 namespace Lykke.Snow.Notifications.Domain.Exceptions
 {
     public class FirebaseAppAlreadyExistsException : Exception
     {
-        public FirebaseAppAlreadyExistsException(Exception innerException = null) : 
-            base($"Firebase App already exists! Check if {nameof(INotificationService)} has been initialized twice.", innerException)
+        private const string ErrorMsg = "FirebaseApp already exists! Initialize() should only be called once.";
+
+        public FirebaseAppAlreadyExistsException(Exception innerException = null) : base(ErrorMsg, innerException)
         {
         }
     }

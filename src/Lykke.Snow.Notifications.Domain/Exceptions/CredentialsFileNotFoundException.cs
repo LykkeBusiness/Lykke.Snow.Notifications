@@ -4,7 +4,9 @@ namespace Lykke.Snow.Notifications.Domain.Exceptions
 {
     public class CredentialsFileNotFoundException : Exception
     {
-        public CredentialsFileNotFoundException(string attemptedPath) : base($"The FCM credentials file was not found {attemptedPath}")
+        private const string ErrorMsg = "FCM credential file was not found at the given location.";
+
+        public CredentialsFileNotFoundException(string attemptedPath) : base(ErrorMsg)
         {
             Data.Add(nameof(attemptedPath), attemptedPath);
         }

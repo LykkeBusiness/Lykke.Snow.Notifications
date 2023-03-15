@@ -71,6 +71,19 @@ namespace Lykke.Snow.Notifications.Tests
         }
         
         [Fact]
+        public void InstantiateNotificationMessage_WithEmptyTitleAndBody_ShouldResultInException()
+        {
+            Assert.Throws<ArgumentNullException>(() => {
+                new DummyNotificationType(title: null, body: null);
+                new DummyNotificationType(title: string.Empty, body: string.Empty);
+                new DummyNotificationType(title: string.Empty, body: "some-body");
+                new DummyNotificationType(title: "some-title", body: string.Empty);
+                new DummyNotificationType(title: null, body: "some-body");
+                new DummyNotificationType(title: "some-title", body: null);
+            });
+        }
+
+        [Fact]
         public void AttemptingSendingNotification_WithoutProvidingDeviceToken_ShouldThrowException()
         {
             var sut = CreateSut();
