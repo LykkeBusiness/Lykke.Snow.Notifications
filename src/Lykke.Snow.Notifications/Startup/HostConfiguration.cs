@@ -24,6 +24,7 @@ namespace Lykke.Snow.Notifications.Startup
                 {
                     // register Autofac modules here
                     cBuilder.RegisterModule(new ServiceModule());
+                    cBuilder.RegisterModule(new DalModule(settings.CurrentValue.NotificationService.Db.ConnectionString));
                     cBuilder.RegisterModule(new CqrsModule(settings.CurrentValue.NotificationService.Cqrs));
                     cBuilder.RegisterModule(new NotificationsModule(settings.CurrentValue.NotificationService));
                 })
