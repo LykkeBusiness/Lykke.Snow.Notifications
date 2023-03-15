@@ -11,8 +11,7 @@ namespace Lykke.Snow.Notifications.Domain.Services
         /// <summary>
         /// Creates the FirebaseApp Instance
         /// </summary>
-        /// <param name="credentialsFilePath"></param>
-        void CreateApp(string credentialsFilePath);
+        void CreateApp();
 
         /// <summary>
         /// Sends notification to the specified device

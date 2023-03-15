@@ -23,11 +23,11 @@ namespace Lykke.Snow.Notifications.Tests
         public void Initialized_ShouldBeTrue_AfterInitializingTheService()
         {
             var mockFcmService = new Mock<IFcmService>();
-            mockFcmService.Setup(mock => mock.CreateApp(It.IsAny<string>())).Verifiable();
+            mockFcmService.Setup(mock => mock.CreateApp()).Verifiable();
 
             var sut = CreateSut(mockFcmService.Object);
             
-            sut.Initialize(credentialsFilePath: "any-path");
+            sut.Initialize();
             
             Assert.True(sut.IsInitialized);
         }
@@ -36,12 +36,12 @@ namespace Lykke.Snow.Notifications.Tests
         public void CallingInitializeTwice_ShouldntBreakAnything()
         {
             var mockFcmService = new Mock<IFcmService>();
-            mockFcmService.Setup(mock => mock.CreateApp(It.IsAny<string>())).Verifiable();
+            mockFcmService.Setup(mock => mock.CreateApp()).Verifiable();
             
             var sut = CreateSut(mockFcmService.Object);
             
-            sut.Initialize(credentialsFilePath: "any-path");
-            sut.Initialize(credentialsFilePath: "any-path");
+            sut.Initialize();
+            sut.Initialize();
             
             Assert.True(sut.IsInitialized);
         }
@@ -50,13 +50,13 @@ namespace Lykke.Snow.Notifications.Tests
         public void Initialize_ShouldWrapInnerException()
         {
             var mockFcmService = new Mock<IFcmService>();
-            mockFcmService.Setup(mock => mock.CreateApp(It.IsAny<string>()))
+            mockFcmService.Setup(mock => mock.CreateApp())
                 .Throws(new FirebaseAppAlreadyExistsException());
         
             var sut = CreateSut(mockFcmService.Object);
             
             Assert.Throws<FirebaseAppAlreadyExistsException>(() => 
-                sut.Initialize(credentialsFilePath: "any-path")
+                sut.Initialize()
             );
         }
         
@@ -88,7 +88,7 @@ namespace Lykke.Snow.Notifications.Tests
         {
             var sut = CreateSut();
             
-            sut.Initialize(credentialsFilePath: "any-credentials-path");
+            sut.Initialize();
             
             Assert.Throws<ArgumentNullException>(() => {
                 sut.SendNotificationToSingleDevice(new DummyNotificationType("any-title", "any-body"), null);

@@ -19,11 +19,7 @@ namespace Lykke.Snow.Notifications.Domain.Services
         /// NotificationService must be initialized before sending any notification.
         /// This method initializes FirebaseApp, makes it ready to send notifications to Fcm Server
         /// </summary>
-        /// <param name="credentialsFilePath">
-        /// The path to the credentials file (in json format) in File system
-        /// See https://firebase.google.com/docs/cloud-messaging/auth-server#provide-credentials-manually
-        /// </param>
-        void Initialize(string credentialsFilePath);
+        void Initialize();
 
         /// <summary>
         /// Sends notification to a single device.

@@ -37,8 +37,8 @@ namespace Lykke.Snow.Notifications.Tests
         {
             var sut = CreateSut();
             
-            Assert.Throws<ArgumentNullException>(() => sut.CreateApp(string.Empty));
-            Assert.Throws<ArgumentNullException>(() => sut.CreateApp(null));
+            Assert.Throws<ArgumentNullException>(() => sut.CreateApp());
+            Assert.Throws<ArgumentNullException>(() => sut.CreateApp());
         }
         
         [Theory]
@@ -59,7 +59,7 @@ namespace Lykke.Snow.Notifications.Tests
         {
             var mockLogger = new Mock<ILogger<FcmService>>();
 
-            return new FcmService(mockLogger.Object);
+            return new FcmService(mockLogger.Object, credentialsFilePath: string.Empty);
         }
     }
 }

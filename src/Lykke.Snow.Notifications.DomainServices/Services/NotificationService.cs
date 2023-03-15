@@ -31,14 +31,14 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             return _fcmService.SendNotificationToDevice(message, deviceToken); 
         }
 
-        public void Initialize(string credentialsFilePath)
+        public void Initialize()
         {
             if(_isInitialized)
                 return;
             
             try 
             {
-                _fcmService.CreateApp(credentialsFilePath);
+                _fcmService.CreateApp();
                 _isInitialized = true;
             }
             catch(Exception e)

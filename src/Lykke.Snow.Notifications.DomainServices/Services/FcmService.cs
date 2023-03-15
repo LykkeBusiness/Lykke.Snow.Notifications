@@ -14,21 +14,23 @@ namespace Lykke.Snow.Notifications.DomainServices
     public class FcmService : IFcmService
     {
         private readonly ILogger<FcmService> _logger;
+        private readonly string _credentialsFilePath;
 
-        public FcmService(ILogger<FcmService> logger)
+        public FcmService(ILogger<FcmService> logger, string credentialsFilePath)
         {
             _logger = logger;
+            _credentialsFilePath = credentialsFilePath;
         }
 
-        public void CreateApp(string credentialsFilePath)
+        public void CreateApp()
         {
-            ThrowIfCannotInitialize(credentialsFilePath);
+            ThrowIfCannotInitialize();
 
             try
             {
                 FirebaseApp.Create(new AppOptions() 
                 {
-                    Credential = GoogleCredential.FromFile(credentialsFilePath)
+                    Credential = GoogleCredential.FromFile(_credentialsFilePath)
                 });
             }
             catch(ArgumentException e)
@@ -41,13 +43,13 @@ namespace Lykke.Snow.Notifications.DomainServices
             }
         }
 
-        private void ThrowIfCannotInitialize(string credentialsFilePath)
+        private void ThrowIfCannotInitialize()
         {
-            if(string.IsNullOrEmpty(credentialsFilePath))
-                throw new ArgumentNullException(nameof(credentialsFilePath));
+            if(string.IsNullOrEmpty(_credentialsFilePath))
+                throw new ArgumentNullException(nameof(_credentialsFilePath));
             
-            if(!System.IO.File.Exists(credentialsFilePath))
-                throw new CredentialsFileNotFoundException(attemptedPath: credentialsFilePath);
+            if(!System.IO.File.Exists(_credentialsFilePath))
+                throw new CredentialsFileNotFoundException(attemptedPath: _credentialsFilePath);
             
             if(FirebaseMessaging.DefaultInstance != null)
                 throw new FirebaseAppAlreadyExistsException();
