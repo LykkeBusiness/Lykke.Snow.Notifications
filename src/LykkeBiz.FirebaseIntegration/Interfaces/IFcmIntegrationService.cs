@@ -1,12 +1,12 @@
 using System.Threading.Tasks;
-using Lykke.Snow.Notifications.Domain.Model;
+using FirebaseAdmin.Messaging;
 
-namespace Lykke.Snow.Notifications.Domain.Services
+namespace LykkeBiz.FirebaseIntegration.Interfaces
 {
     /// <summary>
     /// Firebase Cloud Messaging client interface. Communicates to Firebase services.
     /// </summary>
-    public interface IFcmService
+    public interface IFcmIntegrationService
     {
         /// <summary>
         /// Creates the FirebaseApp Instance
@@ -19,6 +19,6 @@ namespace Lykke.Snow.Notifications.Domain.Services
         /// <param name="message"></param>
         /// <param name="deviceToken"></param>
         /// <returns></returns>
-        Task SendNotificationToDevice(NotificationMessage message, string deviceToken);
+        Task SendNotificationToDevice(Message message, string deviceToken);
     }
 }

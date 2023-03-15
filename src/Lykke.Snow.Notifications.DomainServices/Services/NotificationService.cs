@@ -1,8 +1,10 @@
 using System;
 using System.Threading.Tasks;
+using FirebaseAdmin.Messaging;
 using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Services;
+using LykkeBiz.FirebaseIntegration.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace Lykke.Snow.Notifications.DomainServices.Services
@@ -11,12 +13,12 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
     {
         private bool _isInitialized = false;
         public bool IsInitialized => _isInitialized;
-        private readonly IFcmService _fcmService;
+        private readonly IFcmIntegrationService _fcmIntegrationService;
         private readonly ILogger<NotificationService> _logger;
 
-        public NotificationService(IFcmService fcmService, ILogger<NotificationService> logger)
+        public NotificationService(IFcmIntegrationService fcmIntegrationService, ILogger<NotificationService> logger)
         {
-            _fcmService = fcmService ?? throw new ArgumentNullException(nameof(fcmService));
+            _fcmIntegrationService = fcmIntegrationService ?? throw new ArgumentNullException(nameof(fcmIntegrationService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -27,7 +29,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             
             try 
             {
-                _fcmService.CreateApp();
+                _fcmIntegrationService.CreateApp();
                 _isInitialized = true;
             }
             catch(Exception e)
@@ -41,7 +43,9 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
         {
             ThrowIfCannotSend(deviceToken);
             
-            return _fcmService.SendNotificationToDevice(message, deviceToken); 
+            var fcmMessage = MapToFcmMessage(messageArg: message, deviceToken: deviceToken);
+            
+            return _fcmIntegrationService.SendNotificationToDevice(message: fcmMessage, deviceToken: deviceToken); 
         }
         
         private void ThrowIfCannotSend(string deviceToken)
@@ -51,6 +55,20 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             
             if(string.IsNullOrEmpty(deviceToken))
                 throw new ArgumentNullException(nameof(deviceToken));
+        }
+        
+        public FirebaseAdmin.Messaging.Message MapToFcmMessage(NotificationMessage messageArg, string deviceToken)
+        {
+            return new FirebaseAdmin.Messaging.Message()
+            {
+                Token = deviceToken,
+                Notification = new Notification()
+                {
+                    Title = messageArg.Title,
+                    Body = messageArg.Body
+                },
+                Data = messageArg.KeyValueBag
+            };
         }
     }
 }

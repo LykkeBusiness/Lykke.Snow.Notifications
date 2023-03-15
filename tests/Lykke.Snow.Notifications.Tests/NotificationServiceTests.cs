@@ -1,8 +1,10 @@
 using System;
 using Lykke.Snow.Notifications.Domain.Exceptions;
-using Lykke.Snow.Notifications.Domain.Services;
+using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.DomainServices.Services;
 using Lykke.Snow.Notifications.Tests.Model;
+using LykkeBiz.FirebaseIntegration.Exceptions;
+using LykkeBiz.FirebaseIntegration.Interfaces;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
@@ -22,7 +24,7 @@ namespace Lykke.Snow.Notifications.Tests
         [Fact]
         public void Initialized_ShouldBeTrue_AfterInitializingTheService()
         {
-            var mockFcmService = new Mock<IFcmService>();
+            var mockFcmService = new Mock<IFcmIntegrationService>();
             mockFcmService.Setup(mock => mock.CreateApp()).Verifiable();
 
             var sut = CreateSut(mockFcmService.Object);
@@ -35,7 +37,7 @@ namespace Lykke.Snow.Notifications.Tests
         [Fact]
         public void CallingInitializeTwice_ShouldntBreakAnything()
         {
-            var mockFcmService = new Mock<IFcmService>();
+            var mockFcmService = new Mock<IFcmIntegrationService>();
             mockFcmService.Setup(mock => mock.CreateApp()).Verifiable();
             
             var sut = CreateSut(mockFcmService.Object);
@@ -50,7 +52,7 @@ namespace Lykke.Snow.Notifications.Tests
         [Fact]
         public void Initialize_ShouldWrapInnerException()
         {
-            var mockFcmService = new Mock<IFcmService>();
+            var mockFcmService = new Mock<IFcmIntegrationService>();
             mockFcmService.Setup(mock => mock.CreateApp())
                 .Throws(new FirebaseAppAlreadyExistsException());
         
@@ -97,9 +99,22 @@ namespace Lykke.Snow.Notifications.Tests
             });
         }
 
-        private NotificationService CreateSut(IFcmService fcmServiceArg = null, ILogger<NotificationService> loggerArg = null)
+        [Theory]
+        [ClassData(typeof(NotificationMessageData))]
+        public void MappingNotificationMessage_ToFcmMessage(NotificationMessage notificationMessage, string deviceToken)
         {
-            IFcmService fcmService = new Mock<IFcmService>().Object;
+            var sut = CreateSut();
+            
+            var fcmMessage = sut.MapToFcmMessage(notificationMessage, deviceToken);
+            
+            Assert.Equal(expected: notificationMessage.Title, actual: fcmMessage.Notification.Title);
+            Assert.Equal(expected: notificationMessage.Body, actual: fcmMessage.Notification.Body);
+            Assert.Equal(expected: notificationMessage.KeyValueBag, actual: fcmMessage.Data);
+        }
+
+        private NotificationService CreateSut(IFcmIntegrationService fcmServiceArg = null, ILogger<NotificationService> loggerArg = null)
+        {
+            IFcmIntegrationService fcmService = new Mock<IFcmIntegrationService>().Object;
             ILogger<NotificationService> logger = new Mock<ILogger<NotificationService>>().Object;
 
             if(fcmServiceArg != null)

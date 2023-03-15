@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Lykke.Snow.Notifications.Domain.Model;
-using Lykke.Snow.Notifications.DomainServices;
+using System.Threading.Tasks;
+using FirebaseAdmin.Messaging;
 using Lykke.Snow.Notifications.Tests.Model;
+using LykkeBiz.FirebaseIntegration.Exceptions;
+using LykkeBiz.FirebaseIntegration.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
@@ -30,7 +32,7 @@ namespace Lykke.Snow.Notifications.Tests
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
-    public class FcmServiceTests
+    public class FcmIntegrationServiceTests
     {
         [Fact]
         public void CreateApp_ShouldThrowException_IfCredentialsFilePathIsNotProvided()
@@ -40,26 +42,22 @@ namespace Lykke.Snow.Notifications.Tests
             Assert.Throws<ArgumentNullException>(() => sut.CreateApp());
             Assert.Throws<ArgumentNullException>(() => sut.CreateApp());
         }
-        
-        [Theory]
-        [ClassData(typeof(NotificationMessageData))]
-        public void MappingNotificationMessage_ToFcmMessage(NotificationMessage notificationMessage, string deviceToken)
+
+        [Fact]
+        public async Task SendNotificationToDevice_ShouldThrow_IfFirebaseAppHasNotBeenCreated()
         {
             var sut = CreateSut();
             
-            var fcmMessage = sut.MapToFcmMessage(notificationMessage, deviceToken);
+            var fcmMessage = new Message();
             
-            Assert.Equal(expected: notificationMessage.Title, actual: fcmMessage.Notification.Title);
-            Assert.Equal(expected: notificationMessage.Body, actual: fcmMessage.Notification.Body);
-            Assert.Equal(expected: notificationMessage.KeyValueBag, actual: fcmMessage.Data);
+            await Assert.ThrowsAsync<FirebaseAppNotCreatedException>(() => sut.SendNotificationToDevice(fcmMessage, "any-device-token"));
         }
-
         
-        private FcmService CreateSut()
+        private FcmIntegrationService CreateSut()
         {
-            var mockLogger = new Mock<ILogger<FcmService>>();
+            var mockLogger = new Mock<ILogger<FcmIntegrationService>>();
 
-            return new FcmService(mockLogger.Object, credentialsFilePath: string.Empty);
+            return new FcmIntegrationService(mockLogger.Object, credentialsFilePath: string.Empty);
         }
     }
 }

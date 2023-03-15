@@ -1,6 +1,6 @@
 using System;
 
-namespace Lykke.Snow.Notifications.Domain.Exceptions
+namespace LykkeBiz.FirebaseIntegration.Exceptions
 {
     public class FirebaseAppInitializationFailedException : Exception
     {

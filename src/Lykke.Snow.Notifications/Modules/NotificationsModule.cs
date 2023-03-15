@@ -1,8 +1,9 @@
 using Autofac;
 using Lykke.Snow.Notifications.Domain.Services;
-using Lykke.Snow.Notifications.DomainServices;
 using Lykke.Snow.Notifications.DomainServices.Services;
 using Lykke.Snow.Notifications.Settings;
+using LykkeBiz.FirebaseIntegration.Interfaces;
+using LykkeBiz.FirebaseIntegration.Services;
 
 namespace Lykke.Snow.Notifications.Modules
 {
@@ -22,9 +23,9 @@ namespace Lykke.Snow.Notifications.Modules
                 .SingleInstance();
 
 
-            builder.RegisterType<FcmService>()
+            builder.RegisterType<FcmIntegrationService>()
                 .WithParameter("credentialsFilePath", serviceSettings.Fcm.CredentialFilePath)
-                .As<IFcmService>()
+                .As<IFcmIntegrationService>()
                 .SingleInstance();
         }
     }
