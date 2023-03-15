@@ -4,7 +4,7 @@ using Lykke.Snow.Notifications.Domain.Model;
 namespace Lykke.Snow.Notifications.Domain.Services
 {
     /// <summary>
-    /// FCM client interface. Communicates to Firebase services.
+    /// Firebase Cloud Messaging client interface. Communicates to Firebase services.
     /// </summary>
     public interface IFcmService
     {
