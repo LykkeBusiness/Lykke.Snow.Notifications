@@ -14,13 +14,13 @@ namespace Lykke.Snow.Notifications.Tests
     {
         public IEnumerator<object[]> GetEnumerator()
         {
-            var message1 = new DummyNotificationType(title: "Notification title", body: "Notification body");
+            var message1 = new DummyMessage(title: "Notification title", body: "Notification body");
             var token1 = "device-token-1";
             
             var keyValueBag = new Dictionary<string, string>();
             keyValueBag.Add("key1", "value1");
             keyValueBag.Add("key2", "value2");
-            var message2 = new DummyNotificationType(title: "Notification title 2", body: "Notification body 2", keyValueBag);
+            var message2 = new DummyMessage(title: "Notification title 2", body: "Notification body 2", keyValueBag);
             var token2 = "device-token-2";
             
             yield return new object[] { message1, token1 };

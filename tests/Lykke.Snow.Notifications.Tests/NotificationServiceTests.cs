@@ -67,7 +67,7 @@ namespace Lykke.Snow.Notifications.Tests
             var sut = CreateSut();
             
             Assert.Throws<NotificationServiceNotInitializedException>(() => {
-                sut.SendNotificationToSingleDevice(new DummyNotificationType("any-title", "any-body"), "any-device-token");
+                sut.SendNotificationToSingleDevice(new DummyMessage("any-title", "any-body"), "any-device-token");
             });
         }
         
@@ -75,12 +75,12 @@ namespace Lykke.Snow.Notifications.Tests
         public void InstantiateNotificationMessage_WithEmptyTitleAndBody_ShouldResultInException()
         {
             Assert.Throws<ArgumentNullException>(() => {
-                new DummyNotificationType(title: null, body: null);
-                new DummyNotificationType(title: string.Empty, body: string.Empty);
-                new DummyNotificationType(title: string.Empty, body: "some-body");
-                new DummyNotificationType(title: "some-title", body: string.Empty);
-                new DummyNotificationType(title: null, body: "some-body");
-                new DummyNotificationType(title: "some-title", body: null);
+                new DummyMessage(title: null, body: null);
+                new DummyMessage(title: string.Empty, body: string.Empty);
+                new DummyMessage(title: string.Empty, body: "some-body");
+                new DummyMessage(title: "some-title", body: string.Empty);
+                new DummyMessage(title: null, body: "some-body");
+                new DummyMessage(title: "some-title", body: null);
             });
         }
 
@@ -92,8 +92,8 @@ namespace Lykke.Snow.Notifications.Tests
             sut.Initialize();
             
             Assert.Throws<ArgumentNullException>(() => {
-                sut.SendNotificationToSingleDevice(new DummyNotificationType("any-title", "any-body"), null);
-                sut.SendNotificationToSingleDevice(new DummyNotificationType("any-title", "any-body"), string.Empty);
+                sut.SendNotificationToSingleDevice(new DummyMessage("any-title", "any-body"), null);
+                sut.SendNotificationToSingleDevice(new DummyMessage("any-title", "any-body"), string.Empty);
             });
         }
 
