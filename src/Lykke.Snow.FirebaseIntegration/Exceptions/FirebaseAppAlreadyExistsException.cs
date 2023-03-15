@@ -1,6 +1,6 @@
 using System;
 
-namespace LykkeBiz.FirebaseIntegration.Exceptions
+namespace Lykke.Snow.FirebaseIntegration.Exceptions
 {
     public class FirebaseAppAlreadyExistsException : Exception
     {

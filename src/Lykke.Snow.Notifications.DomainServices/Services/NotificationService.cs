@@ -1,11 +1,11 @@
 using System;
 using System.Threading.Tasks;
-using FirebaseAdmin.Messaging;
+using Lykke.Snow.FirebaseIntegration.Interfaces;
 using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Services;
-using LykkeBiz.FirebaseIntegration.Interfaces;
 using Microsoft.Extensions.Logging;
+using FirebaseAdmin.Messaging;
 
 namespace Lykke.Snow.Notifications.DomainServices.Services
 {

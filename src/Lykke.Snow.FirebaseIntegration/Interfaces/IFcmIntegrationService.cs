@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using FirebaseAdmin.Messaging;
 
-namespace LykkeBiz.FirebaseIntegration.Interfaces
+namespace Lykke.Snow.FirebaseIntegration.Interfaces
 {
     /// <summary>
     /// Firebase Cloud Messaging client interface. Communicates to Firebase services.

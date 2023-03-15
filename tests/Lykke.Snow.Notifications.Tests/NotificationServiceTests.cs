@@ -1,10 +1,10 @@
 using System;
+using Lykke.Snow.FirebaseIntegration.Exceptions;
+using Lykke.Snow.FirebaseIntegration.Interfaces;
 using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.DomainServices.Services;
 using Lykke.Snow.Notifications.Tests.Model;
-using LykkeBiz.FirebaseIntegration.Exceptions;
-using LykkeBiz.FirebaseIntegration.Interfaces;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;

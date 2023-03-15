@@ -4,11 +4,11 @@ using Common;
 using FirebaseAdmin;
 using FirebaseAdmin.Messaging;
 using Google.Apis.Auth.OAuth2;
-using LykkeBiz.FirebaseIntegration.Exceptions;
-using LykkeBiz.FirebaseIntegration.Interfaces;
+using Lykke.Snow.FirebaseIntegration.Exceptions;
+using Lykke.Snow.FirebaseIntegration.Interfaces;
 using Microsoft.Extensions.Logging;
 
-namespace LykkeBiz.FirebaseIntegration.Services
+namespace Lykke.Snow.FirebaseIntegration.Services
 {
     public class FcmIntegrationService : IFcmIntegrationService
     {

@@ -1,7 +1,7 @@
 using System;
 using FirebaseAdmin.Messaging;
 
-namespace LykkeBiz.FirebaseIntegration.Exceptions
+namespace Lykke.Snow.FirebaseIntegration.Exceptions
 {
     public class CannotSendNotificationException : Exception
     {
