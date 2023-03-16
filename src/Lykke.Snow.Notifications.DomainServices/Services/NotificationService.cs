@@ -39,13 +39,13 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             }
         }
 
-        public Task SendNotificationToSingleDevice(NotificationMessage message, string deviceToken)
+        public Task SendNotification(NotificationMessage message, string deviceToken)
         {
             ThrowIfCannotSend(deviceToken);
             
             var fcmMessage = MapToFcmMessage(messageArg: message, deviceToken: deviceToken);
             
-            return _fcmIntegrationService.SendNotificationToDevice(message: fcmMessage, deviceToken: deviceToken); 
+            return _fcmIntegrationService.SendNotification(message: fcmMessage, deviceToken: deviceToken); 
         }
         
         private void ThrowIfCannotSend(string deviceToken)

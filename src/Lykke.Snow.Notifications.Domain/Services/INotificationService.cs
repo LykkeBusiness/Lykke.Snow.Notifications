@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using Lykke.Snow.Notifications.Domain.Model;
 
@@ -26,6 +25,6 @@ namespace Lykke.Snow.Notifications.Domain.Services
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        Task SendNotificationToSingleDevice(NotificationMessage message, string deviceToken);
+        Task SendNotification(NotificationMessage message, string deviceToken);
     }
 }

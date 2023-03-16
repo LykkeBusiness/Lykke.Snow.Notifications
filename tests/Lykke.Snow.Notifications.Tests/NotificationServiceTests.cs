@@ -69,7 +69,7 @@ namespace Lykke.Snow.Notifications.Tests
             var sut = CreateSut();
             
             Assert.Throws<NotificationServiceNotInitializedException>(() => {
-                sut.SendNotificationToSingleDevice(new DummyMessage("any-title", "any-body"), "any-device-token");
+                sut.SendNotification(new DummyMessage("any-title", "any-body"), "any-device-token");
             });
         }
         
@@ -94,8 +94,8 @@ namespace Lykke.Snow.Notifications.Tests
             sut.Initialize();
             
             Assert.Throws<ArgumentNullException>(() => {
-                sut.SendNotificationToSingleDevice(new DummyMessage("any-title", "any-body"), null);
-                sut.SendNotificationToSingleDevice(new DummyMessage("any-title", "any-body"), string.Empty);
+                sut.SendNotification(new DummyMessage("any-title", "any-body"), null);
+                sut.SendNotification(new DummyMessage("any-title", "any-body"), string.Empty);
             });
         }
 

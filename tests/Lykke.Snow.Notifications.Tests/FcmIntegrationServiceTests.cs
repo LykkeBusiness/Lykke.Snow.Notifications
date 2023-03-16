@@ -50,7 +50,7 @@ namespace Lykke.Snow.Notifications.Tests
             
             var fcmMessage = new Message();
             
-            await Assert.ThrowsAsync<FirebaseAppNotCreatedException>(() => sut.SendNotificationToDevice(fcmMessage, "any-device-token"));
+            await Assert.ThrowsAsync<FirebaseAppNotCreatedException>(() => sut.SendNotification(fcmMessage, "any-device-token"));
         }
         
         private FcmIntegrationService CreateSut()
