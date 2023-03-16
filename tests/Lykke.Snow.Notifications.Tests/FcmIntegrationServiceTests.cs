@@ -1,9 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using FirebaseAdmin.Messaging;
-using Lykke.Snow.FirebaseIntegration.Exceptions;
 using Lykke.Snow.FirebaseIntegration.Services;
 using Lykke.Snow.Notifications.Tests.Model;
 using Microsoft.Extensions.Logging;
@@ -37,20 +34,7 @@ namespace Lykke.Snow.Notifications.Tests
         [Fact]
         public void CreateApp_ShouldThrowException_IfCredentialsFilePathIsNotProvided()
         {
-            var sut = CreateSut();
-            
-            Assert.Throws<ArgumentNullException>(() => sut.CreateApp());
-            Assert.Throws<ArgumentNullException>(() => sut.CreateApp());
-        }
-
-        [Fact]
-        public async Task SendNotificationToDevice_ShouldThrow_IfFirebaseAppHasNotBeenCreated()
-        {
-            var sut = CreateSut();
-            
-            var fcmMessage = new Message();
-            
-            await Assert.ThrowsAsync<FirebaseAppNotCreatedException>(() => sut.SendNotificationToDevice(fcmMessage, "any-device-token"));
+            Assert.Throws<ArgumentNullException>(() => CreateSut());
         }
         
         private FcmIntegrationService CreateSut()

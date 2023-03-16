@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Lykke.MarginTrading.Activities.Contracts.Models;
 
 namespace Lykke.Snow.Notifications.Domain.Model
 {
@@ -25,19 +24,19 @@ namespace Lykke.Snow.Notifications.Domain.Model
         /// Key-value dictionary for additional data to be sent along with the notification.
         /// </summary>
         /// <value></value>
-        public Dictionary<string, string> KeyValueBag { get; protected set; }
+        public IReadOnlyDictionary<string, string>? KeyValueCollection { get; }
 
-        protected NotificationMessage(string title, string body, Dictionary<string, string> keyValueBag = null) 
+        protected NotificationMessage(string title, string body, Dictionary<string, string>? keyValueCollection = null) 
         {
             if(string.IsNullOrEmpty(title))
                 throw new ArgumentNullException(nameof(title));
             
             if(string.IsNullOrEmpty(body))
                 throw new ArgumentNullException(nameof(body));
-
+            
             Title = title;
             Body = body;
-            KeyValueBag = keyValueBag;
+            KeyValueCollection = keyValueCollection;
         }
     }
 }
