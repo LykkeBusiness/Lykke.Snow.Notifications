@@ -7,9 +7,9 @@ namespace Lykke.Snow.FirebaseIntegration.Model
     /// </summary>
     public class SendNotificationResult
     {
-        public bool IsSucceeded { get; set; }
-        public string FcmMessageId { get; set; }
-        public MessagingErrorCode? ErrorCode { get; set; }
+        public bool IsSucceeded { get; private set; }
+        public string FcmMessageId { get; private set; }
+        public MessagingErrorCode? ErrorCode { get; private set; }
         
         private SendNotificationResult() {}
         
