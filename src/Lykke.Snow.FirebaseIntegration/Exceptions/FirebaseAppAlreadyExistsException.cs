@@ -6,7 +6,7 @@ namespace Lykke.Snow.FirebaseIntegration.Exceptions
     {
         private const string ErrorMsg = "FirebaseApp already exists! Initialize() should only be called once.";
 
-        public FirebaseAppAlreadyExistsException(Exception innerException = null) : base(ErrorMsg, innerException)
+        public FirebaseAppAlreadyExistsException(Exception? innerException) : base(ErrorMsg, innerException)
         {
         }
     }

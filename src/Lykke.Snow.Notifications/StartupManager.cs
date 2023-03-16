@@ -20,7 +20,7 @@ namespace Lykke.Snow.Notifications
             _settings = settings;
         }
 
-        internal async Task Start()
+        internal void Start()
         {
             _cqrsEngine.StartSubscribers();
         }

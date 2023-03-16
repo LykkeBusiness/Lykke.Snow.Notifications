@@ -10,7 +10,7 @@ namespace Lykke.Snow.FirebaseIntegration.Exceptions
         public NotificationMessageIsNotValidException(
             Message fcmMessage, 
             Exception innerException, 
-            string additionalInfo = null) : base(ErrorMsg)
+            string? additionalInfo = null) : base(ErrorMsg)
         {
             Data.Add(nameof(fcmMessage), fcmMessage);
             

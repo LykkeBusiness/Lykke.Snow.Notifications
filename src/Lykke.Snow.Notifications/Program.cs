@@ -25,7 +25,7 @@ namespace Lykke.Snow.Notifications
                 var app = builder.Build();
 
                 var startupManager = app.Services.GetRequiredService<StartupManager>();
-                await startupManager.Start();
+                startupManager.Start();
 
                 await app.Configure().RunAsync();
             });
