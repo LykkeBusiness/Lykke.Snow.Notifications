@@ -62,9 +62,8 @@ namespace Lykke.Snow.FirebaseIntegration.Services
                     Credential = GoogleCredential.FromFile(_credentialsFilePath)
                 });
             }
-            catch(ArgumentException e)
+            catch(ArgumentException)
             {
-                throw new FirebaseAppAlreadyExistsException(e);
             }
             catch(Exception e)
             {
