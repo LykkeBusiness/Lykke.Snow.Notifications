@@ -4,9 +4,9 @@ using Common;
 using FirebaseAdmin;
 using FirebaseAdmin.Messaging;
 using Google.Apis.Auth.OAuth2;
+using Lykke.Snow.Common.Model;
 using Lykke.Snow.FirebaseIntegration.Exceptions;
 using Lykke.Snow.FirebaseIntegration.Interfaces;
-using Lykke.Snow.FirebaseIntegration.Model;
 using Microsoft.Extensions.Logging;
 
 namespace Lykke.Snow.FirebaseIntegration.Services
@@ -33,14 +33,14 @@ namespace Lykke.Snow.FirebaseIntegration.Services
                 throw new FirebaseCredentialsFileNotFoundException(attemptedPath: _credentialsFilePath);
         }
 
-        public async Task<SendNotificationResult> SendNotification(Message fcmMessage, string deviceToken)
+        public async Task<Result<string, MessagingErrorCode>> SendNotification(Message fcmMessage, string deviceToken)
         {
             try 
             {
                 var response = await FirebaseMessaging.DefaultInstance.SendAsync(fcmMessage);
                 _logger.LogInformation("Notification has successfully been sent to the device {Device} {Notification}", deviceToken, fcmMessage.ToJson());
 
-                return SendNotificationResult.Success(messageId: response);
+                return new Result<string, MessagingErrorCode>(value: response);
             }
             catch(ArgumentNullException e)
             {

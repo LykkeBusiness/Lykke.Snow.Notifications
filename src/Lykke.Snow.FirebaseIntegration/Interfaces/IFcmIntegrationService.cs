@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using FirebaseAdmin.Messaging;
-using Lykke.Snow.FirebaseIntegration.Model;
+using Lykke.Snow.Common.Model;
 
 namespace Lykke.Snow.FirebaseIntegration.Interfaces
 {
@@ -15,6 +15,6 @@ namespace Lykke.Snow.FirebaseIntegration.Interfaces
         /// <param name="message"></param>
         /// <param name="deviceToken"></param>
         /// <returns></returns>
-        Task<SendNotificationResult> SendNotification(Message message, string deviceToken);
+        Task<Result<string, MessagingErrorCode>> SendNotification(Message message, string deviceToken);
     }
 }
