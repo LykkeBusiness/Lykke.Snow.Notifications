@@ -9,18 +9,6 @@ namespace Lykke.Snow.Notifications.Domain.Services
     public interface INotificationService
     {
         /// <summary>
-        /// Indicates that if the service is initialized
-        /// </summary>
-        /// <value></value>
-        bool IsInitialized { get; }
-
-        /// <summary>
-        /// NotificationService must be initialized before sending any notification.
-        /// This method initializes FirebaseApp, makes it ready to send notifications to Fcm Server
-        /// </summary>
-        void Initialize();
-
-        /// <summary>
         /// Sends notification to a single device.
         /// </summary>
         /// <param name="message"></param>

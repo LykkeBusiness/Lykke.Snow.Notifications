@@ -1,7 +1,10 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using FirebaseAdmin.Messaging;
 using Lykke.Snow.FirebaseIntegration.Exceptions;
 using Lykke.Snow.FirebaseIntegration.Interfaces;
-using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.DomainServices.Services;
 using Lykke.Snow.Notifications.Tests.Model;
@@ -13,66 +16,6 @@ namespace Lykke.Snow.Notifications.Tests
 {
     public class NotificationServiceTests
     {
-        [Fact]
-        public void Initialized_ShouldBeFalse_BeforeInitializingTheService()
-        {
-            var sut = CreateSut();
-            
-            Assert.False(sut.IsInitialized);
-        }
-
-        [Fact]
-        public void Initialized_ShouldBeTrue_AfterInitializingTheService()
-        {
-            var mockFcmService = new Mock<IFcmIntegrationService>();
-            mockFcmService.Setup(mock => mock.CreateApp()).Verifiable();
-
-            var sut = CreateSut(mockFcmService.Object);
-            
-            sut.Initialize();
-            
-            Assert.True(sut.IsInitialized);
-        }
-        
-        [Fact]
-        public void CallingInitializeTwice_ShouldntBreakAnything()
-        {
-            var mockFcmService = new Mock<IFcmIntegrationService>();
-            mockFcmService.Setup(mock => mock.CreateApp()).Verifiable();
-            
-            var sut = CreateSut(mockFcmService.Object);
-            
-            sut.Initialize();
-            sut.Initialize();
-            
-            Assert.True(sut.IsInitialized);
-            mockFcmService.Verify(mock => mock.CreateApp(), Times.Once);
-        }
-        
-        [Fact]
-        public void Initialize_ShouldWrapInnerException()
-        {
-            var mockFcmService = new Mock<IFcmIntegrationService>();
-            mockFcmService.Setup(mock => mock.CreateApp())
-                .Throws(new FirebaseAppAlreadyExistsException());
-        
-            var sut = CreateSut(mockFcmService.Object);
-            
-            Assert.Throws<FirebaseAppAlreadyExistsException>(() => 
-                sut.Initialize()
-            );
-        }
-        
-        [Fact]
-        public void AttemptingSendingNotification_WithoutInitializing_ShouldResultInException()
-        {
-            var sut = CreateSut();
-            
-            Assert.Throws<NotificationServiceNotInitializedException>(() => {
-                sut.SendNotification(new DummyMessage("any-title", "any-body"), "any-device-token");
-            });
-        }
-        
         [Fact]
         public void InstantiateNotificationMessage_WithEmptyTitleAndBody_ShouldResultInException()
         {
@@ -91,11 +34,9 @@ namespace Lykke.Snow.Notifications.Tests
         {
             var sut = CreateSut();
             
-            sut.Initialize();
-            
-            Assert.Throws<ArgumentNullException>(() => {
-                sut.SendNotification(new DummyMessage("any-title", "any-body"), null);
-                sut.SendNotification(new DummyMessage("any-title", "any-body"), string.Empty);
+            Assert.ThrowsAsync<ArgumentNullException>(async () => {
+                await sut.SendNotification(new DummyMessage("any-title", "any-body"), null);
+                await sut.SendNotification(new DummyMessage("any-title", "any-body"), string.Empty);
             });
         }
 
@@ -111,7 +52,7 @@ namespace Lykke.Snow.Notifications.Tests
             Assert.Equal(expected: notificationMessage.Body, actual: fcmMessage.Notification.Body);
             Assert.Equal(expected: notificationMessage.KeyValueBag, actual: fcmMessage.Data);
         }
-
+        
         private NotificationService CreateSut(IFcmIntegrationService fcmServiceArg = null, ILogger<NotificationService> loggerArg = null)
         {
             IFcmIntegrationService fcmService = new Mock<IFcmIntegrationService>().Object;

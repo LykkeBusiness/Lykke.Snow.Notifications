@@ -20,30 +20,8 @@ namespace Lykke.Snow.FirebaseIntegration.Services
         {
             _logger = logger;
             _credentialsFilePath = credentialsFilePath;
-        }
-
-        public void CreateApp()
-        {
-            if(FirebaseMessaging.DefaultInstance != null)
-                return;
-
-            ThrowIfCannotInitialize();
-
-            try
-            {
-                FirebaseApp.Create(new AppOptions() 
-                {
-                    Credential = GoogleCredential.FromFile(_credentialsFilePath)
-                });
-            }
-            catch(ArgumentException e)
-            {
-                throw new FirebaseAppAlreadyExistsException(e);
-            }
-            catch(Exception e)
-            {
-                throw new FirebaseAppInitializationFailedException(e);
-            }
+            
+            Initialize();
         }
 
         private void ThrowIfCannotInitialize()
@@ -78,6 +56,30 @@ namespace Lykke.Snow.FirebaseIntegration.Services
             {
                 //TODO: Handle different kinds of e.MessagingErrorCodes
                 throw new CannotSendNotificationException(fcmMessage: fcmMessage, fcmErrorCode: e.MessagingErrorCode, innerException: e);
+            }
+        }
+
+        private void Initialize()
+        {
+            if(FirebaseMessaging.DefaultInstance != null)
+                return;
+
+            ThrowIfCannotInitialize();
+
+            try
+            {
+                FirebaseApp.Create(new AppOptions() 
+                {
+                    Credential = GoogleCredential.FromFile(_credentialsFilePath)
+                });
+            }
+            catch(ArgumentException e)
+            {
+                throw new FirebaseAppAlreadyExistsException(e);
+            }
+            catch(Exception e)
+            {
+                throw new FirebaseAppInitializationFailedException(e);
             }
         }
 

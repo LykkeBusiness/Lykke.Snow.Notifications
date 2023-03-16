@@ -10,11 +10,6 @@ namespace Lykke.Snow.FirebaseIntegration.Interfaces
     public interface IFcmIntegrationService
     {
         /// <summary>
-        /// Creates the FirebaseApp Instance
-        /// </summary>
-        void CreateApp();
-
-        /// <summary>
         /// Sends notification to the specified device
         /// </summary>
         /// <param name="message"></param>

@@ -11,8 +11,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 {
     public class NotificationService : INotificationService
     {
-        private bool _isInitialized = false;
-        public bool IsInitialized => _isInitialized;
         private readonly IFcmIntegrationService _fcmIntegrationService;
         private readonly ILogger<NotificationService> _logger;
 
@@ -22,37 +20,24 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void Initialize()
-        {
-            if(_isInitialized)
-                return;
-            
-            try 
-            {
-                _fcmIntegrationService.CreateApp();
-                _isInitialized = true;
-            }
-            catch(Exception e)
-            {
-                _logger.LogError(e, $"Could not initialize {nameof(NotificationService)}!");
-                throw;
-            }
-        }
-
-        public Task SendNotification(NotificationMessage message, string deviceToken)
+        public async Task SendNotification(NotificationMessage message, string deviceToken)
         {
             ThrowIfCannotSend(deviceToken);
             
             var fcmMessage = MapToFcmMessage(messageArg: message, deviceToken: deviceToken);
             
-            return _fcmIntegrationService.SendNotification(message: fcmMessage, deviceToken: deviceToken); 
+            try
+            {
+                await _fcmIntegrationService.SendNotification(message: fcmMessage, deviceToken: deviceToken); 
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e, "An error has occured while trying to send the notification.");
+            }
         }
         
         private void ThrowIfCannotSend(string deviceToken)
         {
-            if(!_isInitialized)
-                throw new NotificationServiceNotInitializedException();
-            
             if(string.IsNullOrEmpty(deviceToken))
                 throw new ArgumentNullException(nameof(deviceToken));
         }
