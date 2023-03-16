@@ -40,7 +40,7 @@ namespace Lykke.Snow.Notifications.Tests
                         continue;
 
                     var methodParams = apiMethod.GetParameters();
-                    var paramsWithSensitiveData = methodParams.Where(p => _sensitiveParamsNames.Any(s => p.Name.ToLower().Contains(s)));
+                    var paramsWithSensitiveData = methodParams.Where(p => _sensitiveParamsNames.Any(s => p.Name != null && p.Name.ToLower().Contains(s)));
                     sensitiveDataParams.AddRange(
                         paramsWithSensitiveData.Select(i => $"{i.Name} from {apiInterface.Name}.{apiMethod.Name}"));
                 }

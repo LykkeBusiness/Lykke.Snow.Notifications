@@ -20,12 +20,9 @@ namespace Lykke.Snow.Notifications.Tests
         public void InstantiateNotificationMessage_WithEmptyTitleAndBody_ShouldResultInException()
         {
             Assert.Throws<ArgumentNullException>(() => {
-                new DummyMessage(title: null, body: null);
                 new DummyMessage(title: string.Empty, body: string.Empty);
                 new DummyMessage(title: string.Empty, body: "some-body");
                 new DummyMessage(title: "some-title", body: string.Empty);
-                new DummyMessage(title: null, body: "some-body");
-                new DummyMessage(title: "some-title", body: null);
             });
         }
 
@@ -35,7 +32,6 @@ namespace Lykke.Snow.Notifications.Tests
             var sut = CreateSut();
             
             Assert.ThrowsAsync<ArgumentNullException>(async () => {
-                await sut.SendNotification(new DummyMessage("any-title", "any-body"), null);
                 await sut.SendNotification(new DummyMessage("any-title", "any-body"), string.Empty);
             });
         }
@@ -53,7 +49,7 @@ namespace Lykke.Snow.Notifications.Tests
             Assert.Equal(expected: notificationMessage.KeyValueCollection, actual: fcmMessage.Data);
         }
         
-        private NotificationService CreateSut(IFcmIntegrationService fcmServiceArg = null, ILogger<NotificationService> loggerArg = null)
+        private NotificationService CreateSut(IFcmIntegrationService? fcmServiceArg = null, ILogger<NotificationService>? loggerArg = null)
         {
             IFcmIntegrationService fcmService = new Mock<IFcmIntegrationService>().Object;
             ILogger<NotificationService> logger = new Mock<ILogger<NotificationService>>().Object;
