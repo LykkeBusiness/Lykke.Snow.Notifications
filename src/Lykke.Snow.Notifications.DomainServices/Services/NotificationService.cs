@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Lykke.Snow.FirebaseIntegration.Interfaces;
-using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Services;
 using Microsoft.Extensions.Logging;
@@ -26,14 +25,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             
             var fcmMessage = MapToFcmMessage(messageArg: message, deviceToken: deviceToken);
             
-            try
-            {
-                await _fcmIntegrationService.SendNotification(message: fcmMessage, deviceToken: deviceToken); 
-            }
-            catch(Exception e)
-            {
-                _logger.LogError(e, "An error has occured while trying to send the notification.");
-            }
+            var result = await _fcmIntegrationService.SendNotification(message: fcmMessage, deviceToken: deviceToken); 
         }
         
         private void ThrowIfCannotSend(NotificationMessage message, string deviceToken)
@@ -45,9 +37,9 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                 throw new ArgumentNullException(nameof(message));
         }
         
-        public FirebaseAdmin.Messaging.Message MapToFcmMessage(NotificationMessage messageArg, string deviceToken)
+        public Message MapToFcmMessage(NotificationMessage messageArg, string deviceToken)
         {
-            return new FirebaseAdmin.Messaging.Message()
+            return new Message()
             {
                 Token = deviceToken,
                 Notification = new Notification()
