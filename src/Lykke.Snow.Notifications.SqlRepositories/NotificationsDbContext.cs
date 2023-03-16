@@ -1,5 +1,6 @@
 using System.Data.Common;
 using Lykke.Common.MsSql;
+using Lykke.Snow.Notifications.SqlRepositories.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lykke.Snow.Notifications.SqlRepositories
@@ -23,6 +24,8 @@ namespace Lykke.Snow.Notifications.SqlRepositories
         public NotificationsDbContext(DbConnection dbConnection) : base(Schema, dbConnection)
         {
         }
+        
+        internal DbSet<DeviceRegistrationEntity> DeviceRegistrations { get; set; }
 
         protected override void OnLykkeModelCreating(ModelBuilder modelBuilder)
         {
