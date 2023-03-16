@@ -37,6 +37,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Snow.Notifications", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{156FD212-8676-485E-A71F-01021B9A65A4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "7. Integration", "7. Integration", "{GUID}"
+ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lykke.Snow.FirebaseIntegration", "src\Lykke.Snow.FirebaseIntegration\Lykke.Snow.FirebaseIntegration.csproj", "{BFFA6D19-A730-4E52-90F7-82756E1F9ED8}"
 EndProject
 Global
