@@ -16,6 +16,16 @@ namespace Lykke.Snow.Notifications.Tests
 {
     public class NotificationServiceTests
     {
+        class NotificationMessageTestData : IEnumerable<object[]>
+        {
+            public IEnumerator<object[]> GetEnumerator()
+            {
+                yield return new object[] { new DummyMessage("any-title", "any-body"), "any-device-token" };
+            }
+
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        }
+
         [Fact]
         public void InstantiateNotificationMessage_WithEmptyTitleAndBody_ShouldResultInException()
         {
@@ -47,6 +57,24 @@ namespace Lykke.Snow.Notifications.Tests
             Assert.Equal(expected: notificationMessage.Title, actual: fcmMessage.Notification.Title);
             Assert.Equal(expected: notificationMessage.Body, actual: fcmMessage.Notification.Body);
             Assert.Equal(expected: notificationMessage.KeyValueCollection, actual: fcmMessage.Data);
+        }
+
+        [Theory]
+        [ClassData(typeof(NotificationMessageTestData))]
+        public async Task SendNotification_ShouldWrapTheInnerException(NotificationMessage message, string deviceToken)
+        {
+            var exceptionToBeThrown = new CannotSendNotificationException(
+                new Message(), MessagingErrorCode.SenderIdMismatch, new Exception());
+
+            var fcmIntegrationServiceMock = new Mock<IFcmIntegrationService>();
+            fcmIntegrationServiceMock.Setup(x => x.SendNotification(It.IsAny<Message>(), It.IsAny<string>())).Throws(exceptionToBeThrown);
+            
+            var sut = CreateSut(fcmIntegrationServiceMock.Object);
+
+            var exception = await Assert.ThrowsAsync<CannotSendNotificationException>(() => sut.SendNotification(message, deviceToken));
+            
+            Assert.Equal(exceptionToBeThrown.Message, exception.Message);
+            Assert.Equal(exceptionToBeThrown.Data, exception.Data);
         }
         
         private NotificationService CreateSut(IFcmIntegrationService? fcmServiceArg = null, ILogger<NotificationService>? loggerArg = null)
