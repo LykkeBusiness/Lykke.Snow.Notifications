@@ -65,10 +65,6 @@ namespace Lykke.Snow.FirebaseIntegration.Services
             catch(ArgumentException)
             {
             }
-            catch(Exception e)
-            {
-                throw new FirebaseAppInitializationFailedException(e);
-            }
         }
     }
 }
