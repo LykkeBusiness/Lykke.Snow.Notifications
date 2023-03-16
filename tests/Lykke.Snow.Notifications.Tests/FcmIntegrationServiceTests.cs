@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Lykke.Snow.FirebaseIntegration.Exceptions;
 using Lykke.Snow.FirebaseIntegration.Services;
 using Lykke.Snow.Notifications.Tests.Model;
 using Microsoft.Extensions.Logging;
@@ -13,7 +14,7 @@ namespace Lykke.Snow.Notifications.Tests
     {
         public IEnumerator<object[]> GetEnumerator()
         {
-            var message1 = new DummyMessage(title: "Notification title", body: "Notification body");
+            var message1 = new DummyMessage(title: "Notification title", body: "Notification body", new Dictionary<string, string>());
             var token1 = "device-token-1";
             
             var keyValueBag = new Dictionary<string, string>();
@@ -32,14 +33,25 @@ namespace Lykke.Snow.Notifications.Tests
     public class FcmIntegrationServiceTests
     {
         [Fact]
-        public void CreateApp_ShouldThrowException_IfCredentialsFilePathIsNotProvided()
+        public void InstantiatingWithNullCredentialsPath_ShouldThrow_ArgumentNullException()
         {
-            Assert.Throws<ArgumentNullException>(() => CreateSut());
+            Assert.Throws<ArgumentNullException>(() => CreateSut(null));
+        }
+
+        [Fact]
+        public void InstantiatingWithInvalidCredentialsPath_ShouldThrow_FirebaseCredentialsFileNotFoundException()
+        {
+            Assert.Throws<FirebaseCredentialsFileNotFoundException>(() => CreateSut("any-credentials-path"));
         }
         
-        private FcmIntegrationService CreateSut()
+        private FcmIntegrationService CreateSut(string? credentialsFilePath)
         {
             var mockLogger = new Mock<ILogger<FcmIntegrationService>>();
+            
+            if(credentialsFilePath == null)
+            {
+                return new FcmIntegrationService(mockLogger.Object, credentialsFilePath: credentialsFilePath);
+            }
 
             return new FcmIntegrationService(mockLogger.Object, credentialsFilePath: string.Empty);
         }

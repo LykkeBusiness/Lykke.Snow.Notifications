@@ -23,7 +23,7 @@ namespace Lykke.Snow.FirebaseIntegration.Services
 
             if(!System.IO.File.Exists(_credentialsFilePath))
                 throw new FirebaseCredentialsFileNotFoundException(attemptedPath: _credentialsFilePath);
-            
+
             Initialize();
         }
 

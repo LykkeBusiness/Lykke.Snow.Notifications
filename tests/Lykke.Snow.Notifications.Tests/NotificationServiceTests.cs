@@ -20,7 +20,7 @@ namespace Lykke.Snow.Notifications.Tests
         {
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] { new DummyMessage("any-title", "any-body"), "any-device-token" };
+                yield return new object[] { new DummyMessage("any-title", "any-body", new Dictionary<string, string>()), "any-device-token" };
             }
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -30,9 +30,9 @@ namespace Lykke.Snow.Notifications.Tests
         public void InstantiateNotificationMessage_WithEmptyTitleAndBody_ShouldResultInException()
         {
             Assert.Throws<ArgumentNullException>(() => {
-                new DummyMessage(title: string.Empty, body: string.Empty);
-                new DummyMessage(title: string.Empty, body: "some-body");
-                new DummyMessage(title: "some-title", body: string.Empty);
+                new DummyMessage(title: string.Empty, body: string.Empty, new Dictionary<string, string>());
+                new DummyMessage(title: string.Empty, body: "some-body", new Dictionary<string, string>());
+                new DummyMessage(title: "some-title", body: string.Empty, new Dictionary<string, string>());
             });
         }
 
@@ -42,7 +42,7 @@ namespace Lykke.Snow.Notifications.Tests
             var sut = CreateSut();
             
             Assert.ThrowsAsync<ArgumentNullException>(async () => {
-                await sut.SendNotification(new DummyMessage("any-title", "any-body"), string.Empty);
+                await sut.SendNotification(new DummyMessage("any-title", "any-body", new Dictionary<string, string>()), string.Empty);
             });
         }
 
