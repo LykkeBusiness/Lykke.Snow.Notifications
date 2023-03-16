@@ -19,18 +19,12 @@ namespace Lykke.Snow.FirebaseIntegration.Services
         public FcmIntegrationService(ILogger<FcmIntegrationService> logger, string credentialsFilePath)
         {
             _logger = logger;
-            _credentialsFilePath = credentialsFilePath;
-            
-            Initialize();
-        }
+            _credentialsFilePath = credentialsFilePath ?? throw new ArgumentNullException(nameof(credentialsFilePath));
 
-        private void ThrowIfCannotInitialize()
-        {
-            if(string.IsNullOrEmpty(_credentialsFilePath))
-                throw new ArgumentNullException(nameof(_credentialsFilePath));
-            
             if(!System.IO.File.Exists(_credentialsFilePath))
                 throw new FirebaseCredentialsFileNotFoundException(attemptedPath: _credentialsFilePath);
+            
+            Initialize();
         }
 
         public async Task<Result<string, MessagingErrorCode>> SendNotification(Message fcmMessage, string deviceToken)
@@ -38,7 +32,6 @@ namespace Lykke.Snow.FirebaseIntegration.Services
             try 
             {
                 var response = await FirebaseMessaging.DefaultInstance.SendAsync(fcmMessage);
-                _logger.LogInformation("Notification has successfully been sent to the device {Device} {Notification}", deviceToken, fcmMessage.ToJson());
 
                 return new Result<string, MessagingErrorCode>(value: response);
             }
@@ -61,8 +54,6 @@ namespace Lykke.Snow.FirebaseIntegration.Services
         {
             if(FirebaseMessaging.DefaultInstance != null)
                 return;
-
-            ThrowIfCannotInitialize();
 
             try
             {
