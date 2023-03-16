@@ -52,7 +52,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                     Title = messageArg.Title,
                     Body = messageArg.Body
                 },
-                Data = messageArg.KeyValueBag
+                Data = messageArg.KeyValueCollection
             };
         }
     }

@@ -50,7 +50,7 @@ namespace Lykke.Snow.Notifications.Tests
             
             Assert.Equal(expected: notificationMessage.Title, actual: fcmMessage.Notification.Title);
             Assert.Equal(expected: notificationMessage.Body, actual: fcmMessage.Notification.Body);
-            Assert.Equal(expected: notificationMessage.KeyValueBag, actual: fcmMessage.Data);
+            Assert.Equal(expected: notificationMessage.KeyValueCollection, actual: fcmMessage.Data);
         }
         
         private NotificationService CreateSut(IFcmIntegrationService fcmServiceArg = null, ILogger<NotificationService> loggerArg = null)

@@ -25,9 +25,9 @@ namespace Lykke.Snow.Notifications.Domain.Model
         /// Key-value dictionary for additional data to be sent along with the notification.
         /// </summary>
         /// <value></value>
-        public Dictionary<string, string> KeyValueBag { get; protected set; }
+        public Dictionary<string, string> KeyValueCollection { get; }
 
-        protected NotificationMessage(string title, string body, Dictionary<string, string> keyValueBag = null) 
+        protected NotificationMessage(string title, string body, Dictionary<string, string> keyValueCollection = null) 
         {
             if(string.IsNullOrEmpty(title))
                 throw new ArgumentNullException(nameof(title));
@@ -37,7 +37,7 @@ namespace Lykke.Snow.Notifications.Domain.Model
 
             Title = title;
             Body = body;
-            KeyValueBag = keyValueBag;
+            KeyValueCollection = keyValueCollection;
         }
     }
 }
