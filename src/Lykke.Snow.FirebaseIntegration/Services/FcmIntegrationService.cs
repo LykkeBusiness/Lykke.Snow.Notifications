@@ -35,8 +35,6 @@ namespace Lykke.Snow.FirebaseIntegration.Services
 
         public async Task<SendNotificationResult> SendNotification(Message fcmMessage, string deviceToken)
         {
-            ThrowIfNotInitialized();
-
             try 
             {
                 var response = await FirebaseMessaging.DefaultInstance.SendAsync(fcmMessage);
@@ -81,12 +79,6 @@ namespace Lykke.Snow.FirebaseIntegration.Services
             {
                 throw new FirebaseAppInitializationFailedException(e);
             }
-        }
-
-        private void ThrowIfNotInitialized()
-        {
-            if(FirebaseMessaging.DefaultInstance == null)
-                throw new FirebaseAppNotCreatedException();
         }
     }
 }
