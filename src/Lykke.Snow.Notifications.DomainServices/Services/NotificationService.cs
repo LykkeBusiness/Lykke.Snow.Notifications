@@ -5,6 +5,7 @@ using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Services;
 using Microsoft.Extensions.Logging;
 using FirebaseAdmin.Messaging;
+using Lykke.Snow.FirebaseIntegration.Exceptions;
 
 namespace Lykke.Snow.Notifications.DomainServices.Services
 {
@@ -25,7 +26,22 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             
             var fcmMessage = MapToFcmMessage(messageArg: message, deviceToken: deviceToken);
             
-            var result = await _fcmIntegrationService.SendNotification(message: fcmMessage, deviceToken: deviceToken); 
+            try
+            {
+                var result = await _fcmIntegrationService.SendNotification(message: fcmMessage, deviceToken: deviceToken); 
+            }
+            catch(ArgumentNullException)
+            {
+                throw;
+            }
+            catch(ArgumentException)
+            {
+                throw;
+            }
+            catch(CannotSendNotificationException)
+            {
+                throw;
+            }
         }
         
         private void ThrowIfCannotSend(NotificationMessage message, string deviceToken)
