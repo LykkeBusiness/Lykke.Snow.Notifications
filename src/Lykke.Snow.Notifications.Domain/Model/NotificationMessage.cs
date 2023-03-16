@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Lykke.MarginTrading.Activities.Contracts.Models;
 
 namespace Lykke.Snow.Notifications.Domain.Model
 {
