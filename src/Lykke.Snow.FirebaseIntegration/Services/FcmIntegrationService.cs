@@ -1,46 +1,35 @@
 using System;
 using System.Threading.Tasks;
-using Common;
 using FirebaseAdmin;
 using FirebaseAdmin.Messaging;
 using Google.Apis.Auth.OAuth2;
+using Lykke.Snow.Common.Model;
 using Lykke.Snow.FirebaseIntegration.Exceptions;
 using Lykke.Snow.FirebaseIntegration.Interfaces;
-using Lykke.Snow.FirebaseIntegration.Model;
-using Microsoft.Extensions.Logging;
 
 namespace Lykke.Snow.FirebaseIntegration.Services
 {
     public class FcmIntegrationService : IFcmIntegrationService
     {
-        private readonly ILogger<FcmIntegrationService> _logger;
         private readonly string _credentialsFilePath;
 
-        public FcmIntegrationService(ILogger<FcmIntegrationService> logger, string credentialsFilePath)
+        public FcmIntegrationService(string credentialsFilePath)
         {
-            _logger = logger;
-            _credentialsFilePath = credentialsFilePath;
-            
+            _credentialsFilePath = credentialsFilePath ?? throw new ArgumentNullException(nameof(credentialsFilePath));
+
+            if(!System.IO.File.Exists(_credentialsFilePath))
+                throw new FirebaseCredentialsFileNotFoundException(attemptedPath: _credentialsFilePath);
+
             Initialize();
         }
 
-        private void ThrowIfCannotInitialize()
-        {
-            if(string.IsNullOrEmpty(_credentialsFilePath))
-                throw new ArgumentNullException(nameof(_credentialsFilePath));
-            
-            if(!System.IO.File.Exists(_credentialsFilePath))
-                throw new FirebaseCredentialsFileNotFoundException(attemptedPath: _credentialsFilePath);
-        }
-
-        public async Task<SendNotificationResult> SendNotification(Message fcmMessage, string deviceToken)
+        public async Task<Result<string, MessagingErrorCode>> SendNotification(Message fcmMessage)
         {
             try 
             {
                 var response = await FirebaseMessaging.DefaultInstance.SendAsync(fcmMessage);
-                _logger.LogInformation("Notification has successfully been sent to the device {Device} {Notification}", deviceToken, fcmMessage.ToJson());
 
-                return SendNotificationResult.Success(messageId: response);
+                return new Result<string, MessagingErrorCode>(value: response);
             }
             catch(ArgumentNullException e)
             {
@@ -62,8 +51,6 @@ namespace Lykke.Snow.FirebaseIntegration.Services
             if(FirebaseMessaging.DefaultInstance != null)
                 return;
 
-            ThrowIfCannotInitialize();
-
             try
             {
                 FirebaseApp.Create(new AppOptions() 
@@ -71,13 +58,10 @@ namespace Lykke.Snow.FirebaseIntegration.Services
                     Credential = GoogleCredential.FromFile(_credentialsFilePath)
                 });
             }
-            catch(ArgumentException e)
+            catch(ArgumentException)
             {
-                throw new FirebaseAppAlreadyExistsException(e);
-            }
-            catch(Exception e)
-            {
-                throw new FirebaseAppInitializationFailedException(e);
+                //ArgumentException is thrown if Firebase is already initialized according to the documentation
+                //So we silently ignore that ArgumentException that's caused by already existing app 
             }
         }
     }

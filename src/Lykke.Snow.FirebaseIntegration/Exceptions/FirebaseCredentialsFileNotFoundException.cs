@@ -2,7 +2,7 @@ using System;
 
 namespace Lykke.Snow.FirebaseIntegration.Exceptions
 {
-    public class FirebaseCredentialsFileNotFoundException : Exception
+    public sealed class FirebaseCredentialsFileNotFoundException : Exception
     {
         private const string ErrorMsg = "FCM credential file was not found at the given location.";
 

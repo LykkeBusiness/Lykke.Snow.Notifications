@@ -1,53 +1,62 @@
 using System;
 using System.Threading.Tasks;
 using Lykke.Snow.FirebaseIntegration.Interfaces;
-using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Services;
-using Microsoft.Extensions.Logging;
 using FirebaseAdmin.Messaging;
+using Lykke.Snow.FirebaseIntegration.Exceptions;
 
 namespace Lykke.Snow.Notifications.DomainServices.Services
 {
     public class NotificationService : INotificationService
     {
         private readonly IFcmIntegrationService _fcmIntegrationService;
-        private readonly ILogger<NotificationService> _logger;
 
-        public NotificationService(IFcmIntegrationService fcmIntegrationService, ILogger<NotificationService> logger)
+        public NotificationService(IFcmIntegrationService fcmIntegrationService)
         {
-            _fcmIntegrationService = fcmIntegrationService ?? throw new ArgumentNullException(nameof(fcmIntegrationService));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _fcmIntegrationService =
+                fcmIntegrationService ?? throw new ArgumentNullException(nameof(fcmIntegrationService));
         }
 
         public async Task SendNotification(NotificationMessage message, string deviceToken)
         {
-            ThrowIfCannotSend(deviceToken);
+            ThrowIfCannotSend(message, deviceToken);
             
             var fcmMessage = MapToFcmMessage(messageArg: message, deviceToken: deviceToken);
             
             try
             {
-                await _fcmIntegrationService.SendNotification(message: fcmMessage, deviceToken: deviceToken); 
+                await _fcmIntegrationService.SendNotification(message: fcmMessage); 
             }
-            catch(Exception e)
+            catch(ArgumentNullException)
             {
-                _logger.LogError(e, "An error has occured while trying to send the notification.");
+                throw;
+            }
+            catch(ArgumentException)
+            {
+                throw;
+            }
+            catch(CannotSendNotificationException)
+            {
+                throw;
             }
         }
         
-        private void ThrowIfCannotSend(string deviceToken)
+        private void ThrowIfCannotSend(NotificationMessage message, string deviceToken)
         {
             if(string.IsNullOrEmpty(deviceToken))
                 throw new ArgumentNullException(nameof(deviceToken));
+                
+            if(message == null)
+                throw new ArgumentNullException(nameof(message));
         }
         
-        public FirebaseAdmin.Messaging.Message MapToFcmMessage(NotificationMessage messageArg, string deviceToken)
+        public Message MapToFcmMessage(NotificationMessage messageArg, string deviceToken)
         {
-            return new FirebaseAdmin.Messaging.Message()
+            return new Message
             {
                 Token = deviceToken,
-                Notification = new Notification()
+                Notification = new Notification
                 {
                     Title = messageArg.Title,
                     Body = messageArg.Body

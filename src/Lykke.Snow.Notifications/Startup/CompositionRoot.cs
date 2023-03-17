@@ -18,8 +18,8 @@ namespace Lykke.Snow.Notifications.Startup
             if(settings.CurrentValue.NotificationService == null)
                 throw new ArgumentException($"{nameof(AppSettings.NotificationService)} settings is not configured!");
 
-             services.AddSingleton(settings.CurrentValue.NotificationService);
-             services
+            services.AddSingleton(settings.CurrentValue.NotificationService);
+            services
                 .AddApplicationInsightsTelemetry()
                 .AddMvcCore()
                 .AddNewtonsoftJson(options =>

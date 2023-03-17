@@ -3,7 +3,7 @@ using FirebaseAdmin.Messaging;
 
 namespace Lykke.Snow.FirebaseIntegration.Exceptions
 {
-    public class CannotSendNotificationException : Exception
+    public sealed class CannotSendNotificationException : Exception
     {
         private const string ErrorMsg = "FCM could not deliver the message";
 

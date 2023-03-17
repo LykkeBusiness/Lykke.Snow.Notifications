@@ -9,11 +9,11 @@ namespace Lykke.Snow.Notifications.Modules
 {
     public class NotificationsModule : Module
     {
-        private readonly NotificationServiceSettings serviceSettings;
+        private readonly NotificationServiceSettings _serviceSettings;
 
         public NotificationsModule(NotificationServiceSettings serviceSettings)
         {
-            this.serviceSettings = serviceSettings;
+            _serviceSettings = serviceSettings;
         }
 
         protected override void Load(ContainerBuilder builder)
@@ -24,7 +24,7 @@ namespace Lykke.Snow.Notifications.Modules
 
 
             builder.RegisterType<FcmIntegrationService>()
-                .WithParameter("credentialsFilePath", serviceSettings.Fcm.CredentialFilePath)
+                .WithParameter("credentialsFilePath", _serviceSettings.Fcm.CredentialFilePath)
                 .As<IFcmIntegrationService>()
                 .SingleInstance();
         }
