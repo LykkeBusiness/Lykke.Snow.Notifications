@@ -35,11 +35,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "6. Hosts", "6. Hosts", "{EE
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Snow.Notifications", "src\Lykke.Snow.Notifications\Lykke.Snow.Notifications.csproj", "{E414FDB9-FEEA-4CD0-9BBA-D1541601DF29}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{156FD212-8676-485E-A71F-01021B9A65A4}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "7. Integration", "7. Integration", "{EB6CEB63-24A5-4B7C-8A90-094D397E0803}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "7. Integration", "7. Integration", "{GUID}"
- EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lykke.Snow.FirebaseIntegration", "src\Lykke.Snow.FirebaseIntegration\Lykke.Snow.FirebaseIntegration.csproj", "{BFFA6D19-A730-4E52-90F7-82756E1F9ED8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Snow.FirebaseIntegration", "src\Lykke.Snow.FirebaseIntegration\Lykke.Snow.FirebaseIntegration.csproj", "{BFFA6D19-A730-4E52-90F7-82756E1F9ED8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -86,7 +84,7 @@ Global
 		{3C300C31-97D3-41E8-A627-C53491BDA28B} = {C9A2CFDE-EA32-4946-B679-7CE6EFA816B8}
 		{A61FFDEE-5725-4650-A788-6E55EE5EFD5B} = {8F9036B1-5106-4C69-B2D2-B78EE52687A0}
 		{E414FDB9-FEEA-4CD0-9BBA-D1541601DF29} = {EE7F3159-E06C-497F-96D4-DB2A6B03A6AB}
-		{BFFA6D19-A730-4E52-90F7-82756E1F9ED8} = {156FD212-8676-485E-A71F-01021B9A65A4}
+		{BFFA6D19-A730-4E52-90F7-82756E1F9ED8} = {EB6CEB63-24A5-4B7C-8A90-094D397E0803}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EB6C0EF4-AA6A-444D-8603-3669F73A58BC}
