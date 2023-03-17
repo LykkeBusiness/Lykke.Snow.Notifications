@@ -1,8 +1,9 @@
 namespace Lykke.Snow.Notifications.Contracts.Model.Contracts
 {
-    public enum DeviceRegistrationErrorCodes
+    public enum DeviceRegistrationErrorCodeContract
     {
         None,
+        DoesNotExist,
         AlreadyRegistered,
         ClientIdNotValid,
         DeviceTokenNotValid
