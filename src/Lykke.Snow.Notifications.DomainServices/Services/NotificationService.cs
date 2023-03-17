@@ -28,7 +28,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             
             try
             {
-                var result = await _fcmIntegrationService.SendNotification(message: fcmMessage, deviceToken: deviceToken); 
+                var result = await _fcmIntegrationService.SendNotification(message: fcmMessage); 
             }
             catch(ArgumentNullException)
             {

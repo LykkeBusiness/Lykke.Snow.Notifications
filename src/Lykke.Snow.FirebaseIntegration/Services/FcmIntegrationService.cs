@@ -27,7 +27,7 @@ namespace Lykke.Snow.FirebaseIntegration.Services
             Initialize();
         }
 
-        public async Task<Result<string, MessagingErrorCode>> SendNotification(Message fcmMessage, string deviceToken)
+        public async Task<Result<string, MessagingErrorCode>> SendNotification(Message fcmMessage)
         {
             try 
             {
@@ -64,6 +64,8 @@ namespace Lykke.Snow.FirebaseIntegration.Services
             }
             catch(ArgumentException)
             {
+                //ArgumentException is thrown if Firebase is already initialized according to the documentation
+                //So we silently ignore that ArgumentException that's caused by already existing app 
             }
         }
     }

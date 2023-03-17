@@ -67,7 +67,7 @@ namespace Lykke.Snow.Notifications.Tests
                 new Message(), MessagingErrorCode.SenderIdMismatch, new Exception());
 
             var fcmIntegrationServiceMock = new Mock<IFcmIntegrationService>();
-            fcmIntegrationServiceMock.Setup(x => x.SendNotification(It.IsAny<Message>(), It.IsAny<string>())).Throws(exceptionToBeThrown);
+            fcmIntegrationServiceMock.Setup(x => x.SendNotification(It.IsAny<Message>())).Throws(exceptionToBeThrown);
             
             var sut = CreateSut(fcmIntegrationServiceMock.Object);
 
