@@ -8,7 +8,7 @@ namespace Lykke.Snow.Notifications.Domain.Repositories
     public interface IDeviceRegistrationRepository
     {
         Task<Result<DeviceRegistration, DeviceRegistrationErrorCode>> GetDeviceRegistrationAsync(string deviceToken);
-        Task<Result<DeviceRegistrationErrorCode>> InsertAsync(string deviceToken);
-        Task<Result<DeviceRegistrationErrorCode>> DeleteAsync(string deviceToken, string clientId);
+        Task<Result<DeviceRegistrationErrorCode>> InsertAsync(DeviceRegistration entity);
+        Task<Result<DeviceRegistrationErrorCode>> DeleteAsync(string deviceToken);
     }
 }

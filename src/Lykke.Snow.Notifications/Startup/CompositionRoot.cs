@@ -3,6 +3,7 @@ using Lykke.SettingsReader;
 using Lykke.Snow.Common.Startup;
 using Lykke.Snow.Common.Startup.ApiKey;
 using Lykke.Snow.Notifications.Settings;
+using Lykke.Snow.Notifications.SqlRepositories.MappingProfiles;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
@@ -42,6 +43,8 @@ namespace Lykke.Snow.Notifications.Startup
                         options.AddApiKeyAwareness();
                 })
                 .AddSwaggerGenNewtonsoftSupport();
+            
+            services.AddAutoMapper(typeof(DeviceRegistrationMappingProfile).Assembly);
             
             return services;
         }
