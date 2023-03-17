@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Lykke.Cqrs;
 
 namespace Lykke.Snow.Notifications
@@ -12,7 +11,7 @@ namespace Lykke.Snow.Notifications
             _cqrsEngine = cqrsEngine;
         }
 
-        internal async Task Start()
+        internal void Start()
         {
             _cqrsEngine.StartSubscribers();
         }

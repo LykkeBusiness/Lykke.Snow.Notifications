@@ -1,9 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Lykke.Snow.Notifications.Startup;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Serilog;
 
 namespace Lykke.Snow.Notifications
 {
@@ -25,7 +23,7 @@ namespace Lykke.Snow.Notifications
                 var app = builder.Build();
 
                 var startupManager = app.Services.GetRequiredService<StartupManager>();
-                await startupManager.Start();
+                startupManager.Start();
 
                 await app.Configure().RunAsync();
             });
