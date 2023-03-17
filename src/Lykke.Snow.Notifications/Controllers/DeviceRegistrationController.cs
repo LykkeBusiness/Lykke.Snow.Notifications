@@ -13,7 +13,6 @@ namespace Lykke.Snow.Notifications.Controllers
         [HttpPost("register")]
         public async Task<ErrorCodeResponse<DeviceRegistrationErrorCodes>> RegisterDevice(RegisterDeviceRequest request)
         {
-            
             var response = new ErrorCodeResponse<DeviceRegistrationErrorCodes>();
             return response;
         }
