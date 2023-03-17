@@ -28,10 +28,14 @@ namespace Lykke.Snow.Notifications.Controllers
         public async Task<ErrorCodeResponse<DeviceRegistrationErrorCodeContract>> RegisterDevice(RegisterDeviceRequest request)
         {
             var response = new ErrorCodeResponse<DeviceRegistrationErrorCodeContract>();
+
             var deviceRegistration = _mapper.Map<DeviceRegistration>(request);
+
+            var result = await _deviceRegistrationService.RegisterDeviceAsync(deviceRegistration);
             
-            //TODO check result
-            await _deviceRegistrationService.RegisterDeviceAsync(deviceRegistration);
+            // TODO: we can maybe create an extension method?
+            //if(result.IsFailed)
+            //    response.ErrorCode = _mapper.Map(...)
             
             return response;
         }
