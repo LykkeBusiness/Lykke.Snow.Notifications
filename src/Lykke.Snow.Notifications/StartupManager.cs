@@ -1,7 +1,4 @@
-using System.Threading.Tasks;
 using Lykke.Cqrs;
-using Lykke.Snow.Notifications.Domain.Services;
-using Lykke.Snow.Notifications.Settings;
 
 namespace Lykke.Snow.Notifications
 {

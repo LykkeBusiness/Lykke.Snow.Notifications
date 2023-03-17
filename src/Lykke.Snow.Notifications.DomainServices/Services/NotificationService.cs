@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Lykke.Snow.FirebaseIntegration.Interfaces;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Services;
-using Microsoft.Extensions.Logging;
 using FirebaseAdmin.Messaging;
 using Lykke.Snow.FirebaseIntegration.Exceptions;
 
@@ -12,12 +11,11 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
     public class NotificationService : INotificationService
     {
         private readonly IFcmIntegrationService _fcmIntegrationService;
-        private readonly ILogger<NotificationService> _logger;
 
-        public NotificationService(IFcmIntegrationService fcmIntegrationService, ILogger<NotificationService> logger)
+        public NotificationService(IFcmIntegrationService fcmIntegrationService)
         {
-            _fcmIntegrationService = fcmIntegrationService ?? throw new ArgumentNullException(nameof(fcmIntegrationService));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _fcmIntegrationService =
+                fcmIntegrationService ?? throw new ArgumentNullException(nameof(fcmIntegrationService));
         }
 
         public async Task SendNotification(NotificationMessage message, string deviceToken)
@@ -28,7 +26,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             
             try
             {
-                var result = await _fcmIntegrationService.SendNotification(message: fcmMessage); 
+                await _fcmIntegrationService.SendNotification(message: fcmMessage); 
             }
             catch(ArgumentNullException)
             {
@@ -55,10 +53,10 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
         
         public Message MapToFcmMessage(NotificationMessage messageArg, string deviceToken)
         {
-            return new Message()
+            return new Message
             {
                 Token = deviceToken,
-                Notification = new Notification()
+                Notification = new Notification
                 {
                     Title = messageArg.Title,
                     Body = messageArg.Body

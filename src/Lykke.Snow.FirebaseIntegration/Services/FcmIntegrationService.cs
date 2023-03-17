@@ -1,24 +1,20 @@
 using System;
 using System.Threading.Tasks;
-using Common;
 using FirebaseAdmin;
 using FirebaseAdmin.Messaging;
 using Google.Apis.Auth.OAuth2;
 using Lykke.Snow.Common.Model;
 using Lykke.Snow.FirebaseIntegration.Exceptions;
 using Lykke.Snow.FirebaseIntegration.Interfaces;
-using Microsoft.Extensions.Logging;
 
 namespace Lykke.Snow.FirebaseIntegration.Services
 {
     public class FcmIntegrationService : IFcmIntegrationService
     {
-        private readonly ILogger<FcmIntegrationService> _logger;
         private readonly string _credentialsFilePath;
 
-        public FcmIntegrationService(ILogger<FcmIntegrationService> logger, string credentialsFilePath)
+        public FcmIntegrationService(string credentialsFilePath)
         {
-            _logger = logger;
             _credentialsFilePath = credentialsFilePath ?? throw new ArgumentNullException(nameof(credentialsFilePath));
 
             if(!System.IO.File.Exists(_credentialsFilePath))

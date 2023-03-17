@@ -1,5 +1,4 @@
 ﻿using JetBrains.Annotations;
-using Refit;
 
 namespace Lykke.Snow.Notifications.Client
 {

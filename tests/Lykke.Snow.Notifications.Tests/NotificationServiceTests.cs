@@ -8,7 +8,6 @@ using Lykke.Snow.FirebaseIntegration.Interfaces;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.DomainServices.Services;
 using Lykke.Snow.Notifications.Tests.Model;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -71,27 +70,24 @@ namespace Lykke.Snow.Notifications.Tests
             
             var sut = CreateSut(fcmIntegrationServiceMock.Object);
 
-            var exception = await Assert.ThrowsAsync<CannotSendNotificationException>(() => sut.SendNotification(message, deviceToken));
+            var exception =
+                await Assert.ThrowsAsync<CannotSendNotificationException>(() =>
+                    sut.SendNotification(message, deviceToken));
             
             Assert.Equal(exceptionToBeThrown.Message, exception.Message);
             Assert.Equal(exceptionToBeThrown.Data, exception.Data);
         }
         
-        private NotificationService CreateSut(IFcmIntegrationService? fcmServiceArg = null, ILogger<NotificationService>? loggerArg = null)
+        private NotificationService CreateSut(IFcmIntegrationService? fcmServiceArg = null)
         {
-            IFcmIntegrationService fcmService = new Mock<IFcmIntegrationService>().Object;
-            ILogger<NotificationService> logger = new Mock<ILogger<NotificationService>>().Object;
+            var fcmService = new Mock<IFcmIntegrationService>().Object;
 
             if(fcmServiceArg != null)
             {
                 fcmService = fcmServiceArg;
             }
-            if(loggerArg != null)
-            {
-                logger = loggerArg;
-            }
 
-            return new NotificationService(fcmService, logger);
+            return new NotificationService(fcmService);
         }
     }
 }

@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using Lykke.Snow.FirebaseIntegration.Exceptions;
 using Lykke.Snow.FirebaseIntegration.Services;
 using Lykke.Snow.Notifications.Tests.Model;
-using Microsoft.Extensions.Logging;
-using Moq;
 using Xunit;
 
 namespace Lykke.Snow.Notifications.Tests
@@ -46,14 +44,12 @@ namespace Lykke.Snow.Notifications.Tests
         
         private FcmIntegrationService CreateSut(string? credentialsFilePath)
         {
-            var mockLogger = new Mock<ILogger<FcmIntegrationService>>();
-            
             if(credentialsFilePath == null)
             {
-                return new FcmIntegrationService(mockLogger.Object, credentialsFilePath: credentialsFilePath);
+                return new FcmIntegrationService(credentialsFilePath: credentialsFilePath);
             }
 
-            return new FcmIntegrationService(mockLogger.Object, credentialsFilePath: string.Empty);
+            return new FcmIntegrationService(credentialsFilePath: string.Empty);
         }
     }
 }

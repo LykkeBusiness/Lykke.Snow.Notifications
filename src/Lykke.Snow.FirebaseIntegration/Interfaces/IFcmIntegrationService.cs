@@ -13,7 +13,6 @@ namespace Lykke.Snow.FirebaseIntegration.Interfaces
         /// Sends notification to the specified device
         /// </summary>
         /// <param name="message"></param>
-        /// <param name="deviceToken"></param>
         /// <returns></returns>
         Task<Result<string, MessagingErrorCode>> SendNotification(Message message);
     }
