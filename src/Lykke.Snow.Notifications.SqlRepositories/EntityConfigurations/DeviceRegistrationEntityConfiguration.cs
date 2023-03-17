@@ -9,7 +9,7 @@ namespace Lykke.Snow.Notifications.SqlRepositories.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<DeviceRegistrationEntity> builder)
         {
-            builder.HasKey(x => new { x.DeviceToken, x.ClientId });
+            builder.HasKey(x => x.DeviceToken);
             
             builder.Property(x => x.ClientId).HasMaxLength(128).IsRequired();
             builder.Property(x => x.DeviceToken).HasMaxLength(512).IsRequired();

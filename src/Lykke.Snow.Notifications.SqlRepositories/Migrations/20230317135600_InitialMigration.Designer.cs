@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lykke.Snow.Notifications.SqlRepositories.Migrations
 {
     [DbContext(typeof(NotificationsDbContext))]
-    [Migration("20230316071535_InitialMigration")]
+    [Migration("20230317135600_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,24 +27,19 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Migrations
 
             modelBuilder.Entity("Lykke.Snow.Notifications.SqlRepositories.Entities.DeviceRegistrationEntity", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                    b.Property<string>("DeviceToken")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
 
                     b.Property<string>("ClientId")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<string>("DeviceToken")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
-
                     b.Property<DateTime>("RegisteredOn")
                         .HasColumnType("datetime");
 
-                    b.HasKey("Id");
+                    b.HasKey("DeviceToken");
 
                     b.ToTable("DeviceRegistrations", "notifications");
                 });

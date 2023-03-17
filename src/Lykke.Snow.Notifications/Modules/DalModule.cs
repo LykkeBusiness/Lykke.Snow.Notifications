@@ -1,7 +1,9 @@
 using System.Data.Common;
 using Autofac;
 using Lykke.Common.MsSql;
+using Lykke.Snow.Notifications.Domain.Repositories;
 using Lykke.Snow.Notifications.SqlRepositories;
+using Lykke.Snow.Notifications.SqlRepositories.Repositories;
 
 namespace Lykke.Snow.Notifications.Modules
 {
@@ -19,6 +21,10 @@ namespace Lykke.Snow.Notifications.Modules
             builder.RegisterMsSql(_connectionString,
                 (string connStr) => new NotificationsDbContext(connStr, isTracingEnabled: false), 
                 (DbConnection dbConnection) => new NotificationsDbContext(dbConnection));
+        
+            builder.RegisterType<DeviceRegistrationRepository>()
+                .As<IDeviceRegistrationRepository>()
+                .SingleInstance();
         }
     }
 }

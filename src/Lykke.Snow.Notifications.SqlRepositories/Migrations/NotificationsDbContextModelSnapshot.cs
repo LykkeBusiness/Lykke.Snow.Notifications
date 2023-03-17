@@ -25,24 +25,19 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Migrations
 
             modelBuilder.Entity("Lykke.Snow.Notifications.SqlRepositories.Entities.DeviceRegistrationEntity", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                    b.Property<string>("DeviceToken")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
 
                     b.Property<string>("ClientId")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<string>("DeviceToken")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
-
                     b.Property<DateTime>("RegisteredOn")
                         .HasColumnType("datetime");
 
-                    b.HasKey("Id");
+                    b.HasKey("DeviceToken");
 
                     b.ToTable("DeviceRegistrations", "notifications");
                 });

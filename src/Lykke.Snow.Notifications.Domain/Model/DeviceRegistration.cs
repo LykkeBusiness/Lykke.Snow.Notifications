@@ -12,6 +12,7 @@ namespace Lykke.Snow.Notifications.Domain.Model
         {
             ClientId = clientId;
             DeviceToken = deviceToken;
+            RegisteredOn = DateTime.UtcNow; //TODO: check if we can get in any other way
         }
     }
 }

@@ -61,8 +61,17 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
             var entity = new DeviceRegistrationEntity() { DeviceToken = deviceToken };
             
             context.Attach(entity);
-            context.(entity);
-
+            context.DeviceRegistrations.Remove(entity);
+            
+            try 
+            {
+                await context.SaveChangesAsync();
+                return new Result<DeviceRegistrationErrorCode>();
+            }
+            catch(DbUpdateConcurrencyException e) when (e.IsMissingDataException())
+            {
+                return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DoesNotExist);
+            }
         }
     }
 }
