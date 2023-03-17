@@ -8,16 +8,10 @@ namespace Lykke.Snow.Notifications
     public class StartupManager
     {
         private readonly ICqrsEngine _cqrsEngine;
-        private readonly INotificationService _notificationService;
-        private readonly NotificationServiceSettings _settings;
 
-        public StartupManager(ICqrsEngine cqrsEngine, 
-            INotificationService notificationService, 
-            NotificationServiceSettings settings)
+        public StartupManager(ICqrsEngine cqrsEngine)
         {
             _cqrsEngine = cqrsEngine;
-            _notificationService = notificationService;
-            _settings = settings;
         }
 
         internal void Start()
