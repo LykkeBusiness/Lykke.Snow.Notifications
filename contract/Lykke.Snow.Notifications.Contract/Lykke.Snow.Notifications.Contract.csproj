@@ -8,8 +8,4 @@
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     </PropertyGroup>
 
-    <ItemGroup>
-      <PackageReference Include="Lykke.Snow.Contracts" Version="1.48.0" />
-    </ItemGroup>
-
 </Project>
