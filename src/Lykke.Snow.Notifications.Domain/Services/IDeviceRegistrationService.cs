@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lykke.Snow.Common.Model;
 using Lykke.Snow.Notifications.Domain.Enums;
@@ -24,5 +25,13 @@ namespace Lykke.Snow.Notifications.Domain.Services
         /// <param name="deviceRegistration"></param>
         /// <returns></returns>
         Task<Result<DeviceRegistrationErrorCode>> UnregisterDeviceAsync(DeviceRegistration deviceRegistration);
+        
+        /// <summary>
+        /// Get all device registrations associated by given accountId
+        /// Intented to be used to send notifications when a client is logged in multiple devices
+        /// </summary>
+        /// <param name="accountId"></param>
+        /// <returns>An IEnumerable<> to the iterate the collection of device registrations. Returns empty collection if there's no any.</returns>
+        Task<Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>> GetDeviceRegistrationsAsync(string accountId);
     }
 }

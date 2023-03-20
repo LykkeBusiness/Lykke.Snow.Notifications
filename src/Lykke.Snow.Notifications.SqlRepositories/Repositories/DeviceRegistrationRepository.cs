@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Lykke.Common.MsSql;
@@ -30,6 +32,15 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
                 return new Result<DeviceRegistration, DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DoesNotExist);
         
             return new Result<DeviceRegistration, DeviceRegistrationErrorCode>(_mapper.Map<DeviceRegistration>(entity));
+        }
+
+        public async Task<Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>> GetDeviceRegistrationsByAccountIdAsync(string accountId)
+        {
+            await using var context = _contextFactory.CreateDataContext();
+            var entitites = context.DeviceRegistrations.Where(x => x.AccountId == accountId)
+                .Select(devRegEntity => _mapper.Map<DeviceRegistration>(devRegEntity));
+            
+            return new Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>(entitites);
         }
 
         public async Task<Result<DeviceRegistrationErrorCode>> InsertAsync(DeviceRegistration deviceRegistration)
