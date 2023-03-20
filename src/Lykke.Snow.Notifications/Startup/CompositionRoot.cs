@@ -2,7 +2,6 @@ using System;
 using Lykke.SettingsReader;
 using Lykke.Snow.Common.Startup;
 using Lykke.Snow.Common.Startup.ApiKey;
-using Lykke.Snow.Notifications.MappingProfiles;
 using Lykke.Snow.Notifications.Settings;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
@@ -43,8 +42,6 @@ namespace Lykke.Snow.Notifications.Startup
                         options.AddApiKeyAwareness();
                 })
                 .AddSwaggerGenNewtonsoftSupport();
-            
-            services.AddAutoMapper(typeof(DeviceRegistrationMappingProfile).Assembly);
             
             return services;
         }
