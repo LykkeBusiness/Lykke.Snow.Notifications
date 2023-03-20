@@ -4,6 +4,7 @@ using AutoMapper;
 using Lykke.Snow.Contracts.Responses;
 using Lykke.Snow.Notifications.Contracts.Model.Contracts;
 using Lykke.Snow.Notifications.Contracts.Model.Requests;
+using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -27,17 +28,10 @@ namespace Lykke.Snow.Notifications.Controllers
         [ProducesResponseType(typeof(ErrorCodeResponse<DeviceRegistrationErrorCodeContract>), (int) HttpStatusCode.OK)]
         public async Task<ErrorCodeResponse<DeviceRegistrationErrorCodeContract>> RegisterDevice(RegisterDeviceRequest request)
         {
-            var response = new ErrorCodeResponse<DeviceRegistrationErrorCodeContract>();
-
             var deviceRegistration = _mapper.Map<DeviceRegistration>(request);
-
             var result = await _deviceRegistrationService.RegisterDeviceAsync(deviceRegistration);
             
-            // TODO: we can maybe create an extension method?
-            //if(result.IsFailed)
-            //    response.ErrorCode = _mapper.Map(...)
-            
-            return response;
+            return Map(result.Error);
         }
 
         [HttpPost("unregister")]
@@ -47,10 +41,17 @@ namespace Lykke.Snow.Notifications.Controllers
             var response = new ErrorCodeResponse<DeviceRegistrationErrorCodeContract>();
             var deviceRegistration = _mapper.Map<DeviceRegistration>(request);
             
-            //TODO check result
-            await _deviceRegistrationService.UnregisterDeviceAsync(deviceRegistration);
+            var result = await _deviceRegistrationService.UnregisterDeviceAsync(deviceRegistration);
             
-            return response;
+            return Map(result.Error);
+        }
+        
+        private ErrorCodeResponse<DeviceRegistrationErrorCodeContract> Map(DeviceRegistrationErrorCode? errorCode)
+        {
+            return new ErrorCodeResponse<DeviceRegistrationErrorCodeContract> 
+            { 
+                ErrorCode = _mapper.Map<DeviceRegistrationErrorCodeContract>(errorCode) 
+            };
         }
     }
 }
