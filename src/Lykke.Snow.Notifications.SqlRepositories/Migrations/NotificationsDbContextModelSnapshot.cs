@@ -29,7 +29,7 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Migrations
                         .HasMaxLength(512)
                         .HasColumnType("nvarchar(512)");
 
-                    b.Property<string>("ClientId")
+                    b.Property<string>("AccountId")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");

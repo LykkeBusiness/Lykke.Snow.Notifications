@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lykke.Snow.Notifications.SqlRepositories.Migrations
 {
     [DbContext(typeof(NotificationsDbContext))]
-    [Migration("20230317135600_InitialMigration")]
+    [Migration("20230320074319_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,7 +31,7 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Migrations
                         .HasMaxLength(512)
                         .HasColumnType("nvarchar(512)");
 
-                    b.Property<string>("ClientId")
+                    b.Property<string>("AccountId")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");

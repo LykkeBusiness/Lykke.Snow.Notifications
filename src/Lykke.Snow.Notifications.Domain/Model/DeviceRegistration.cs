@@ -5,19 +5,18 @@ namespace Lykke.Snow.Notifications.Domain.Model
 {
     public class DeviceRegistration
     {
-        public string ClientId { get; }
+        public string AccountId { get; }
         public string DeviceToken { get; }
         public DateTime RegisteredOn { get; private set; }
         
-        public DeviceRegistration(string clientId, string deviceToken)
-        {
-            if(string.IsNullOrEmpty(clientId))
-                throw new ArgumentNullException(nameof(clientId));
+        public DeviceRegistration(string accountId, string deviceToken) {
+            if(string.IsNullOrEmpty(accountId))
+                throw new ArgumentNullException(nameof(accountId));
 
             if(string.IsNullOrEmpty(deviceToken))
                 throw new ArgumentNullException(nameof(deviceToken));
 
-            ClientId = clientId;
+            AccountId = accountId;
             DeviceToken = deviceToken;
         }
         

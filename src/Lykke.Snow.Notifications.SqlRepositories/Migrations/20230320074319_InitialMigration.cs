@@ -18,7 +18,7 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Migrations
                 columns: table => new
                 {
                     DeviceToken = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: false),
-                    ClientId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    AccountId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     RegisteredOn = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>

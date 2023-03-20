@@ -37,8 +37,8 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             if(result.IsFailed)
                 return result;
             
-            if(result.Value.ClientId != deviceRegistration.ClientId)
-                return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.ClientIdNotValid);
+            if(result.Value.AccountId != deviceRegistration.AccountId)
+                return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.AccountIdNotValid);
             
             return await _repository.DeleteAsync(deviceToken: deviceRegistration.DeviceToken);
         }

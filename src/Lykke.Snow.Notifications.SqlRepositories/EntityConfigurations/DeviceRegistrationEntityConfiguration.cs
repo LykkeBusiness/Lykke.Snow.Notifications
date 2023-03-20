@@ -11,7 +11,7 @@ namespace Lykke.Snow.Notifications.SqlRepositories.EntityConfigurations
         {
             builder.HasKey(x => x.DeviceToken);
             
-            builder.Property(x => x.ClientId).HasMaxLength(128).IsRequired();
+            builder.Property(x => x.AccountId).HasMaxLength(128).IsRequired();
             builder.Property(x => x.DeviceToken).HasMaxLength(512).IsRequired();
             builder.Property(x => x.RegisteredOn).HasColumnType("datetime").IsRequired();
         }

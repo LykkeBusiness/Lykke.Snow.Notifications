@@ -5,7 +5,7 @@ namespace Lykke.Snow.Notifications.Domain.Enums
         None,
         DoesNotExist,
         AlreadyRegistered,
-        ClientIdNotValid,
+        AccountIdNotValid,
         DeviceTokenNotValid
     }
 }

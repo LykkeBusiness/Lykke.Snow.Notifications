@@ -5,7 +5,7 @@ namespace Lykke.Snow.Notifications.Contracts.Model.Contracts
         None,
         DoesNotExist,
         AlreadyRegistered,
-        ClientIdNotValid,
+        AccountIdNotValid,
         DeviceTokenNotValid
     }
 }
