@@ -19,10 +19,5 @@ namespace Lykke.Snow.Notifications.Domain.Model
             AccountId = accountId;
             DeviceToken = deviceToken;
         }
-        
-        public void SetRegisteredOn(ISystemClock systemClock)
-        {
-            RegisteredOn = systemClock.UtcNow.DateTime;
-        }
     }
 }
