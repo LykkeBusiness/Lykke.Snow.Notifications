@@ -25,7 +25,7 @@ namespace Lykke.Snow.Notifications.SqlRepositories
         {
         }
         
-        internal DbSet<DeviceRegistrationEntity> DeviceRegistrations { get; set; }
+        public DbSet<DeviceRegistrationEntity> DeviceRegistrations { get; set; }
 
         protected override void OnLykkeModelCreating(ModelBuilder modelBuilder)
         {

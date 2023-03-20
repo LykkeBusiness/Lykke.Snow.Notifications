@@ -14,10 +14,10 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
 {
     public class DeviceRegistrationRepository : IDeviceRegistrationRepository
     {
-        private readonly MsSqlContextFactory<NotificationsDbContext> _contextFactory;
+        private readonly Lykke.Common.MsSql.IDbContextFactory<NotificationsDbContext> _contextFactory;
         private readonly IMapper _mapper;
 
-        public DeviceRegistrationRepository(MsSqlContextFactory<NotificationsDbContext> contextFactory, IMapper mapper)
+        public DeviceRegistrationRepository(Lykke.Common.MsSql.IDbContextFactory<NotificationsDbContext> contextFactory, IMapper mapper)
         {
             _contextFactory = contextFactory;
             _mapper = mapper;
