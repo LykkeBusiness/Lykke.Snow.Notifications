@@ -1,12 +1,15 @@
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
+using Lykke.Snow.Common.Model;
 using Lykke.Snow.Contracts.Responses;
 using Lykke.Snow.Notifications.Contracts.Model.Contracts;
 using Lykke.Snow.Notifications.Contracts.Model.Requests;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lykke.Snow.Notifications.Controllers
@@ -31,7 +34,7 @@ namespace Lykke.Snow.Notifications.Controllers
             var deviceRegistration = _mapper.Map<DeviceRegistration>(request);
             var result = await _deviceRegistrationService.RegisterDeviceAsync(deviceRegistration);
             
-            return Map(result.Error);
+            return MapToResponse(result, Response);
         }
 
         [HttpPost("unregister")]
@@ -43,14 +46,17 @@ namespace Lykke.Snow.Notifications.Controllers
             
             var result = await _deviceRegistrationService.UnregisterDeviceAsync(deviceRegistration);
             
-            return Map(result.Error);
+            return MapToResponse(result, Response);
         }
-        
-        private ErrorCodeResponse<DeviceRegistrationErrorCodeContract> Map(DeviceRegistrationErrorCode? errorCode)
+
+        private ErrorCodeResponse<DeviceRegistrationErrorCodeContract> MapToResponse(Result<DeviceRegistrationErrorCode> result, HttpResponse response)
         {
+            if(result.IsFailed)
+                response.StatusCode = (int) HttpStatusCode.BadRequest;
+
             return new ErrorCodeResponse<DeviceRegistrationErrorCodeContract> 
             { 
-                ErrorCode = _mapper.Map<DeviceRegistrationErrorCodeContract>(errorCode) 
+                ErrorCode = _mapper.Map<DeviceRegistrationErrorCodeContract>(result.Error) 
             };
         }
     }
