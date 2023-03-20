@@ -21,12 +21,11 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             _repository = repository;
             _systemClock = systemClock;
         }
-        // TODO what if mobile client sends some string for clientId field?
-        // check if there's such a client exist. (through account api?)
+
         public async Task<Result<DeviceRegistrationErrorCode>> RegisterDeviceAsync(DeviceRegistration deviceRegistration)
         {
             deviceRegistration.SetRegisteredOn(_systemClock);
-
+            
             var result = await _repository.InsertAsync(deviceRegistration);
             
             return result;
@@ -51,12 +50,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                 throw new ArgumentNullException(nameof(accountId));
 
             var result = await _repository.GetDeviceRegistrationsByAccountIdAsync(accountId);
-            
-            if(result.IsFailed)
-                return result;
-            
-            if(result == null)
-                return new Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>(Enumerable.Empty<DeviceRegistration>());
             
             return result;
         }
