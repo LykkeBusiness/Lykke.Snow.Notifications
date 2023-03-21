@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Lykke.MarginTrading.Activities.Contracts.Models;
 
 namespace Lykke.Snow.Notifications.Domain.Model
 {
@@ -12,13 +13,13 @@ namespace Lykke.Snow.Notifications.Domain.Model
         /// Title for the notification
         /// </summary>
         /// <value></value>
-        public string Title { get; }
+        public string Title { get; private set; }
         
         /// <summary>
         /// The notification payload
         /// </summary>
         /// <value></value>
-        public string Body { get; }
+        public string Body { get; private set; }
         
         /// <summary>
         /// Key-value dictionary for additional data to be sent along with the notification.
