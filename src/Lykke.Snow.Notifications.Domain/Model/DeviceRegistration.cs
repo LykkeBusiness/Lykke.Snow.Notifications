@@ -4,6 +4,7 @@ namespace Lykke.Snow.Notifications.Domain.Model
 {
     public sealed class DeviceRegistration
     {
+        public int Oid { get; set; }
         public string AccountId { get; }
         public string DeviceToken { get; }
         public DateTime RegisteredOn { get; }

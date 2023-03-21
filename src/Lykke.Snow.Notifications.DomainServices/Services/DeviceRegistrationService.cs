@@ -24,24 +24,39 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
         public async Task<Result<DeviceRegistrationErrorCode>> RegisterDeviceAsync(DeviceRegistration deviceRegistration)
         {
-            deviceRegistration.SetRegisteredOn(_systemClock);
-            
-            var result = await _repository.InsertAsync(deviceRegistration);
-            
-            return result;
+            //TODO: handle exceptions
+            try
+            {
+                await _repository.InsertAsync(deviceRegistration);
+                return new Result<DeviceRegistrationErrorCode>();
+            }
+            catch(Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<Result<DeviceRegistrationErrorCode>> UnregisterDeviceAsync(DeviceRegistration deviceRegistration)
         {
             var result = await _repository.GetDeviceRegistrationAsync(deviceToken: deviceRegistration.DeviceToken);
             
-            if(result.IsFailed)
-                return result;
-            
-            if(result.Value.AccountId != deviceRegistration.AccountId)
+            if(result == null)
+            {
+                return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DoesNotExist);
+            }
+
+            if(result.AccountId != deviceRegistration.AccountId)
                 return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.AccountIdNotValid);
             
-            return await _repository.DeleteAsync(deviceToken: deviceRegistration.DeviceToken);
+            try
+            {
+               await _repository.DeleteAsync(oid: result.Oid);
+               return new Result<DeviceRegistrationErrorCode>();
+            }
+            catch(Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>> GetDeviceRegistrationsAsync(string accountId)
@@ -49,9 +64,16 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             if(string.IsNullOrEmpty(accountId))
                 throw new ArgumentNullException(nameof(accountId));
 
-            var result = await _repository.GetDeviceRegistrationsByAccountIdAsync(accountId);
             
-            return result;
+            try 
+            {
+                var result = await _repository.GetDeviceRegistrationsByAccountIdAsync(accountId);
+                return new Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>(result);
+            }
+            catch(Exception)
+            {
+                throw;
+            }
         }
 
     }
