@@ -17,12 +17,15 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Migrations
                 schema: "notifications",
                 columns: table => new
                 {
+                    Oid = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     AccountId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     DeviceToken = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: false),
-                    RegisteredOn = table.Column<DateTime>(type: "datetime", nullable: false)
+                    RegisteredOn = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
+                    table.PrimaryKey("PK_DeviceRegistrations", x => x.Oid);
                 });
 
             migrationBuilder.CreateIndex(
