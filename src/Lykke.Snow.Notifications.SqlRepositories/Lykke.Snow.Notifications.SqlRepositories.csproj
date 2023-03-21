@@ -5,6 +5,7 @@
     <LangVersion>8.0</LangVersion>
     <TreatWarningAsErrors>true</TreatWarningAsErrors>
     <Nullable>enable</Nullable>
+    <NoWarn>CS8618</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

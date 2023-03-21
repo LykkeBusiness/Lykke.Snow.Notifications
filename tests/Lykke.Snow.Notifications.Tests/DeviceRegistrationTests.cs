@@ -15,19 +15,15 @@ namespace Lykke.Snow.Notifications.Tests
         [Fact]
         public void DeviceRegistration_InvalidAccountId_ShouldThrowException()
         {
-            string? nullStr = null;
-
             Assert.Throws<ArgumentNullException>(() => new DeviceRegistration(accountId: "", deviceToken: "any-device-token", registeredOn: DateTime.UtcNow)); 
-            Assert.Throws<ArgumentNullException>(() => new DeviceRegistration(accountId: nullStr, deviceToken: "any-device-token", registeredOn: DateTime.UtcNow)); 
+            Assert.Throws<ArgumentNullException>(() => new DeviceRegistration(accountId: null, deviceToken: "any-device-token", registeredOn: DateTime.UtcNow)); 
         }
 
         [Fact]
         public void DeviceRegistration_InvalidDeviceToken_ShouldThrowException()
         {
-            string? nullStr = null;
-
             Assert.Throws<ArgumentNullException>(() => new DeviceRegistration(accountId: "any-account-id", deviceToken: "", registeredOn: DateTime.UtcNow)); 
-            Assert.Throws<ArgumentNullException>(() => new DeviceRegistration(accountId: "any-account-id", deviceToken: nullStr, registeredOn: DateTime.UtcNow)); 
+            Assert.Throws<ArgumentNullException>(() => new DeviceRegistration(accountId: "any-account-id", deviceToken: null, registeredOn: DateTime.UtcNow)); 
         }
 
         [Fact]

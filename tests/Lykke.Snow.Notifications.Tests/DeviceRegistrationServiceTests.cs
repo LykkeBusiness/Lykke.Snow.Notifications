@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Lykke.Snow.Common.Model;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Repositories;
@@ -21,7 +20,10 @@ namespace Lykke.Snow.Notifications.Tests
         {
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] { new DeviceRegistration("any-account-id", "any-device-token", DateTime.UtcNow) };
+                yield return new object[] 
+                { 
+                    new DeviceRegistration("any-account-id", "any-device-token", DateTime.UtcNow) { Oid = 1 } 
+                };
             }
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -50,14 +52,27 @@ namespace Lykke.Snow.Notifications.Tests
         #region RegisterDevice
         [Theory]
         [ClassData(typeof(DeviceRegistrationTestData))]
+        public async Task RegisterDevice_HappyPath_ShouldNotReturnError(DeviceRegistration deviceRegistration)
+        {
+            var mockRepository = new Mock<IDeviceRegistrationRepository>();
+            mockRepository.Setup(mock => mock.InsertAsync(deviceRegistration))
+                .Returns(Task.CompletedTask);
+            
+            var sut = CreateSut(mockRepository.Object);
+            
+            var result = await sut.RegisterDeviceAsync(deviceRegistration);
+            
+            Assert.True(result.IsSuccess);
+            Assert.False(result.IsFailed);
+            Assert.Null(result.Error);
+        }
+
+        [Theory]
+        [ClassData(typeof(DeviceRegistrationTestData))]
         public async Task RegisterDevice_ShouldPassDeviceRegistration_ToInsertAsync(DeviceRegistration deviceRegistration)
         {
-            var registeredOn = DateTime.UtcNow;
             var mockRepository = new Mock<IDeviceRegistrationRepository>();
             
-            var systemClockMock = new Mock<ISystemClock>();
-            systemClockMock.Setup(mock => mock.UtcNow).Returns(registeredOn);
-
             var sut = CreateSut(mockRepository.Object);
             
             await sut.RegisterDeviceAsync(deviceRegistration);
@@ -69,137 +84,129 @@ namespace Lykke.Snow.Notifications.Tests
                 )));
         }
         
+        //TODO: cover the cases where InsertAsync() throws particular exceptions
+        #endregion
+        
+        #region UnregisterDevice
         [Theory]
         [ClassData(typeof(DeviceRegistrationTestData))]
-        public async Task RegisterDevice_HappyPath_ShouldNotReturnError(DeviceRegistration deviceRegistration)
+        public async Task UnregisterDevice_ShouldReturnDoesNotExistError_IfRegistrationWasNotFound(DeviceRegistration deviceRegistration)
         {
             var mockRepository = new Mock<IDeviceRegistrationRepository>();
-            mockRepository.Setup(mock => mock.InsertAsync(deviceRegistration))
-                .Returns(new Result<DeviceRegistrationErrorCode>());
+
+            // Setup the mock so that it will return null
+            mockRepository.Setup(mock => mock.GetDeviceRegistrationAsync(deviceRegistration.DeviceToken))
+                .Returns(Task.FromResult<DeviceRegistration>(null));
+                
+            var sut = CreateSut(mockRepository.Object);
+            
+            var actual = await sut.UnregisterDeviceAsync(deviceRegistration);
+            
+            Assert.False(actual.IsSuccess);
+            Assert.True(actual.IsFailed);
+            Assert.True(actual.Error == DeviceRegistrationErrorCode.DoesNotExist);
+        }
+
+        [Theory]
+        [ClassData(typeof(DeviceRegistrationTestData))]
+        public async Task UnregisterDevice_HappyPath_ShouldntReturnError(DeviceRegistration deviceRegistration)
+        {
+            var mockRepository = new Mock<IDeviceRegistrationRepository>();
+            // Setup the mock so that GetDeviceRegistrationAsync() will return the given registration without any error
+            mockRepository.Setup(mock => mock.GetDeviceRegistrationAsync(deviceRegistration.DeviceToken))
+                .ReturnsAsync(deviceRegistration);
+            
+            // Setup the mock so that DeleteAsync() gets executed without exception
+            mockRepository.Setup(mock => mock.DeleteAsync(deviceRegistration.Oid))
+                .Returns(Task.CompletedTask);
             
             var sut = CreateSut(mockRepository.Object);
             
-            var result = await sut.RegisterDeviceAsync(deviceRegistration);
+            var result = await sut.UnregisterDeviceAsync(deviceRegistration);
             
             Assert.True(result.IsSuccess);
             Assert.False(result.IsFailed);
             Assert.Null(result.Error);
         }
-        #endregion
         
-        #region UnregisterDevice
+        [Theory]
+        [ClassData(typeof(DeviceRegistrationTestData))]
+        public async Task UnregisterDevice_ShouldPassOid_ToDeleteAsync(DeviceRegistration deviceRegistration)
+        {
+            var mockRepository = new Mock<IDeviceRegistrationRepository>();
 
-       // [Theory]
-       // [ClassData(typeof(DeviceRegistrationTestData))]
-       // public async Task UnregisterDevice_HappyPath_ShouldntReturnError(DeviceRegistration deviceRegistration)
-       // {
-       //     var mockRepository = new Mock<IDeviceRegistrationRepository>();
-       //     // Setup the mock so that it will return the given registration without any error
-       //     mockRepository.Setup(mock => mock.GetDeviceRegistrationAsync(deviceRegistration.DeviceToken))
-       //         .Returns(new Result<DeviceRegistration, DeviceRegistrationErrorCode>(deviceRegistration));
-       //     
-       //     mockRepository.Setup(mock => mock.DeleteAsync(deviceRegistration.DeviceToken))
-       //         .Returns(new Result<DeviceRegistrationErrorCode>());
-       //     
-       //     var sut = CreateSut(mockRepository.Object);
-       //     
-       //     var result = await sut.UnregisterDeviceAsync(deviceRegistration);
-       //     
-       //     Assert.True(result.IsSuccess);
-       //     Assert.False(result.IsFailed);
-       //     Assert.Null(result.Error);
-       // }
-       // 
-       // [Theory]
-       // [ClassData(typeof(DeviceRegistrationTestData))]
-       // public async Task UnregisterDevice_ShouldPassDeviceToken_ToDeleteAsync(DeviceRegistration deviceRegistration)
-       // {
-       //     var mockRepository = new Mock<IDeviceRegistrationRepository>();
-       //     // Setup the mock so that it will return the given registration without any error
-       //     mockRepository.Setup(x => x.GetDeviceRegistrationAsync(deviceRegistration.DeviceToken))
-       //         .Returns(new Result<DeviceRegistration, DeviceRegistrationErrorCode>(deviceRegistration));
-       //     
-       //     var sut = CreateSut(mockRepository.Object);
-       //     
-       //     await sut.UnregisterDeviceAsync(deviceRegistration);
+            // Setup the mock so that it will return the given registration without any error
+            mockRepository.Setup(x => x.GetDeviceRegistrationAsync(deviceRegistration.DeviceToken))
+                .ReturnsAsync(deviceRegistration);
+            
+            var sut = CreateSut(mockRepository.Object);
+            
+            await sut.UnregisterDeviceAsync(deviceRegistration);
 
-       //     mockRepository.Verify(mock => mock.DeleteAsync(It.Is<string>(x => x == deviceRegistration.DeviceToken)));
-       // }
-       // 
-       // [Theory]
-       // [ClassData(typeof(DeviceRegistrationTestData))]
-       // public async Task UnregisterDevice_ShouldReturnAccountNotValid_WhenAccountIdDoesntMatch(DeviceRegistration deviceRegistration)
-       // {
-       //     var mockRepository = new Mock<IDeviceRegistrationRepository>();
-       //     // Setup the mock so that it will return a DeviceRegistration with some different account id without any error.
-       //     mockRepository.Setup(x => x.GetDeviceRegistrationAsync(deviceRegistration.DeviceToken))
-       //         .Returns(new Result<DeviceRegistration, DeviceRegistrationErrorCode>(new DeviceRegistration(accountId: "some-other-account-id", deviceToken: deviceRegistration.DeviceToken)));
-       //         
-       //     var sut = CreateSut(mockRepository.Object);
+            mockRepository.Verify(mock => 
+                mock.DeleteAsync(It.Is<int>(x => x == deviceRegistration.Oid)));
+        }
+        
+        [Theory]
+        [ClassData(typeof(DeviceRegistrationTestData))]
+        public async Task UnregisterDevice_ShouldReturnAccountNotValid_WhenAccountIdDoesntMatch(DeviceRegistration deviceRegistration)
+        {
+            var mockRepository = new Mock<IDeviceRegistrationRepository>();
 
-       //     var actual = await sut.UnregisterDeviceAsync(deviceRegistration);
-       //     
-       //     Assert.True(actual.IsFailed);
-       //     Assert.Equal(DeviceRegistrationErrorCode.AccountIdNotValid, actual.Error);
-       // }
-       // 
+            // Setup the mock so that it will return a DeviceRegistration with some different account id without any error.
+            mockRepository.Setup(x => x.GetDeviceRegistrationAsync(deviceRegistration.DeviceToken))
+                .ReturnsAsync(new DeviceRegistration(accountId: "some-other-account-id", deviceToken: deviceRegistration.DeviceToken, _systemClock.UtcNow.DateTime));
+                
+            var sut = CreateSut(mockRepository.Object);
 
-       // [Theory]
-       // [ClassData(typeof(DeviceRegistrationTestData))]
-       // public async Task UnregisterDevice_ShouldReturnError_IfRegistrationWasNotFound(DeviceRegistration deviceRegistration)
-       // {
-       //     var errorResponse = new Result<DeviceRegistration, DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DoesNotExist);
+            var actual = await sut.UnregisterDeviceAsync(deviceRegistration);
+            
+            Assert.True(actual.IsFailed);
+            Assert.False(actual.IsSuccess);
+            Assert.Equal(DeviceRegistrationErrorCode.AccountIdNotValid, actual.Error);
+        }
+        
+        //TODO: test the cases where repository throws exception
+       #endregion
 
-       //     var mockRepository = new Mock<IDeviceRegistrationRepository>();
-       //     // Setup the mock so that it will return an error DoesNotExist
-       //     mockRepository.Setup(mock => mock.GetDeviceRegistrationAsync(deviceRegistration.DeviceToken))
-       //         .ReturnsAsync(errorResponse);
-       //         
-       //     var sut = CreateSut(mockRepository.Object);
-       //     
-       //     var actual = await sut.UnregisterDeviceAsync(deviceRegistration);
-       //     
-       //     Assert.False(actual.IsSuccess);
-       //     Assert.True(actual.IsFailed);
-       //     Assert.True(actual.Error == errorResponse.Error);
-       // }
-       // 
-       // #endregion
-       // 
-       // #region GetDeviceRegistrationsByAccountId
+        
+       #region GetDeviceRegistrationsByAccountId
 
-       // [Fact]
-       // public async Task GetDeviceRegistrations_ShouldThrowException_IfAccountIdNotProvided()
-       // {
-       //     var sut = CreateSut();
-       //     
-       //     await Assert.ThrowsAsync<ArgumentNullException>(
-       //         () => sut.GetDeviceRegistrationsAsync(""));
-       // }
-       // 
-       // [Theory]
-       // [ClassData(typeof(DeviceRegistrationCollectionTestData))]
-       // public async Task GetDeviceRegistrations_HappyPath_ShouldntReturnError(string accountId, IEnumerable<DeviceRegistration> deviceRegistrations)
-       // {
-       //     var mockRepository = new Mock<IDeviceRegistrationRepository>();
-       //     // Setup the mock so that it will return the list of DeviceRegistrations without any error
-       //     mockRepository.Setup(mock => mock.GetDeviceRegistrationsByAccountIdAsync(accountId))
-       //         .Returns(new Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>(deviceRegistrations));
-       //     
-       //     var sut = CreateSut(mockRepository.Object);
-       //     
-       //     var result = await sut.GetDeviceRegistrationsAsync(accountId);
-       //     
-       //     Assert.True(result.IsSuccess);
-       //     Assert.False(result.IsFailed);
-       //     Assert.Null(result.Error);
-       //     Assert.Equal(deviceRegistrations, result.Value);
-       // }
+       [Fact]
+       public async Task GetDeviceRegistrations_ShouldThrowException_IfAccountIdNotProvided()
+       {
+           var sut = CreateSut();
+           
+           await Assert.ThrowsAsync<ArgumentNullException>(
+               () => sut.GetDeviceRegistrationsAsync(""));
+       }
 
-        #endregion
+       
+       [Theory]
+       [ClassData(typeof(DeviceRegistrationCollectionTestData))]
+       public async Task GetDeviceRegistrations_HappyPath_ShouldntReturnError(string accountId, IReadOnlyList<DeviceRegistration> deviceRegistrations)
+       {
+           var mockRepository = new Mock<IDeviceRegistrationRepository>();
+
+           // Setup the mock so that it will return the list of DeviceRegistrations without any error
+           mockRepository.Setup(mock => mock.GetDeviceRegistrationsByAccountIdAsync(accountId))
+               .ReturnsAsync(deviceRegistrations);
+           
+           var sut = CreateSut(mockRepository.Object);
+           
+           var result = await sut.GetDeviceRegistrationsAsync(accountId);
+           
+           Assert.True(result.IsSuccess);
+           Assert.False(result.IsFailed);
+           Assert.Null(result.Error);
+           Assert.Equal(deviceRegistrations, result.Value);
+       }
+       
+       //TODO:  test the cases where repository throws an exception
+       #endregion
         
         
-        private DeviceRegistrationService CreateSut(IDeviceRegistrationRepository? repositoryArg = null, ISystemClock? systemClockArg = null)
+        private DeviceRegistrationService CreateSut(IDeviceRegistrationRepository repositoryArg = null, ISystemClock systemClockArg = null)
         {
             var repository = new Mock<IDeviceRegistrationRepository>().Object;
             ISystemClock systemClock = _systemClock;

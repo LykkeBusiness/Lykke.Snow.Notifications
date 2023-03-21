@@ -63,7 +63,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
         {
             if(string.IsNullOrEmpty(accountId))
                 throw new ArgumentNullException(nameof(accountId));
-
             
             try 
             {
