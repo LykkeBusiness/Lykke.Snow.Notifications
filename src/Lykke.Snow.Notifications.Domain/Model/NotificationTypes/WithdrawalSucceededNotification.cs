@@ -4,15 +4,15 @@ using Lykke.Snow.Notifications.Domain.Model;
 
 namespace Lykke.Snow.Notifications.Domain.NotificationTypes
 {
-    public class WithdrawalSucceededNotification : NotificationMessage
+    public class WithdrawalNotification : NotificationMessage
     {
-        public WithdrawalSucceededNotification(string title, string body, Dictionary<string, string> keyValueCollection) : base(title, body, keyValueCollection)
+        public WithdrawalNotification(string title, string body, Dictionary<string, string> keyValueCollection) : base(title, body, keyValueCollection)
         {
         }
         
-        public static WithdrawalSucceededNotification FromActivityEvent(ActivityEvent e)
+        public static WithdrawalNotification FromActivityEvent(ActivityEvent e)
         {
-            return new WithdrawalSucceededNotification("", "", new Dictionary<string, string>());
+            return new WithdrawalNotification("", "", new Dictionary<string, string>());
         }
     }
 }

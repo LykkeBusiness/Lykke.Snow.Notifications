@@ -36,7 +36,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
             switch(activityEvent.Activity.Event)
             {
                 case ActivityTypeContract.AccountDepositSucceeded:
-                    return DepositSucceededNotification.FromActivityEvent(activityEvent);
+                    return DepositNotification.FromActivityEvent(activityEvent);
                 default:
                     throw new ArgumentException(); //TODO: Create a custom exception
             }
