@@ -1,9 +1,8 @@
 using System;
-using Microsoft.Extensions.Internal;
 
 namespace Lykke.Snow.Notifications.Domain.Model
 {
-    public class DeviceRegistration
+    public sealed class DeviceRegistration
     {
         public string AccountId { get; }
         public string DeviceToken { get; }
