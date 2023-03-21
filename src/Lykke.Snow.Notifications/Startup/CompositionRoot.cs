@@ -43,9 +43,9 @@ namespace Lykke.Snow.Notifications.Startup
                         options.AddApiKeyAwareness();
                 })
                 .AddSwaggerGenNewtonsoftSupport();
-            
+
             services.AddAutoMapper(typeof(DeviceRegistrationMappingProfile).Assembly);
-            
+
             return services;
         }
 

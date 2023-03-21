@@ -3,47 +3,47 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Lykke.Common.MsSql;
-using Lykke.Snow.Common.Model;
-using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Repositories;
 using Lykke.Snow.Notifications.SqlRepositories.Entities;
+using Lykke.Snow.Notifications.SqlRepositories.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
 {
     public class DeviceRegistrationRepository : IDeviceRegistrationRepository
     {
-        private readonly MsSqlContextFactory<NotificationsDbContext> _contextFactory;
+        private readonly Lykke.Common.MsSql.IDbContextFactory<NotificationsDbContext> _contextFactory;
         private readonly IMapper _mapper;
 
-        public DeviceRegistrationRepository(MsSqlContextFactory<NotificationsDbContext> contextFactory, IMapper mapper)
+        public DeviceRegistrationRepository(Lykke.Common.MsSql.IDbContextFactory<NotificationsDbContext> contextFactory, IMapper mapper)
         {
             _contextFactory = contextFactory;
             _mapper = mapper;
         }
 
-        public async Task<Result<DeviceRegistration, DeviceRegistrationErrorCode>> GetDeviceRegistrationAsync(string deviceToken)
+        public async Task<DeviceRegistration> GetDeviceRegistrationAsync(string deviceToken)
         {
             await using var context = _contextFactory.CreateDataContext();
             var entity = await context.DeviceRegistrations.SingleOrDefaultAsync(x => x.DeviceToken == deviceToken);
             
             if (entity == null)
-                return new Result<DeviceRegistration, DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DoesNotExist);
+                throw new EntityNotFoundException(deviceToken);
         
-            return new Result<DeviceRegistration, DeviceRegistrationErrorCode>(_mapper.Map<DeviceRegistration>(entity));
+            return _mapper.Map<DeviceRegistration>(entity);
         }
 
-        public async Task<Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>> GetDeviceRegistrationsByAccountIdAsync(string accountId)
+        public async Task<IReadOnlyList<DeviceRegistration>> GetDeviceRegistrationsByAccountIdAsync(string accountId)
         {
             await using var context = _contextFactory.CreateDataContext();
-            var entitites = context.DeviceRegistrations.Where(x => x.AccountId == accountId)
-                .Select(devRegEntity => _mapper.Map<DeviceRegistration>(devRegEntity));
             
-            return new Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>(entitites);
+            var entitites = await context.DeviceRegistrations.Where(x => x.AccountId == accountId)
+                .Select(devRegEntity => _mapper.Map<DeviceRegistration>(devRegEntity)).ToListAsync();
+            
+            return entitites;
         }
 
-        public async Task<Result<DeviceRegistrationErrorCode>> InsertAsync(DeviceRegistration deviceRegistration)
+        public async Task InsertAsync(DeviceRegistration deviceRegistration)
         {
             await using var context = _contextFactory.CreateDataContext();
             var entity = _mapper.Map<DeviceRegistrationEntity>(deviceRegistration);
@@ -53,23 +53,22 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
             try
             {
                 await context.SaveChangesAsync();
-                return new Result<DeviceRegistrationErrorCode>();
             }
             catch(DbUpdateException e)
             {
                 if(e.ValueAlreadyExistsException())
                 {
-                    return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.AlreadyRegistered);
+                    throw new EntityAlreadyExistsException(entity: deviceRegistration);
                 }
                 
                 throw;
             };
         }
 
-        public async Task<Result<DeviceRegistrationErrorCode>> DeleteAsync(string deviceToken)
+        public async Task DeleteAsync(int oid)
         {
             await using var context = _contextFactory.CreateDataContext();
-            var entity = new DeviceRegistrationEntity() { DeviceToken = deviceToken };
+            var entity = new DeviceRegistrationEntity() { Oid = oid };
             
             context.Attach(entity);
             context.DeviceRegistrations.Remove(entity);
@@ -77,11 +76,10 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
             try 
             {
                 await context.SaveChangesAsync();
-                return new Result<DeviceRegistrationErrorCode>();
             }
             catch(DbUpdateConcurrencyException e) when (e.IsMissingDataException())
             {
-                return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DoesNotExist);
+                throw new EntityNotFoundException(oid);
             }
         }
     }

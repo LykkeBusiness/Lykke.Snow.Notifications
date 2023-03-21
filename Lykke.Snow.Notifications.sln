@@ -39,6 +39,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "7. Integration", "7. Integr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Snow.FirebaseIntegration", "src\Lykke.Snow.FirebaseIntegration\Lykke.Snow.FirebaseIntegration.csproj", "{BFFA6D19-A730-4E52-90F7-82756E1F9ED8}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Snow.Notifications.SqlRepositories", "src\Lykke.Snow.Notifications.SqlRepositories\Lykke.Snow.Notifications.SqlRepositories.csproj", "{A20B77FB-6725-43CB-9C47-CCAFCE476C90}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,10 +75,10 @@ Global
 		{BFFA6D19-A730-4E52-90F7-82756E1F9ED8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BFFA6D19-A730-4E52-90F7-82756E1F9ED8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BFFA6D19-A730-4E52-90F7-82756E1F9ED8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EDF3B9A6-06E9-4D4D-80A8-A6001A5EF8DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EDF3B9A6-06E9-4D4D-80A8-A6001A5EF8DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EDF3B9A6-06E9-4D4D-80A8-A6001A5EF8DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EDF3B9A6-06E9-4D4D-80A8-A6001A5EF8DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A20B77FB-6725-43CB-9C47-CCAFCE476C90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A20B77FB-6725-43CB-9C47-CCAFCE476C90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A20B77FB-6725-43CB-9C47-CCAFCE476C90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A20B77FB-6725-43CB-9C47-CCAFCE476C90}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -89,6 +91,7 @@ Global
 		{A61FFDEE-5725-4650-A788-6E55EE5EFD5B} = {8F9036B1-5106-4C69-B2D2-B78EE52687A0}
 		{E414FDB9-FEEA-4CD0-9BBA-D1541601DF29} = {EE7F3159-E06C-497F-96D4-DB2A6B03A6AB}
 		{BFFA6D19-A730-4E52-90F7-82756E1F9ED8} = {EB6CEB63-24A5-4B7C-8A90-094D397E0803}
+		{A20B77FB-6725-43CB-9C47-CCAFCE476C90} = {BF745453-B940-470E-81BC-43FB67703D4E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EB6C0EF4-AA6A-444D-8603-3669F73A58BC}
