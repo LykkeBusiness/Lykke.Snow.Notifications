@@ -18,6 +18,9 @@ namespace Lykke.Snow.Notifications.Domain.Model
             
             if(registeredOn == default(DateTime))
                 throw new ArgumentException();
+        
+            if(registeredOn > DateTime.UtcNow)
+                throw new ArgumentException($"{nameof(registeredOn)} value cannot be in the future.");
             
             AccountId = accountId;
             DeviceToken = deviceToken;
