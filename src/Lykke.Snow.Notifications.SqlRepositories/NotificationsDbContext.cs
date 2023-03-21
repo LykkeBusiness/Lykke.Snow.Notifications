@@ -26,7 +26,7 @@ namespace Lykke.Snow.Notifications.SqlRepositories
         }
         
         public DbSet<DeviceRegistrationEntity> DeviceRegistrations { get; set; }
-
+    
         protected override void OnLykkeModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(NotificationsDbContext).Assembly);
