@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using Lykke.MarginTrading.Activities.Contracts.Models;
-using Lykke.Snow.Notifications.Domain.Model;
 
-namespace Lykke.Snow.Notifications.Domain.NotificationTypes
+namespace Lykke.Snow.Notifications.Domain.Model.NotificationTypes
 {
     public class DepositNotification : NotificationMessage
     {

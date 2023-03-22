@@ -1,18 +1,17 @@
 using System.Collections.Generic;
 using Lykke.MarginTrading.Activities.Contracts.Models;
-using Lykke.Snow.Notifications.Domain.Model;
 
-namespace Lykke.Snow.Notifications.Domain.NotificationTypes
+namespace Lykke.Snow.Notifications.Domain.Model.NotificationTypes
 {
-    public class MarginCall2Notification : NotificationMessage
+    public class MarginCall1Notification : NotificationMessage
     {
-        public MarginCall2Notification(string title, string body, Dictionary<string, string> keyValueCollection) : base(title, body, keyValueCollection)
+        public MarginCall1Notification(string title, string body, Dictionary<string, string> keyValueCollection) : base(title, body, keyValueCollection)
         {
         }
         
-        public static MarginCall2Notification FromActivityEvent(ActivityEvent e)
+        public static MarginCall1Notification FromActivityEvent(ActivityEvent e)
         {
-            return new MarginCall2Notification("", "", new Dictionary<string, string>());
+            return new MarginCall1Notification("", "", new Dictionary<string, string>());
         }
     }
 }
