@@ -7,7 +7,7 @@ using Lykke.Snow.Notifications.Domain.Model;
 namespace Lykke.Snow.Notifications.Domain.Services
 {
     /// <summary>
-    /// Device registration is the process of correlating particular client with a unique mobile device.
+    /// Device registration is the process of correlating particular trading account with a unique mobile device.
     /// This service that's responsible for handling device token registrations
     /// </summary>
     public interface IDeviceRegistrationService

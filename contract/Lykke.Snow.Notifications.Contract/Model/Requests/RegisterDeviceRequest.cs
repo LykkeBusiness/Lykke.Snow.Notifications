@@ -9,11 +9,5 @@ namespace Lykke.Snow.Notifications.Contracts.Model.Requests
 
         [Required]
         public string DeviceToken { get; set; }
-        
-        public RegisterDeviceRequest(string accountId, string deviceToken)
-        {
-            AccountId = accountId;
-            DeviceToken = deviceToken;
-        }
     }
 }

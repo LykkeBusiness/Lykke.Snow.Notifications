@@ -9,11 +9,5 @@ namespace Lykke.Snow.Notifications.Contracts.Model.Requests
 
         [Required]
         public string DeviceToken { get; set; }
-        
-        public UnregisterDeviceRequest(string deviceToken, string accountId)
-        {
-            this.DeviceToken = deviceToken;
-            this.AccountId = accountId; 
-        }
     }
 }
