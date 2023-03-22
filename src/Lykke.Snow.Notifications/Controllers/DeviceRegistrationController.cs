@@ -44,7 +44,7 @@ namespace Lykke.Snow.Notifications.Controllers
         {
             var response = new ErrorCodeResponse<DeviceRegistrationErrorCodeContract>();
             
-            var result = await _deviceRegistrationService.UnregisterDeviceAsync(deviceToken: request.DeviceToken, accountId: request.AccountId);
+            var result = await _deviceRegistrationService.UnregisterDeviceAsync(deviceToken: request.DeviceToken);
             
             return MapToResponse(result, Response);
         }

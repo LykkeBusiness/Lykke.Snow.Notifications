@@ -8,17 +8,19 @@ namespace Lykke.Snow.Notifications.Client.Model.Requests
     public class UnregisterDeviceRequest
     {
         /// <summary>
-        /// Account id that's been associated with the device.
-        /// </summary>
-        /// <value></value>
-        [Required]
-        public string AccountId { get; set; }
-
-        /// <summary>
         /// Device token to be unregistered.
         /// </summary>
         /// <value></value>
         [Required]
         public string DeviceToken { get; set; }
+        
+        /// <summary>
+        /// Constructor for UnregisterDeviceRequest
+        /// </summary>
+        /// <param name="deviceToken"></param>
+        public UnregisterDeviceRequest(string deviceToken)
+        {
+            DeviceToken = deviceToken;
+        }
     }
 }

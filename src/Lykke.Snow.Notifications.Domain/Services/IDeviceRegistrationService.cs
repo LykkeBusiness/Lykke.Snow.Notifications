@@ -23,9 +23,8 @@ namespace Lykke.Snow.Notifications.Domain.Services
         /// Unregisters the device.
         /// </summary>
         /// <param name="deviceToken"></param>
-        /// <param name="accountId"></param>
         /// <returns></returns>
-        Task<Result<DeviceRegistrationErrorCode>> UnregisterDeviceAsync(string deviceToken, string accountId);
+        Task<Result<DeviceRegistrationErrorCode>> UnregisterDeviceAsync(string deviceToken);
         
         /// <summary>
         /// Get all device registrations associated by given accountId

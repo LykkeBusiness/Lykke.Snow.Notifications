@@ -36,7 +36,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             }
         }
 
-        public async Task<Result<DeviceRegistrationErrorCode>> UnregisterDeviceAsync(string deviceToken, string accountId)
+        public async Task<Result<DeviceRegistrationErrorCode>> UnregisterDeviceAsync(string deviceToken)
         {
             DeviceRegistration? result = null;
             try
@@ -52,9 +52,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             {
                 return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DoesNotExist);
             }
-
-            if(result.AccountId != accountId)
-                return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.AccountIdNotValid);
             
             try
             {
