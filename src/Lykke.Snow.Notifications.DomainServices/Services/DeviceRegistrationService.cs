@@ -36,16 +36,24 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             }
         }
 
-        public async Task<Result<DeviceRegistrationErrorCode>> UnregisterDeviceAsync(DeviceRegistration deviceRegistration)
+        public async Task<Result<DeviceRegistrationErrorCode>> UnregisterDeviceAsync(string deviceToken, string accountId)
         {
-            var result = await _repository.GetDeviceRegistrationAsync(deviceToken: deviceRegistration.DeviceToken);
+            DeviceRegistration? result = null;
+            try
+            {
+                result = await _repository.GetDeviceRegistrationAsync(deviceToken: deviceToken);
+            }
+            catch(EntityNotFoundException)
+            {
+                return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DoesNotExist);
+            }
             
             if(result == null)
             {
                 return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DoesNotExist);
             }
 
-            if(result.AccountId != deviceRegistration.AccountId)
+            if(result.AccountId != accountId)
                 return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.AccountIdNotValid);
             
             try

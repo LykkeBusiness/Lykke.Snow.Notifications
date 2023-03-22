@@ -118,7 +118,26 @@ namespace Lykke.Snow.Notifications.Tests
                 
             var sut = CreateSut(mockRepository.Object);
             
-            var actual = await sut.UnregisterDeviceAsync(deviceRegistration);
+            var actual = await sut.UnregisterDeviceAsync(deviceToken: deviceRegistration.DeviceToken, accountId: deviceRegistration.AccountId);
+            
+            Assert.False(actual.IsSuccess);
+            Assert.True(actual.IsFailed);
+            Assert.True(actual.Error == DeviceRegistrationErrorCode.DoesNotExist);
+        }
+
+        [Theory]
+        [ClassData(typeof(DeviceRegistrationTestData))]
+        public async Task UnregisterDevice_ShouldReturnDoesNotExistError_UponEntityNotFoundException(DeviceRegistration deviceRegistration)
+        {
+            var mockRepository = new Mock<IDeviceRegistrationRepository>();
+
+            // Setup the mock so that it will throw EntityNotFoundException
+            mockRepository.Setup(mock => mock.GetDeviceRegistrationAsync(deviceRegistration.DeviceToken))
+                .Throws(new EntityNotFoundException());
+                
+            var sut = CreateSut(mockRepository.Object);
+            
+            var actual = await sut.UnregisterDeviceAsync(deviceToken: deviceRegistration.DeviceToken, accountId: deviceRegistration.AccountId);
             
             Assert.False(actual.IsSuccess);
             Assert.True(actual.IsFailed);
@@ -141,7 +160,7 @@ namespace Lykke.Snow.Notifications.Tests
             
             var sut = CreateSut(mockRepository.Object);
             
-            var result = await sut.UnregisterDeviceAsync(deviceRegistration);
+            var result = await sut.UnregisterDeviceAsync(deviceToken: deviceRegistration.DeviceToken, accountId: deviceRegistration.AccountId);
             
             Assert.True(result.IsSuccess);
             Assert.False(result.IsFailed);
@@ -160,7 +179,7 @@ namespace Lykke.Snow.Notifications.Tests
             
             var sut = CreateSut(mockRepository.Object);
             
-            await sut.UnregisterDeviceAsync(deviceRegistration);
+            await sut.UnregisterDeviceAsync(deviceToken: deviceRegistration.DeviceToken, accountId: deviceRegistration.AccountId);
 
             mockRepository.Verify(mock => 
                 mock.DeleteAsync(It.Is<int>(x => x == deviceRegistration.Oid)));
@@ -178,7 +197,7 @@ namespace Lykke.Snow.Notifications.Tests
                 
             var sut = CreateSut(mockRepository.Object);
 
-            var actual = await sut.UnregisterDeviceAsync(deviceRegistration);
+            var actual = await sut.UnregisterDeviceAsync(deviceToken: deviceRegistration.DeviceToken, accountId: deviceRegistration.AccountId);
             
             Assert.True(actual.IsFailed);
             Assert.False(actual.IsSuccess);
@@ -201,7 +220,7 @@ namespace Lykke.Snow.Notifications.Tests
             
             var sut = CreateSut(mockRepository.Object);
             
-            var actual = await sut.UnregisterDeviceAsync(deviceRegistration);
+            var actual = await sut.UnregisterDeviceAsync(deviceToken: deviceRegistration.DeviceToken, accountId: deviceRegistration.AccountId);
 
             Assert.True(actual.IsFailed);
             Assert.False(actual.IsSuccess);
