@@ -10,15 +10,29 @@ namespace Lykke.Snow.Notifications.Domain.NotificationTypes
         {
         }
         
-        public static WithdrawalNotification FromActivityEvent(ActivityEvent e)
+        public static WithdrawalNotification FromActivityEvent(ActivityEvent e, bool success)
         {
             var amount = e.Activity.DescriptionAttributes[0];
             var currency = e.Activity.DescriptionAttributes[1];
             
-            var body = $"The withdrawal operation ({currency}{amount}) has been successfully completed.";
+            
+            // Withdrawal succeeded
+            if(success)
+            {
+                var title = "Withdrawal";
+                var body = $"The withdrawal of {currency}{amount} to the account {e.Activity.AccountId} has been completed successfully.";
+                
+                return new WithdrawalNotification(title, body, new Dictionary<string, string>());
+            }
+            
+            // Withdrawal failed
+            else
+            {
+                var title = "Withdrawal";
+                var body = $"The withdrawal of {currency}{amount} to the account {e.Activity.AccountId} has failed.";
 
-            return new WithdrawalNotification(title: "Withdrawal", 
-                body: body, new Dictionary<string, string>());
+                return new WithdrawalNotification(title, body, new Dictionary<string, string>());
+            }
         }
     }
 }

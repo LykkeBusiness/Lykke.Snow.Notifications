@@ -60,18 +60,27 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
             switch(activityEvent.Activity.Event)
             {
                 case ActivityTypeContract.AccountTradingDisabled:
+                    message = AccountLockNotification.FromActivityEvent(activityEvent, locked: true);
+                    return true;
+
                 case ActivityTypeContract.AccountTradingEnabled:
-                    message = AccountLockNotification.FromActivityEvent(activityEvent);
+                    message = AccountLockNotification.FromActivityEvent(activityEvent, locked: false);
                     return true;
 
                 case ActivityTypeContract.AccountDepositSucceeded:
+                    message = DepositNotification.FromActivityEvent(activityEvent, success: true);
+                    return true;
+
                 case ActivityTypeContract.AccountDepositFailed:
-                    message = DepositNotification.FromActivityEvent(activityEvent);
+                    message = DepositNotification.FromActivityEvent(activityEvent, success: false);
                     return true;
 
                 case ActivityTypeContract.AccountWithdrawalSucceeded:
+                    message = WithdrawalNotification.FromActivityEvent(activityEvent, success: true);
+                    return true;
+
                 case ActivityTypeContract.AccountWithdrawalFailed:
-                    message = WithdrawalNotification.FromActivityEvent(activityEvent);
+                    message = WithdrawalNotification.FromActivityEvent(activityEvent, success: false);
                     return true;
 
                 case ActivityTypeContract.AccountWithdrawalEnabled:

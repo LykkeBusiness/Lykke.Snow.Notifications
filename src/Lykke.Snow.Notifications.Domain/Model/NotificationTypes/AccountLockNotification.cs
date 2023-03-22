@@ -9,9 +9,25 @@ namespace Lykke.Snow.Notifications.Domain.Model.NotificationTypes
         {
         }
         
-        public static AccountLockNotification FromActivityEvent(ActivityEvent e)
+        public static AccountLockNotification FromActivityEvent(ActivityEvent e, bool locked)
         {
-            return new AccountLockNotification("", "", new Dictionary<string, string>());
+            // Account locked
+            if(locked)
+            {
+                var title = "Account locked";
+                var body = "Trading and withdrawal is not allowed.";
+
+                return new AccountLockNotification(title, body, new Dictionary<string, string>());
+            }
+
+            // Account unlocked
+            else
+            {
+                var title = "Account unlocked";
+                var body = "Trading and withdrawal is allowed.";
+
+                return new AccountLockNotification(title, body, new Dictionary<string, string>());
+            }
         }
     }
 }
