@@ -14,6 +14,7 @@
     <PackageTags>LykkeBusiness</PackageTags>
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>CS8618</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
@@ -25,6 +26,7 @@
     <None Remove="Lykke.Snow.Notifications.Client.xml" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Lykke.Snow.Contracts" Version="1.48.0" />
     <PackageReference Include="LykkeBiz.HttpClientGenerator" Version="5.5.0" />
     <PackageReference Include="LykkeBiz.SettingsReader" Version="7.1.0" />
   </ItemGroup>

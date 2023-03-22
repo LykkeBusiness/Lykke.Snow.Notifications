@@ -9,5 +9,69 @@
             Notifications client API interface.
             </summary>
         </member>
+        <member name="T:Lykke.Snow.Notifications.Client.Model.DeviceRegistrationErrorCodeContract">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Lykke.Snow.Notifications.Client.Model.DeviceRegistrationErrorCodeContract.None">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Lykke.Snow.Notifications.Client.Model.DeviceRegistrationErrorCodeContract.DoesNotExist">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Lykke.Snow.Notifications.Client.Model.DeviceRegistrationErrorCodeContract.AlreadyRegistered">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Lykke.Snow.Notifications.Client.Model.DeviceRegistrationErrorCodeContract.AccountIdNotValid">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Lykke.Snow.Notifications.Client.Model.DeviceRegistrationErrorCodeContract.DeviceTokenNotValid">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Lykke.Snow.Notifications.Client.Model.Requests.RegisterDeviceRequest">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Lykke.Snow.Notifications.Client.Model.Requests.RegisterDeviceRequest.AccountId">
+            <summary>
+            
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:Lykke.Snow.Notifications.Client.Model.Requests.RegisterDeviceRequest.DeviceToken">
+            <summary>
+            
+            </summary>
+            <value></value>
+        </member>
+        <member name="T:Lykke.Snow.Notifications.Client.Model.Requests.UnregisterDeviceRequest">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Lykke.Snow.Notifications.Client.Model.Requests.UnregisterDeviceRequest.AccountId">
+            <summary>
+            
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:Lykke.Snow.Notifications.Client.Model.Requests.UnregisterDeviceRequest.DeviceToken">
+            <summary>
+            
+            </summary>
+            <value></value>
+        </member>
     </members>
 </doc>

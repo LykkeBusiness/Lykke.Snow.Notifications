@@ -1,6 +1,6 @@
 using System;
 using AutoMapper;
-using Lykke.Snow.Notifications.Contracts.Model.Requests;
+using Lykke.Snow.Notifications.Client.Model.Requests;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.SqlRepositories.Entities;
 
