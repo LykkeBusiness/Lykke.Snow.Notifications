@@ -13,11 +13,9 @@ namespace Lykke.Snow.FirebaseIntegration.Services
     public class FcmIntegrationService : IFcmIntegrationService
     {
         private readonly string _credentialsFilePath;
-        private readonly ILogger<FcmIntegrationService> _logger;
 
-        public FcmIntegrationService(string credentialsFilePath, ILogger<FcmIntegrationService> logger)
+        public FcmIntegrationService(string credentialsFilePath)
         {
-            _logger = logger;
             _credentialsFilePath = credentialsFilePath ?? throw new ArgumentNullException(nameof(credentialsFilePath));
 
             if (!System.IO.File.Exists(_credentialsFilePath))

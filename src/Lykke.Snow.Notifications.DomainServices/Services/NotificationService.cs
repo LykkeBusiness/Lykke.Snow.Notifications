@@ -12,13 +12,11 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
     public class NotificationService : INotificationService
     {
         private readonly IFcmIntegrationService _fcmIntegrationService;
-        private readonly ILogger<NotificationService> _logger;
 
-        public NotificationService(IFcmIntegrationService fcmIntegrationService, ILogger<NotificationService> logger)
+        public NotificationService(IFcmIntegrationService fcmIntegrationService)
         {
             _fcmIntegrationService =
                 fcmIntegrationService ?? throw new ArgumentNullException(nameof(fcmIntegrationService));
-            _logger = logger;
         }
 
         public async Task SendNotification(NotificationMessage message, string deviceToken)
@@ -44,7 +42,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                 // TODO: Now is it a good time to remove it from the db?
                 if(e.ErrorCode == MessagingErrorCode.Unregistered)
                 {
-                    _logger.LogWarning("Notification could not be delivered to the device {DeviceToken} becuase the device is no longer active.");
                     return;
                 }
 
