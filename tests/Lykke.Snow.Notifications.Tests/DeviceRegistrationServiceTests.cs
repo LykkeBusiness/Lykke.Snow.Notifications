@@ -3,9 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lykke.Snow.Notifications.Domain.Enums;
+using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Repositories;
 using Lykke.Snow.Notifications.DomainServices.Services;
+using Lykke.Snow.Notifications.SqlRepositories.Entities;
 using Microsoft.Extensions.Internal;
 using Moq;
 using Xunit;
@@ -84,7 +86,23 @@ namespace Lykke.Snow.Notifications.Tests
                 )));
         }
         
-        //TODO: cover the cases where InsertAsync() throws particular exceptions
+        [Fact]
+        public async Task RegisterDevice_ShouldReturnAlreadyExists_UponAlreadyExistException()
+        {
+            var mockRepository = new Mock<IDeviceRegistrationRepository>();
+            
+            // Setup the mock so that it will throw EntityAlreadyExistsException
+            mockRepository.Setup(mock => mock.InsertAsync(It.IsAny<DeviceRegistration>()))
+                .Throws<EntityAlreadyExistsException>();
+            
+            var sut = CreateSut(mockRepository.Object);
+            
+            var actual = await sut.RegisterDeviceAsync(It.IsAny<DeviceRegistration>());
+
+            Assert.True(actual.IsFailed);
+            Assert.False(actual.IsSuccess);
+            Assert.Equal(DeviceRegistrationErrorCode.AlreadyRegistered, actual.Error);
+        }
         #endregion
         
         #region UnregisterDevice
@@ -112,6 +130,7 @@ namespace Lykke.Snow.Notifications.Tests
         public async Task UnregisterDevice_HappyPath_ShouldntReturnError(DeviceRegistration deviceRegistration)
         {
             var mockRepository = new Mock<IDeviceRegistrationRepository>();
+
             // Setup the mock so that GetDeviceRegistrationAsync() will return the given registration without any error
             mockRepository.Setup(mock => mock.GetDeviceRegistrationAsync(deviceRegistration.DeviceToken))
                 .ReturnsAsync(deviceRegistration);
@@ -166,7 +185,28 @@ namespace Lykke.Snow.Notifications.Tests
             Assert.Equal(DeviceRegistrationErrorCode.AccountIdNotValid, actual.Error);
         }
         
-        //TODO: test the cases where repository throws exception
+       [Theory]
+       [ClassData(typeof(DeviceRegistrationTestData))]
+       public async Task UnregisterDevice_ShouldReturnDoesNotExist_UponEntityNotFoundException(DeviceRegistration deviceRegistration)
+       {
+            var mockRepository = new Mock<IDeviceRegistrationRepository>();
+
+            // Setup the mock so that GetDeviceRegistrationAsync() will return the given registration without any error
+            mockRepository.Setup(mock => mock.GetDeviceRegistrationAsync(deviceRegistration.DeviceToken))
+                .ReturnsAsync(deviceRegistration);
+            
+            // Setup the mock so that it will throw EntityNotFoundException
+            mockRepository.Setup(mock => mock.DeleteAsync(deviceRegistration.Oid))
+                .Throws<EntityNotFoundException>();
+            
+            var sut = CreateSut(mockRepository.Object);
+            
+            var actual = await sut.UnregisterDeviceAsync(deviceRegistration);
+
+            Assert.True(actual.IsFailed);
+            Assert.False(actual.IsSuccess);
+            Assert.Equal(DeviceRegistrationErrorCode.DoesNotExist, actual.Error);
+       }
        #endregion
 
         
@@ -202,7 +242,24 @@ namespace Lykke.Snow.Notifications.Tests
            Assert.Equal(deviceRegistrations, result.Value);
        }
        
-       //TODO:  test the cases where repository throws an exception
+       [Fact]
+       public async Task GetDeviceRegistrations_ShouldReturnEmptyCollection_IfRepositoryReturnsNull()
+       {
+           var mockRepository = new Mock<IDeviceRegistrationRepository>();
+
+           // Setup the mock so that it will return the list of DeviceRegistrations without any error
+           mockRepository.Setup(mock => mock.GetDeviceRegistrationsByAccountIdAsync(It.IsAny<string>()))
+               .Returns(Task.FromResult<IReadOnlyList<DeviceRegistration>>(null));
+            
+            var sut = CreateSut(mockRepository.Object);
+            
+            var actual = await sut.GetDeviceRegistrationsAsync("any-account-id");
+            
+            Assert.True(actual.IsSuccess);
+            Assert.False(actual.IsFailed);
+            Assert.Empty(actual.Value);
+       }
+
        #endregion
         
         

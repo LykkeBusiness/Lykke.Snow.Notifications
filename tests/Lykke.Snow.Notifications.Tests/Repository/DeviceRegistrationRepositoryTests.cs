@@ -1,10 +1,9 @@
 using System;
 using System.Threading.Tasks;
 using AutoMapper;
-using Lykke.Snow.Notifications.Domain.Enums;
+using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.SqlRepositories.Entities;
-using Lykke.Snow.Notifications.SqlRepositories.Exceptions;
 using Lykke.Snow.Notifications.SqlRepositories.Repositories;
 using Lykke.Snow.Notifications.Tests.Fakes;
 using Moq;

@@ -1,6 +1,6 @@
 using System;
 
-namespace Lykke.Snow.Notifications.SqlRepositories.Exceptions
+namespace Lykke.Snow.Notifications.Domain.Exceptions
 {
     public class EntityNotFoundException : Exception
     {
@@ -12,6 +12,10 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Exceptions
         public EntityNotFoundException(int key) : base($"The requested entity with key {key} was not found.")
         {
             Data.Add("key", key);
+        }
+        
+        public EntityNotFoundException()
+        {
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lykke.Snow.Common.Model;
 using Lykke.Snow.Notifications.Domain.Enums;
+using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Repositories;
 using Lykke.Snow.Notifications.Domain.Services;
@@ -24,15 +25,14 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
         public async Task<Result<DeviceRegistrationErrorCode>> RegisterDeviceAsync(DeviceRegistration deviceRegistration)
         {
-            //TODO: handle exceptions
             try
             {
                 await _repository.InsertAsync(deviceRegistration);
                 return new Result<DeviceRegistrationErrorCode>();
             }
-            catch(Exception)
+            catch(EntityAlreadyExistsException)
             {
-                throw;
+                return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.AlreadyRegistered);
             }
         }
 
@@ -53,9 +53,9 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                await _repository.DeleteAsync(oid: result.Oid);
                return new Result<DeviceRegistrationErrorCode>();
             }
-            catch(Exception)
+            catch(EntityNotFoundException)
             {
-                throw;
+                return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DoesNotExist);
             }
         }
 
@@ -64,15 +64,12 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             if(string.IsNullOrEmpty(accountId))
                 throw new ArgumentNullException(nameof(accountId));
             
-            try 
-            {
-                var result = await _repository.GetDeviceRegistrationsByAccountIdAsync(accountId);
-                return new Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>(result);
-            }
-            catch(Exception)
-            {
-                throw;
-            }
+            var result = await _repository.GetDeviceRegistrationsByAccountIdAsync(accountId);
+            
+            if(result == null)
+                return new Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>(Enumerable.Empty<DeviceRegistration>());
+
+            return new Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>(result);
         }
 
     }
