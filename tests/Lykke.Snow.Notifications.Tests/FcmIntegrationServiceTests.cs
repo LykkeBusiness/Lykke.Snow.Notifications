@@ -42,7 +42,7 @@ namespace Lykke.Snow.Notifications.Tests
             Assert.Throws<FirebaseCredentialsFileNotFoundException>(() => CreateSut("any-credentials-path"));
         }
         
-        private FcmIntegrationService CreateSut(string? credentialsFilePath)
+        private FcmIntegrationService CreateSut(string credentialsFilePath)
         {
             if(credentialsFilePath == null)
             {

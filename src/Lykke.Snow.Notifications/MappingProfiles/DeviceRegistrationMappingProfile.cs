@@ -1,4 +1,6 @@
+using System;
 using AutoMapper;
+using Lykke.Snow.Notifications.Contracts.Model.Requests;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.SqlRepositories.Entities;
 
@@ -9,6 +11,11 @@ namespace Lykke.Snow.Notifications.MappingProfiles
         public DeviceRegistrationMappingProfile()
         {
             CreateMap<DeviceRegistration, DeviceRegistrationEntity>().ReverseMap();
+            CreateMap<RegisterDeviceRequest, DeviceRegistration>()
+                .ConstructUsing(ctx => 
+                    new DeviceRegistration(ctx.AccountId,
+                                           ctx.DeviceToken,
+                                           DateTime.UtcNow));
         }
     }
 }

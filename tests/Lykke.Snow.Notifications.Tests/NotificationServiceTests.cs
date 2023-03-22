@@ -78,7 +78,7 @@ namespace Lykke.Snow.Notifications.Tests
             Assert.Equal(exceptionToBeThrown.Data, exception.Data);
         }
         
-        private NotificationService CreateSut(IFcmIntegrationService? fcmServiceArg = null)
+        private NotificationService CreateSut(IFcmIntegrationService fcmServiceArg = null)
         {
             var fcmService = new Mock<IFcmIntegrationService>().Object;
 
