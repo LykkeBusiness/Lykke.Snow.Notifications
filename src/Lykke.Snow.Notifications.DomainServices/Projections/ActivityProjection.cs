@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using Common;
 using JetBrains.Annotations;
@@ -31,8 +30,14 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
         {
             _logger.LogInformation("A new activity event has just arrived {ActivityEvent}", e.ToJson());
 
-            var notificationMessage = GetNotificationType(e);
+            NotificationMessage? notificationMessage;
             
+            if(!TryGetNotificationType(activityEvent: e, out notificationMessage))
+                return;
+        
+            if(notificationMessage == null)
+                return;
+
             var deviceRegistrationsResult = await _deviceRegistrationService.GetDeviceRegistrationsAsync(accountId: e.Activity.AccountId);
             
             if(deviceRegistrationsResult.IsFailed)
@@ -50,47 +55,57 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
             }
         }
         
-        private NotificationMessage GetNotificationType(ActivityEvent activityEvent)
+        private bool TryGetNotificationType(ActivityEvent activityEvent, out NotificationMessage? message)
         {
             switch(activityEvent.Activity.Event)
             {
                 case ActivityTypeContract.AccountTradingDisabled:
                 case ActivityTypeContract.AccountTradingEnabled:
-                    return AccountLockNotification.FromActivityEvent(activityEvent);
+                    message = AccountLockNotification.FromActivityEvent(activityEvent);
+                    return true;
 
                 case ActivityTypeContract.AccountDepositSucceeded:
                 case ActivityTypeContract.AccountDepositFailed:
-                    return DepositNotification.FromActivityEvent(activityEvent);
+                    message = DepositNotification.FromActivityEvent(activityEvent);
+                    return true;
 
                 case ActivityTypeContract.AccountWithdrawalSucceeded:
                 case ActivityTypeContract.AccountWithdrawalFailed:
-                    return WithdrawalNotification.FromActivityEvent(activityEvent);
+                    message = WithdrawalNotification.FromActivityEvent(activityEvent);
+                    return true;
 
                 case ActivityTypeContract.AccountWithdrawalEnabled:
                 case ActivityTypeContract.AccountWithdrawalDisabled:
-                    return CashLockNotification.FromActivityEvent(activityEvent);
+                    message = CashLockNotification.FromActivityEvent(activityEvent);
+                    return true;
 
                 case ActivityTypeContract.MarginCall1:
-                    return MarginCall1Notification.FromActivityEvent(activityEvent);
+                    message = MarginCall1Notification.FromActivityEvent(activityEvent);
+                    return true;
 
                 case ActivityTypeContract.MarginCall2:
-                    return MarginCall2Notification.FromActivityEvent(activityEvent);
+                    message = MarginCall2Notification.FromActivityEvent(activityEvent);
+                    return true;
 
                 case ActivityTypeContract.Liquidation:
-                    return LiquidationNotification.FromActivityEvent(activityEvent);
+                    message = LiquidationNotification.FromActivityEvent(activityEvent);
+                    return true;
 
                 case ActivityTypeContract.OrderExecution:
-                    return OrderExecutedNotification.FromActivityEvent(activityEvent);
+                    message = OrderExecutedNotification.FromActivityEvent(activityEvent);
+                    return true;
 
                 case ActivityTypeContract.OrderExpiry:
-                    return OrderExpiredNotification.FromActivityEvent(activityEvent);
+                    message = OrderExpiredNotification.FromActivityEvent(activityEvent);
+                    return true;
 
                 case ActivityTypeContract.PositionClosing:
-                    return PositionClosedNotification.FromActivityEvent(activityEvent);
-                
-                default:
-                    throw new ArgumentException(); //TODO: Create a custom exception
+                    message = PositionClosedNotification.FromActivityEvent(activityEvent);
+                    return true;
             }
+
+            message = null;
+            return false;
         }
         
     }
