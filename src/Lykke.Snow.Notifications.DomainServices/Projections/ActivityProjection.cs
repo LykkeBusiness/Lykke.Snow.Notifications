@@ -61,7 +61,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
                 {
                     if(ex.ErrorCode == MessagingErrorCode.Unregistered)
                     {
-                        _logger.LogWarning("The notification could not be delivered to the device {DeviceToken} because it is no longer active.");
+                        _logger.LogWarning("The notification could not be delivered to the device {DeviceToken} because it is no longer active.", deviceRegistration.DeviceToken);
                     }
                 }
 
