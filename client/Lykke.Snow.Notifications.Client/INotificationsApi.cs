@@ -19,7 +19,7 @@ namespace Lykke.Snow.Notifications.Client
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [Post("api/DeviceRegistration/register")]
+        [Post("/api/DeviceRegistration/register")]
         Task<ErrorCodeResponse<DeviceRegistrationErrorCodeContract>> RegisterDevice([Body] RegisterDeviceRequest request);
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace Lykke.Snow.Notifications.Client
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [Post("api/DeviceRegistration/unregister")]
+        [Post("/api/DeviceRegistration/unregister")]
         Task<ErrorCodeResponse<DeviceRegistrationErrorCodeContract>> UnregisterDevice([Body] UnregisterDeviceRequest request);
     }
 }

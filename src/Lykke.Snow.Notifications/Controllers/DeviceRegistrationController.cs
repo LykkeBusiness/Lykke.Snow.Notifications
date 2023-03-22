@@ -51,9 +51,6 @@ namespace Lykke.Snow.Notifications.Controllers
 
         private ErrorCodeResponse<DeviceRegistrationErrorCodeContract> MapToResponse(Result<DeviceRegistrationErrorCode> result, HttpResponse response)
         {
-            if(result.IsFailed)
-                response.StatusCode = (int) HttpStatusCode.BadRequest;
-
             return new ErrorCodeResponse<DeviceRegistrationErrorCodeContract> 
             { 
                 ErrorCode = _mapper.Map<DeviceRegistrationErrorCodeContract>(result.Error) 
