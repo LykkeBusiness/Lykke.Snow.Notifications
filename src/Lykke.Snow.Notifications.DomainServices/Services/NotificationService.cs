@@ -37,14 +37,8 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             {
                 throw;
             }
-            catch(CannotSendNotificationException e)
+            catch(CannotSendNotificationException)
             {
-                // TODO: Now is it a good time to remove it from the db?
-                if(e.ErrorCode == MessagingErrorCode.Unregistered)
-                {
-                    return;
-                }
-
                 throw;
             }
         }

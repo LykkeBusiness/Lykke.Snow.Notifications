@@ -1,7 +1,9 @@
 using System.Threading.Tasks;
 using Common;
+using FirebaseAdmin.Messaging;
 using JetBrains.Annotations;
 using Lykke.MarginTrading.Activities.Contracts.Models;
+using Lykke.Snow.FirebaseIntegration.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Model.NotificationTypes;
 using Lykke.Snow.Notifications.Domain.NotificationTypes;
@@ -48,10 +50,21 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
 
             foreach(var deviceRegistration in deviceRegistrationsResult.Value)
             {
-                await _notificationService.SendNotification(notificationMessage, deviceToken: deviceRegistration.DeviceToken);
+                try 
+                {
+                    await _notificationService.SendNotification(notificationMessage, deviceToken: deviceRegistration.DeviceToken);
 
-                _logger.LogInformation("Push notification has successfully been sent to the device {DeviceToken}: {PushNotificationPayload}",
-                    deviceRegistration.DeviceToken, notificationMessage.ToJson());
+                    _logger.LogInformation("Push notification has successfully been sent to the device {DeviceToken}: {PushNotificationPayload}",
+                        deviceRegistration.DeviceToken, notificationMessage.ToJson());
+                }
+                catch(CannotSendNotificationException ex)
+                {
+                    if(ex.ErrorCode == MessagingErrorCode.Unregistered)
+                    {
+                        _logger.LogWarning("The notification could not be delivered to the device {DeviceToken} because it is no longer active.");
+                    }
+                }
+
             }
         }
         
