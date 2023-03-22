@@ -6,18 +6,21 @@ using Google.Apis.Auth.OAuth2;
 using Lykke.Snow.Common.Model;
 using Lykke.Snow.FirebaseIntegration.Exceptions;
 using Lykke.Snow.FirebaseIntegration.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace Lykke.Snow.FirebaseIntegration.Services
 {
     public class FcmIntegrationService : IFcmIntegrationService
     {
         private readonly string _credentialsFilePath;
+        private readonly ILogger<FcmIntegrationService> _logger;
 
-        public FcmIntegrationService(string credentialsFilePath)
+        public FcmIntegrationService(string credentialsFilePath, ILogger<FcmIntegrationService> logger)
         {
+            _logger = logger;
             _credentialsFilePath = credentialsFilePath ?? throw new ArgumentNullException(nameof(credentialsFilePath));
 
-            if(!System.IO.File.Exists(_credentialsFilePath))
+            if (!System.IO.File.Exists(_credentialsFilePath))
                 throw new FirebaseCredentialsFileNotFoundException(attemptedPath: _credentialsFilePath);
 
             Initialize();
