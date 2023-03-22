@@ -8,12 +8,14 @@ using Lykke.Snow.Notifications.Contracts.Model.Requests;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lykke.Snow.Notifications.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/[controller]")]
     public class DeviceRegistrationController : ControllerBase
     {
