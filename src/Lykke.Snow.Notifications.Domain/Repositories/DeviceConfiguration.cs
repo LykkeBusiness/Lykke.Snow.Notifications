@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Lykke.Snow.Notifications.Domain.Model;
 
 namespace Lykke.Snow.Notifications.Domain.Repositories
@@ -52,6 +53,14 @@ namespace Lykke.Snow.Notifications.Domain.Repositories
             AccountId = accountId;
             Locale = locale;
             Notifications = notifications ?? new List<Notification>();
+        }
+
+        public static DeviceConfiguration Default(string deviceId, string accountId, string? locale = "en")
+        {
+            var notificationTypes = Enum.GetValues(typeof(NotificationType)).Cast<NotificationType>();
+            var defaultNotifications = notificationTypes.Select(nt => new Notification(nt.ToString()));
+
+            return new DeviceConfiguration(deviceId, accountId, locale, defaultNotifications.ToList());
         }
     }
 }
