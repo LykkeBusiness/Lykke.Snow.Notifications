@@ -2,7 +2,7 @@ namespace Lykke.Snow.Notifications.Domain.Model
 {
     public class NotificationTypeNames
     {
-        public const string AccountLockNotification = nameof(AccountLockNotification);
+        public const string AccountLockNotification = nameof(Notifications.Domain.Model.NotificationTypes.AccountLockNotification);
         public const string CashLockNotification = nameof(CashLockNotification);
         public const string DepositNotification = nameof(DepositNotification);
         public const string InboxMessagesNotification = nameof(InboxMessagesNotification);
