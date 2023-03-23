@@ -71,10 +71,17 @@ namespace Lykke.Snow.FirebaseIntegration.Services
                 var result = await FirebaseMessaging.DefaultInstance.SendAsync(new Message() { Token = deviceToken }, dryRun: true);
                 return true;
             }
-            catch(Exception e)
+            catch(FirebaseMessagingException e)
             {
-                Console.Write(e);
-                throw;
+                if(e.ErrorCode == ErrorCode.InvalidArgument)
+                {
+                    return false;
+                }
+                
+                else
+                {
+                    throw;
+                }
             }
         }
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Lykke.Snow.FirebaseIntegration.Interfaces;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
@@ -263,10 +264,11 @@ namespace Lykke.Snow.Notifications.Tests
        #endregion
         
         
-        private DeviceRegistrationService CreateSut(IDeviceRegistrationRepository repositoryArg = null, ISystemClock systemClockArg = null)
+        private DeviceRegistrationService CreateSut(IDeviceRegistrationRepository repositoryArg = null, ISystemClock systemClockArg = null, IFcmIntegrationService fcmIntegrationServiceArg = null)
         {
             var repository = new Mock<IDeviceRegistrationRepository>().Object;
             ISystemClock systemClock = _systemClock;
+            IFcmIntegrationService fcmIntegrationService = new Mock<IFcmIntegrationService>().Object;
             
             if(repositoryArg != null)
             {
@@ -276,8 +278,12 @@ namespace Lykke.Snow.Notifications.Tests
             {
                 systemClock = systemClockArg;
             }
+            if(fcmIntegrationServiceArg != null)
+            {
+                fcmIntegrationService = fcmIntegrationServiceArg;
+            }
             
-            return new DeviceRegistrationService(repository, systemClock, null);
+            return new DeviceRegistrationService(repository, systemClock, fcmIntegrationService);
         }
     }
 }
