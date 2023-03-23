@@ -8,8 +8,6 @@
     <Product>Lykke.Snow.Notifications</Product>
     <Description>Client for Lykke.Snow.Notifications API</Description>
     <PackageId>Lykke.Snow.Notifications.Client</PackageId>
-    <PackageLicenseUrl>https://github.com/LykkeBusiness/Lykke.Snow.Notifications/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/LykkeBusiness/Lykke.Snow.Notifications</PackageProjectUrl>
     <RepositoryUrl>https://github.com/LykkeBusiness/Lykke.Snow.Notifications.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>LykkeBusiness</PackageTags>
