@@ -1,9 +1,81 @@
 {
   "Titles": {
     "AccountLockedNotification": {
+      "en": "accountlocked-title-en",
+      "es": "accountlocked-title-es",
+      "de": "accountlocked-title-de"
+    },
+    "AccountUnlockedNotification": {
       "en": "",
       "es": "",
       "de": ""
+    },
+    "DepositSucceededNotification": {
+      "en": "",
+      "es": "",
+      "de": ""
+    },
+    "DepositFailedNotification": {
+      "en": "",
+      "es": "",
+      "de": ""
+    },
+    "WithdrawalSucceededNotification": {
+      "en": "",
+      "es": "",
+      "de": ""
+    },
+    "WithdrawalFailedNotification": {
+      "en": "",
+      "es": "",
+      "de": ""
+    },
+    "CashLockedNotification": {
+      "en": "",
+      "es": "",
+      "de": ""
+    },
+    "CashUnlockedNotification": {
+      "en": "",
+      "es": "",
+      "de": ""
+    },
+    "MarginCall1Notification": {
+      "en": "",
+      "es": "",
+      "de": ""
+    },
+    "MarginCall2Notification": {
+      "en": "",
+      "es": "",
+      "de": ""
+    },
+    "LiquidationNotification": {
+      "en": "",
+      "es": "",
+      "de": ""
+    },
+    "OrderExecutedNotification": {
+      "en": "",
+      "es": "",
+      "de": ""
+    },
+    "OrderExpiredNotification": {
+      "en": "",
+      "es": "",
+      "de": ""
+    },
+    "PositionClosedNotification": {
+      "en": "",
+      "es": "",
+      "de": ""
+    }
+  },
+  "Bodies": {
+    "AccountLockedNotification": {
+      "en": "accountlocked-body-en",
+      "es": "accountlocked-body-es",
+      "de": "accountlocked-body-de"
     },
     "AccountUnlockedNotification": {
       "en": "",

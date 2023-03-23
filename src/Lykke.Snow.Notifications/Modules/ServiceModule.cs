@@ -3,6 +3,8 @@
 
 using Autofac;
 using Lykke.Middlewares.Mappers;
+using Lykke.Snow.Notifications.Domain.Services;
+using Lykke.Snow.Notifications.DomainServices.Services;
 using Microsoft.Extensions.Internal;
 
 namespace Lykke.Snow.Notifications.Modules
@@ -25,6 +27,11 @@ namespace Lykke.Snow.Notifications.Modules
             
             builder.RegisterType<StartupManager>()
                 .AsSelf()
+                .SingleInstance();
+
+            builder.RegisterType<LocalizationService>()
+                .As<ILocalizationService>()
+                .WithParameter("localizationFilePath", "localization.json")
                 .SingleInstance();
         }
     }
