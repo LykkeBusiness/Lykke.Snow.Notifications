@@ -1,8 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using Lykke.Snow.Notifications.Domain.Model;
 
 namespace Lykke.Snow.Notifications.Domain.Repositories
 {
+    // todo: insert configuration upong adding new token registration if it doesn't exist
+    
+    /// <summary>
+    /// Device configuration
+    /// </summary>
     public class DeviceConfiguration
     {
         public class Notification
@@ -12,13 +18,14 @@ namespace Lykke.Snow.Notifications.Domain.Repositories
                 if (string.IsNullOrEmpty(type))
                     throw new ArgumentNullException(nameof(type), "Notification type cannot be null or empty");
                 
-                // todo: check for allowed types
-                
-                Type = type;
+                if (!Enum.TryParse<NotificationType>(type, true, out var notificationType)) 
+                    throw new ArgumentException($"Notification type {type} is not supported");
+
+                Type = notificationType;
                 Enabled = enabled;
             }
 
-            public string Type { get; }
+            public NotificationType Type { get; }
             public bool Enabled { get; }
         }
         public string DeviceId { get; }
