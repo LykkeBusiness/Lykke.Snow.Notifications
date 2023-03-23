@@ -8,7 +8,6 @@ using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Repositories;
 using Lykke.Snow.Notifications.DomainServices.Services;
-using Lykke.Snow.Notifications.SqlRepositories.Entities;
 using Microsoft.Extensions.Internal;
 using Moq;
 using Xunit;
@@ -61,7 +60,10 @@ namespace Lykke.Snow.Notifications.Tests
             mockRepository.Setup(mock => mock.InsertAsync(deviceRegistration))
                 .Returns(Task.CompletedTask);
             
-            var sut = CreateSut(mockRepository.Object);
+            var mockFcmIntegrationService = new Mock<IFcmIntegrationService>();
+            mockFcmIntegrationService.Setup(mock => mock.IsDeviceTokenValid(deviceRegistration.DeviceToken)).ReturnsAsync(true);
+            
+            var sut = CreateSut(mockRepository.Object, mockFcmIntegrationService.Object);
             
             var result = await sut.RegisterDeviceAsync(deviceRegistration);
             
@@ -76,7 +78,10 @@ namespace Lykke.Snow.Notifications.Tests
         {
             var mockRepository = new Mock<IDeviceRegistrationRepository>();
             
-            var sut = CreateSut(mockRepository.Object);
+            var mockFcmIntegrationService = new Mock<IFcmIntegrationService>();
+            mockFcmIntegrationService.Setup(mock => mock.IsDeviceTokenValid(deviceRegistration.DeviceToken)).ReturnsAsync(true);
+
+            var sut = CreateSut(mockRepository.Object, mockFcmIntegrationService.Object);
             
             await sut.RegisterDeviceAsync(deviceRegistration);
             
@@ -87,22 +92,44 @@ namespace Lykke.Snow.Notifications.Tests
                 )));
         }
         
-        [Fact]
-        public async Task RegisterDevice_ShouldReturnAlreadyExists_UponAlreadyExistException()
+        [Theory]
+        [ClassData(typeof(DeviceRegistrationTestData))]
+        public async Task RegisterDevice_ShouldReturnAlreadyExists_UponAlreadyExistException(DeviceRegistration deviceRegistration)
         {
             var mockRepository = new Mock<IDeviceRegistrationRepository>();
             
             // Setup the mock so that it will throw EntityAlreadyExistsException
-            mockRepository.Setup(mock => mock.InsertAsync(It.IsAny<DeviceRegistration>()))
+            mockRepository.Setup(mock => mock.InsertAsync(deviceRegistration))
                 .Throws<EntityAlreadyExistsException>();
+
+            var mockFcmIntegrationService = new Mock<IFcmIntegrationService>();
+            mockFcmIntegrationService.Setup(mock => mock.IsDeviceTokenValid(deviceRegistration.DeviceToken))
+                .ReturnsAsync(true);
             
-            var sut = CreateSut(mockRepository.Object);
+            var sut = CreateSut(mockRepository.Object, mockFcmIntegrationService.Object);
             
-            var actual = await sut.RegisterDeviceAsync(It.IsAny<DeviceRegistration>());
+            var actual = await sut.RegisterDeviceAsync(deviceRegistration);
 
             Assert.True(actual.IsFailed);
             Assert.False(actual.IsSuccess);
             Assert.Equal(DeviceRegistrationErrorCode.AlreadyRegistered, actual.Error);
+        }
+
+        [Theory]
+        [ClassData(typeof(DeviceRegistrationTestData))]
+        public async Task RegisterDevice_ShouldReturnInvalidFcmToken_IfDeviceTokenIsInvalid(DeviceRegistration deviceRegistration)
+        {
+            var mockFcmIntegrationService = new Mock<IFcmIntegrationService>();
+            mockFcmIntegrationService.Setup(mock => mock.IsDeviceTokenValid(deviceRegistration.DeviceToken))
+                .ReturnsAsync(false);
+            
+            var sut = CreateSut(fcmIntegrationServiceArg: mockFcmIntegrationService.Object);
+            
+            var actual = await sut.RegisterDeviceAsync(deviceRegistration);
+
+            Assert.True(actual.IsFailed);
+            Assert.False(actual.IsSuccess);
+            Assert.Equal(DeviceRegistrationErrorCode.DeviceTokenNotValid, actual.Error);
         }
         #endregion
         
@@ -264,7 +291,9 @@ namespace Lykke.Snow.Notifications.Tests
        #endregion
         
         
-        private DeviceRegistrationService CreateSut(IDeviceRegistrationRepository repositoryArg = null, ISystemClock systemClockArg = null, IFcmIntegrationService fcmIntegrationServiceArg = null)
+        private DeviceRegistrationService CreateSut(IDeviceRegistrationRepository repositoryArg = null, 
+            IFcmIntegrationService fcmIntegrationServiceArg = null, 
+            ISystemClock systemClockArg = null)
         {
             var repository = new Mock<IDeviceRegistrationRepository>().Object;
             ISystemClock systemClock = _systemClock;

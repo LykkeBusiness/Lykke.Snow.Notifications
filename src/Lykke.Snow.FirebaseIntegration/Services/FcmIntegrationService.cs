@@ -68,7 +68,12 @@ namespace Lykke.Snow.FirebaseIntegration.Services
         {
             try 
             {
-                var result = await FirebaseMessaging.DefaultInstance.SendAsync(new Message() { Token = deviceToken }, dryRun: true);
+                var result = await FirebaseMessaging.DefaultInstance.SendAsync(
+                    new Message() 
+                    { 
+                        Token = deviceToken, 
+                    }, dryRun: true);
+
                 return true;
             }
             catch(FirebaseMessagingException e)
@@ -77,12 +82,9 @@ namespace Lykke.Snow.FirebaseIntegration.Services
                 {
                     return false;
                 }
-                
-                else
-                {
-                    throw;
-                }
             }
+
+            return true;
         }
 
     }

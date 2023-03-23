@@ -30,8 +30,10 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
         public async Task<Result<DeviceRegistrationErrorCode>> RegisterDeviceAsync(DeviceRegistration deviceRegistration)
         {
-            
             var isValid = await _fcmIntegrationService.IsDeviceTokenValid(deviceToken: deviceRegistration.DeviceToken);
+            
+            if(!isValid)
+                return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DeviceTokenNotValid);
             
             try
             {

@@ -6,16 +6,23 @@ namespace Lykke.Snow.Notifications.Client.Model
     public enum DeviceRegistrationErrorCodeContract
     {
         /// <summary>
-        /// No error
+        /// No error, represents a successful operation.
         /// </summary>
         None,
+
         /// <summary>
-        /// The attempt in registering/unregistering the device token failed due to the token which does not exist.
+        /// The attempt in unregistering the device token has failed because the token does not exist.
         /// </summary>
         DoesNotExist,
+
         /// <summary>
-        /// The attempt in registering device token failed becuase the device had already been registered. 
+        /// The attempt in registering device token has failed becuase the device had already been registered. 
         /// </summary>
         AlreadyRegistered,
+
+        /// <summary>
+        /// The attemp in registering device token has failed because the token was not a valid FCM token. 
+        /// </summary>
+        DeviceTokenNotValid,
     }
 }
