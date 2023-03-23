@@ -122,6 +122,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
                     return true;
 
                 case ActivityTypeContract.PositionClosing:
+                case ActivityTypeContract.PositionPartialClosing:
                     message = PositionClosedNotification.FromActivityEvent(activityEvent);
                     return true;
             }
