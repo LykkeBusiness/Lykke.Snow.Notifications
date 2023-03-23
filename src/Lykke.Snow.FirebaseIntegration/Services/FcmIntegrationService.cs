@@ -9,8 +9,7 @@ using Lykke.Snow.FirebaseIntegration.Interfaces;
 
 namespace Lykke.Snow.FirebaseIntegration.Services
 {
-    public class FcmIntegrationService : IFcmIntegrationService
-    {
+    public class FcmIntegrationService : IFcmIntegrationService {
         private readonly string _credentialsFilePath;
 
         public FcmIntegrationService(string credentialsFilePath)
@@ -64,5 +63,20 @@ namespace Lykke.Snow.FirebaseIntegration.Services
                 //So we silently ignore that ArgumentException that's caused by already existing app 
             }
         }
+
+        public async Task<bool> IsDeviceTokenValid(string deviceToken)
+        {
+            try 
+            {
+                var result = await FirebaseMessaging.DefaultInstance.SendAsync(new Message() { Token = deviceToken }, dryRun: true);
+                return true;
+            }
+            catch(Exception e)
+            {
+                Console.Write(e);
+                throw;
+            }
+        }
+
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lykke.Snow.Common.Model;
+using Lykke.Snow.FirebaseIntegration.Interfaces;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
@@ -15,16 +16,23 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
     public class DeviceRegistrationService : IDeviceRegistrationService
     {
         private readonly IDeviceRegistrationRepository _repository;
+        private readonly IFcmIntegrationService _fcmIntegrationService;
         private readonly ISystemClock _systemClock;
 
-        public DeviceRegistrationService(IDeviceRegistrationRepository repository, ISystemClock systemClock)
+        public DeviceRegistrationService(IDeviceRegistrationRepository repository, 
+            ISystemClock systemClock, 
+            IFcmIntegrationService fcmIntegrationService)
         {
             _repository = repository;
             _systemClock = systemClock;
+            _fcmIntegrationService = fcmIntegrationService;
         }
 
         public async Task<Result<DeviceRegistrationErrorCode>> RegisterDeviceAsync(DeviceRegistration deviceRegistration)
         {
+            
+            // var isValid = await _fcmIntegrationService.IsDeviceTokenValid(deviceToken: deviceRegistration.DeviceToken);
+            
             try
             {
                 await _repository.InsertAsync(deviceRegistration);
@@ -38,10 +46,25 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
         public async Task<Result<DeviceRegistrationErrorCode>> UnregisterDeviceAsync(string deviceToken)
         {
+            DeviceRegistration? result = null;
             try
             {
-               await _repository.DeleteAsync(deviceToken);
-               return new Result<DeviceRegistrationErrorCode>();
+                result = await _repository.GetDeviceRegistrationAsync(deviceToken: deviceToken);
+            }
+            catch (EntityNotFoundException)
+            {
+                return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DoesNotExist);
+            }
+
+            if (result == null)
+            {
+                return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DoesNotExist);
+            }
+
+            try
+            {
+                await _repository.DeleteAsync(oid: result.Oid);
+                return new Result<DeviceRegistrationErrorCode>();
             }
             catch(EntityNotFoundException)
             {

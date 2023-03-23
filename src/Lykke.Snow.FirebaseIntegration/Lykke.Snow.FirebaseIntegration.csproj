@@ -5,6 +5,7 @@
     <Version>1.0.1</Version>
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>CA2200</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="FirebaseAdmin" Version="2.3.0" />

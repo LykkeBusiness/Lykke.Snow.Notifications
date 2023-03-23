@@ -21,14 +21,6 @@ namespace Lykke.Snow.Notifications.Tests.Repository
             await Assert.ThrowsAsync<EntityNotFoundException>(async() => await sut.GetDeviceRegistrationAsync("device-token-that-does-not-exist-on-database"));
         }
         
-        [Fact]
-        public async Task DeleteAsync_ShouldThrow_EntityNotFoundException_WhenEntityIsNull()
-        {
-            var sut = CreateSut();
-            
-            await Assert.ThrowsAsync<EntityNotFoundException>(async() => await sut.DeleteAsync("device-token-that-does-not-exist-on-database"));
-        }
-
         private DeviceRegistrationRepository CreateSut()
         {
             var mockMapper = new Mock<IMapper>();

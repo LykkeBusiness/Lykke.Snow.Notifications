@@ -9,6 +9,6 @@ namespace Lykke.Snow.Notifications.Domain.Repositories
         Task<DeviceRegistration> GetDeviceRegistrationAsync(string deviceToken);
         Task<IReadOnlyList<DeviceRegistration>> GetDeviceRegistrationsByAccountIdAsync(string accountId);
         Task InsertAsync(DeviceRegistration entity);
-        Task DeleteAsync(string deviceToken);
+        Task DeleteAsync(int oid);
     }
 }
