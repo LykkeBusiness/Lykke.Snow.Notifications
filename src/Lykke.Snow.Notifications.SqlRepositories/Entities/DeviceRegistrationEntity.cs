@@ -10,8 +10,7 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Entities
         public int Oid { get; set; }
         public string AccountId { get; set; }
         public string DeviceToken { get; set; }
-        
-        // todo: add device id ?
+        public string DeviceId { get; set; } 
         public DateTime RegisteredOn { get; set; }
     }
 }
