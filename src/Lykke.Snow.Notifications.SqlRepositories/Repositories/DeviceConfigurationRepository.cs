@@ -21,7 +21,13 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
             _mapper = mapper;
         }
 
-        public async Task<DeviceConfiguration?> GetAsync(string deviceId)
+        /// <summary>
+        /// Gets device configuration by device id
+        /// </summary>
+        /// <param name="deviceId">Teh device id</param>
+        /// <returns></returns>
+        /// <exception cref="EntityNotFoundException">When there is no device configuration for device id</exception>
+        public async Task<DeviceConfiguration> GetAsync(string deviceId)
         {
             await using var context = _contextFactory.CreateDataContext();
 
@@ -35,6 +41,18 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
             return _mapper.Map<DeviceConfiguration>(entity);
         }
 
+        /// <summary>
+        /// Adds or updates device configuration
+        /// </summary>
+        /// <param name="deviceConfiguration"></param>
+        /// <exception cref="EntityNotFoundException">
+        /// When there is no device configuration for device id.
+        /// Potentially possible in highly concurrent environments.
+        /// </exception>
+        /// <exception cref="EntityAlreadyExistsExceptionFoundException">
+        /// When there is already device configuration for device id.
+        /// Potentially possible in highly concurrent environments.
+        /// </exception>
         public async Task AddOrUpdateAsync(DeviceConfiguration deviceConfiguration)
         {
             await using var context = _contextFactory.CreateDataContext();
@@ -52,6 +70,13 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
             await TryUpdateAsync(context, deviceConfiguration, existingEntity);
         }
 
+        /// <summary>
+        /// Removes device configuration
+        /// </summary>
+        /// <param name="deviceId">The device id</param>
+        /// <exception cref="EntityNotFoundException">
+        /// When there is no device configuration for device id.
+        /// </exception>
         public async Task RemoveAsync(string deviceId)
         {
             await using var context = _contextFactory.CreateDataContext();

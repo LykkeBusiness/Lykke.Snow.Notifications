@@ -1,6 +1,7 @@
 using AutoMapper;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Repositories;
+using Lykke.Snow.Notifications.Responses;
 using Lykke.Snow.Notifications.SqlRepositories.Entities;
 
 namespace Lykke.Snow.Notifications.MappingProfiles
@@ -22,6 +23,9 @@ namespace Lykke.Snow.Notifications.MappingProfiles
             CreateMap<DeviceConfiguration, DeviceConfigurationEntity>()
                 .ForMember(x => x.Oid, opt => opt.Ignore())
                 .ForMember(x => x.CreatedOn, opt => opt.Ignore());
+
+            CreateMap<DeviceConfiguration.Notification, NotificationResponse>();
+            CreateMap<DeviceConfiguration, DeviceConfigurationResponse>();
 
             #endregion
         }

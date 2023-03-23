@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using AutoMapper;
 using Lykke.Snow.Notifications.Domain.Repositories;
+using Lykke.Snow.Notifications.SqlRepositories.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lykke.Snow.Notifications.Controllers
@@ -17,38 +17,57 @@ namespace Lykke.Snow.Notifications.Controllers
             public bool Enabled { get; set; }
         }
         
-        // crud operations for device configuration
         private readonly IDeviceConfigurationRepository _repository;
+        private readonly IMapper _mapper;
 
-        public DeviceConfigurationController(IDeviceConfigurationRepository repository)
+        public DeviceConfigurationController(IDeviceConfigurationRepository repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
-
-        [HttpPost]
-        public async Task<IActionResult> AddOrUpdate([FromQuery] string deviceId,
-            [FromQuery] string accountId, [FromQuery] string locale, [FromBody] List<NotificationTypeConfig> notifications)
+        
+        [HttpGet("{deviceId}")]
+        public async Task<IActionResult> Get([FromRoute] string deviceId)
         {
-            await _repository.AddOrUpdateAsync(new DeviceConfiguration(deviceId, accountId, locale,
-                notifications.Select(n => new DeviceConfiguration.Notification(n.TypeName, n.Enabled)).ToList()));
-
-            return Ok();
+            try
+            {
+                var deviceConfiguration = await _repository.GetAsync(deviceId);
+                var response = _mapper.Map<Responses.DeviceConfigurationResponse>(deviceConfiguration);
+                return Ok(response);
+            }
+            catch (EntityNotFoundException)
+            {
+                return NotFound();
+            }
         }
-
-        [HttpGet]
-        public async Task<IActionResult> Get(string deviceId)
+        
+        [HttpDelete("{deviceId}")]
+        public async Task<IActionResult> Delete([FromRoute] string deviceId)
         {
-            var configuration = await _repository.GetAsync(deviceId);
+            try
+            {
+                await _repository.RemoveAsync(deviceId);
+            }
+            catch (EntityNotFoundException)
+            {
+                return NotFound();
+            }
 
-            return Ok(configuration);
+            return NoContent();
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> Delete(string deviceId)
-        {
-            await _repository.RemoveAsync(deviceId);
-
-            return Ok();
-        }
+        // [HttpPost("{deviceId}")]
+        // public async Task<IActionResult> AddOrUpdate([FromRoute] string deviceId, 
+        //     [FromQuery] string accountId, 
+        //     [FromQuery] string locale, 
+        //     [FromBody] List<NotificationTypeConfig> notifications)
+        // {
+        //     var deviceConfiguration = new DeviceConfiguration(deviceId, accountId, locale);
+        //     
+        //     await _repository.AddOrUpdateAsync(new DeviceConfiguration(deviceId, accountId, locale,
+        //         notifications.Select(n => new DeviceConfiguration.Notification(n.TypeName, n.Enabled)).ToList()));
+        //
+        //     return Ok();
+        // }
     }
 }
