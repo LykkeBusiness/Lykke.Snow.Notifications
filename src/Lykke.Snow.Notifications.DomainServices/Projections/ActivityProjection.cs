@@ -6,7 +6,6 @@ using Lykke.MarginTrading.Activities.Contracts.Models;
 using Lykke.Snow.FirebaseIntegration.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Model.NotificationTypes;
-using Lykke.Snow.Notifications.Domain.NotificationTypes;
 using Lykke.Snow.Notifications.Domain.Services;
 using Microsoft.Extensions.Logging;
 
@@ -73,35 +72,35 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
             switch(activityEvent.Activity.Event)
             {
                 case ActivityTypeContract.AccountTradingDisabled:
-                    message = AccountLockNotification.FromActivityEvent(activityEvent, locked: true);
+                    message = AccountLockedNotification.FromActivityEvent(activityEvent);
                     return true;
 
                 case ActivityTypeContract.AccountTradingEnabled:
-                    message = AccountLockNotification.FromActivityEvent(activityEvent, locked: false);
+                    message = AccountUnlockedNotification.FromActivityEvent(activityEvent);
                     return true;
 
                 case ActivityTypeContract.AccountDepositSucceeded:
-                    message = DepositNotification.FromActivityEvent(activityEvent, success: true);
+                    message = DepositSucceededNotification.FromActivityEvent(activityEvent);
                     return true;
 
                 case ActivityTypeContract.AccountDepositFailed:
-                    message = DepositNotification.FromActivityEvent(activityEvent, success: false);
+                    message = DepositFailedNotification.FromActivityEvent(activityEvent);
                     return true;
 
                 case ActivityTypeContract.AccountWithdrawalSucceeded:
-                    message = WithdrawalNotification.FromActivityEvent(activityEvent, success: true);
+                    message = WithdrawalSucceededNotification.FromActivityEvent(activityEvent);
                     return true;
 
                 case ActivityTypeContract.AccountWithdrawalFailed:
-                    message = WithdrawalNotification.FromActivityEvent(activityEvent, success: false);
+                    message = WithdrawalFailedNotification.FromActivityEvent(activityEvent);
                     return true;
 
                 case ActivityTypeContract.AccountWithdrawalEnabled:
-                    message = CashLockNotification.FromActivityEvent(activityEvent, locked: false);
+                    message = CashUnlockedNotification.FromActivityEvent(activityEvent);
                     return true;
 
                 case ActivityTypeContract.AccountWithdrawalDisabled:
-                    message = CashLockNotification.FromActivityEvent(activityEvent, locked: true);
+                    message = CashLockedNotification.FromActivityEvent(activityEvent);
                     return true;
 
                 case ActivityTypeContract.MarginCall1:
