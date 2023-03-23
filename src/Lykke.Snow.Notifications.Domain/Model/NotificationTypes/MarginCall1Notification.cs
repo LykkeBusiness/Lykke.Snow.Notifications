@@ -11,7 +11,8 @@ namespace Lykke.Snow.Notifications.Domain.Model.NotificationTypes
         
         public static MarginCall1Notification FromActivityEvent(ActivityEvent e)
         {
-            return new MarginCall1Notification("", "", new Dictionary<string, string>());
+            //TODO: find out the actual title / body
+            return new MarginCall1Notification("Margin call 1", "Margin call 1 body", new Dictionary<string, string>());
         }
     }
 }

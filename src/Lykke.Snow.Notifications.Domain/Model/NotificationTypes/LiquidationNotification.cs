@@ -11,7 +11,8 @@ namespace Lykke.Snow.Notifications.Domain.Model.NotificationTypes
 
         public static LiquidationNotification FromActivityEvent(ActivityEvent e)
         {
-            return new LiquidationNotification("", "", new Dictionary<string, string>());
+            // TODO: find out the actual title / body
+            return new LiquidationNotification("Liquidation title", "Liquidation body", new Dictionary<string, string>());
         }
     }
 }

@@ -97,8 +97,11 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
                     return true;
 
                 case ActivityTypeContract.AccountWithdrawalEnabled:
+                    message = CashLockNotification.FromActivityEvent(activityEvent, locked: false);
+                    return true;
+
                 case ActivityTypeContract.AccountWithdrawalDisabled:
-                    message = CashLockNotification.FromActivityEvent(activityEvent);
+                    message = CashLockNotification.FromActivityEvent(activityEvent, locked: true);
                     return true;
 
                 case ActivityTypeContract.MarginCall1:
@@ -114,6 +117,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
                     return true;
 
                 case ActivityTypeContract.OrderExecution:
+                case ActivityTypeContract.OrderAcceptanceAndExecution:
                     message = OrderExecutedNotification.FromActivityEvent(activityEvent);
                     return true;
 

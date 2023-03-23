@@ -9,9 +9,25 @@ namespace Lykke.Snow.Notifications.Domain.Model.NotificationTypes
         {
         }
         
-        public static CashLockNotification FromActivityEvent(ActivityEvent e)
+        public static CashLockNotification FromActivityEvent(ActivityEvent e, bool locked)
         {
-            return new CashLockNotification("", "", new Dictionary<string, string>());
+            // Cash locked
+            if(locked)
+            {
+                var title = "Cash locked";
+                var body = "Withdrawal is not allowed.";
+                
+                return new CashLockNotification(title, body, new Dictionary<string, string>());
+            }
+            
+            // cash unlocked
+            else
+            {
+                var title = "Cash unlocked";
+                var body = "Withdrawal is allowed.";
+                
+                return new CashLockNotification(title, body, new Dictionary<string, string>());
+            }
         }
     }
 }

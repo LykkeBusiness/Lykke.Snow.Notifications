@@ -11,7 +11,15 @@ namespace Lykke.Snow.Notifications.Domain.Model.NotificationTypes
         
         public static OrderExpiredNotification FromActivityEvent(ActivityEvent e)
         {
-            return new OrderExpiredNotification("", "", new Dictionary<string, string>());
+            var direction = e.Activity.DescriptionAttributes[0];
+            var orderType = e.Activity.DescriptionAttributes[1];
+            var quantity = e.Activity.DescriptionAttributes[2];
+            var productName = e.Activity.DescriptionAttributes[3];
+
+            var title = "Order expired";
+            var body = $"{direction} {orderType} order for {quantity} {productName} expired.";
+
+            return new OrderExpiredNotification(title, body, new Dictionary<string, string>());
         }
     }
 }
