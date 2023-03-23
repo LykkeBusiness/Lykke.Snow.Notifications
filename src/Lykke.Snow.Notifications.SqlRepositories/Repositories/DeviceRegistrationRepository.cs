@@ -65,10 +65,13 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
             };
         }
 
-        public async Task DeleteAsync(int oid)
+        public async Task DeleteAsync(string deviceToken)
         {
             await using var context = _contextFactory.CreateDataContext();
-            var entity = new DeviceRegistrationEntity() { Oid = oid };
+            var entity = context.DeviceRegistrations.SingleOrDefault(x => x.DeviceToken == deviceToken);
+            
+            if(entity == null)
+                throw new EntityNotFoundException(deviceToken);
             
             context.Attach(entity);
             context.DeviceRegistrations.Remove(entity);
@@ -79,7 +82,7 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
             }
             catch(DbUpdateConcurrencyException e) when (e.IsMissingDataException())
             {
-                throw new EntityNotFoundException(oid);
+                throw new EntityNotFoundException(deviceToken);
             }
         }
     }
