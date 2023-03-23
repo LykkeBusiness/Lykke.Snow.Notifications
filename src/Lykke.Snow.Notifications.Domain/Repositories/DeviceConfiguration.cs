@@ -23,9 +23,11 @@ namespace Lykke.Snow.Notifications.Domain.Repositories
         }
         public string DeviceId { get; }
         public string AccountId { get; }
+        
+        public string Locale { get; set; }
         public IReadOnlyList<Notification> Notifications { get; }
         
-        public DeviceConfiguration(string deviceId, string accountId, IReadOnlyList<Notification>? notifications = null)
+        public DeviceConfiguration(string deviceId, string accountId, string? locale = "en", IReadOnlyList<Notification>? notifications = null)
         {
             if (string.IsNullOrEmpty(deviceId))
                 throw new ArgumentNullException(nameof(deviceId), "Device id cannot be null or empty");
@@ -35,8 +37,13 @@ namespace Lykke.Snow.Notifications.Domain.Repositories
             if (string.IsNullOrEmpty(accountId))
                 throw new ArgumentNullException(nameof(accountId), "Account id cannot be null or empty");
             
+            // todo: check the locale to ne in the list of allowed locales
+            if (string.IsNullOrEmpty(locale))
+                throw new ArgumentNullException(nameof(locale), "Locale cannot be null or empty");
+            
             DeviceId = deviceId;
             AccountId = accountId;
+            Locale = locale;
             Notifications = notifications ?? new List<Notification>();
         }
     }

@@ -13,6 +13,7 @@ namespace Lykke.Snow.Notifications.SqlRepositories.EntityConfigurations
             builder.HasIndex(x => x.DeviceId).IsUnique();
             
             builder.Property(x => x.AccountId).HasMaxLength(128).IsRequired();
+            builder.Property(x => x.Locale).HasMaxLength(10).IsRequired();
             builder.Property(x => x.CreatedOn)
                 .HasColumnType("datetime2")
                 .ValueGeneratedOnAdd()

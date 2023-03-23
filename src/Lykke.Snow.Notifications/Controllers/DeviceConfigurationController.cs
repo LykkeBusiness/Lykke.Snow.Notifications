@@ -27,9 +27,9 @@ namespace Lykke.Snow.Notifications.Controllers
 
         [HttpPost]
         public async Task<IActionResult> AddOrUpdate([FromQuery] string deviceId,
-            [FromQuery] string accountId, [FromBody] List<NotificationTypeConfig> notifications)
+            [FromQuery] string accountId, [FromQuery] string locale, [FromBody] List<NotificationTypeConfig> notifications)
         {
-            await _repository.AddOrUpdateAsync(new DeviceConfiguration(deviceId, accountId,
+            await _repository.AddOrUpdateAsync(new DeviceConfiguration(deviceId, accountId, locale,
                 notifications.Select(n => new DeviceConfiguration.Notification(n.TypeName, n.Enabled)).ToList()));
 
             return Ok();
