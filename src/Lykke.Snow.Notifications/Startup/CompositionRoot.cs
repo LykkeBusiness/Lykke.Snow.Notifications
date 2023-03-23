@@ -44,7 +44,7 @@ namespace Lykke.Snow.Notifications.Startup
                 })
                 .AddSwaggerGenNewtonsoftSupport();
 
-            services.AddAutoMapper(typeof(DeviceRegistrationMappingProfile).Assembly);
+            services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
             return services;
         }

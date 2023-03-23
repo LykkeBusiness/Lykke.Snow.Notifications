@@ -25,6 +25,10 @@ namespace Lykke.Snow.Notifications.Modules
             builder.RegisterType<DeviceRegistrationRepository>()
                 .As<IDeviceRegistrationRepository>()
                 .SingleInstance();
+
+            builder.RegisterType<DeviceConfigurationRepository>()
+                .As<IDeviceConfigurationRepository>()
+                .SingleInstance();
         }
     }
 }
