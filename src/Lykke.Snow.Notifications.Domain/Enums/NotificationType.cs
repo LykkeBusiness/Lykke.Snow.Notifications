@@ -2,6 +2,7 @@ namespace Lykke.Snow.Notifications.Domain.Enums
 {
     public enum NotificationType
     {
+        NotSpecified,
         AccountLocked,
         AccountUnlocked,
         CashLocked,

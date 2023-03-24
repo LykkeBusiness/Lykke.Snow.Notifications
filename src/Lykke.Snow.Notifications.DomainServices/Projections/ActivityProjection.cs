@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common;
@@ -6,6 +7,7 @@ using JetBrains.Annotations;
 using Lykke.MarginTrading.Activities.Contracts.Models;
 using Lykke.Snow.FirebaseIntegration.Exceptions;
 using Lykke.Snow.Notifications.Domain.Enums;
+using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Services;
 using Microsoft.Extensions.Logging;
@@ -56,15 +58,20 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
         public async Task Handle(ActivityEvent e)
         {
             _logger.LogInformation("A new activity event has just arrived {ActivityEvent}", e.ToJson());
-
             
-            NotificationType? notificationType;
+            NotificationType notificationType;
             
             if(!TryGetNotificationType(activityEvent: e, out notificationType))
+            {
+                // We silently ignore if there's no notification type is defined for the activity.
                 return;
+            }
             
-            if(notificationType == null)
-                return;
+            if(notificationType == NotificationType.NotSpecified)
+            {
+                // It was in the mapping dictionary, however, it's NotSpecified
+                throw new NotificationTypeConversionException($"Could not get a notification type for activity {e.Activity.Event}");
+            }
             
             var deviceRegistrationsResult = await _deviceRegistrationService.GetDeviceRegistrationsAsync(accountId: e.Activity.AccountId);
             
@@ -73,8 +80,25 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
                 _logger.LogWarning("Could not get device tokens for the account {AccountId}", e.Activity.AccountId);
                 return;
             }
+
+            var notificationTypeName = Enum.GetName(notificationType);
+
+            if(notificationTypeName == null)
+            {
+                throw new NotificationTypeConversionException($"Couldn't get the name in string for {notificationType}");
+            }
+
+            //TODO load configuration and language
+            var (title, body) = _localizationService.GetLocalizedText(
+                notificationType: notificationTypeName, 
+                language: "en", 
+                parameters: e.Activity.DescriptionAttributes);
             
-            var (title, body) = _localizationService.GetLocalizedText()
+            var notificationMessage = new NotificationMessage(
+                title, 
+                body, 
+                notificationType, 
+                new Dictionary<string, string>());
 
             foreach(var deviceRegistration in deviceRegistrationsResult.Value)
             {
@@ -96,14 +120,11 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
             }
         }
         
-        
-
-        // This is for enum
-        private bool TryGetNotificationType(ActivityEvent activityEvent, out NotificationType? type)
+        private bool TryGetNotificationType(ActivityEvent activityEvent, out NotificationType type)
         {
-            if(_notificationTypeMapping.ContainsKey(activityEvent.Activity.Event))
+            if(!_notificationTypeMapping.ContainsKey(activityEvent.Activity.Event))
             {
-                type = null;
+                type = NotificationType.NotSpecified;
                 return false;
             }
 
@@ -111,75 +132,5 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
 
             return true;
         }
-
-
-        // This is for separate notifiction types
-       // private bool TryGetNotificationType(ActivityEvent activityEvent, out NotificationMessage? message)
-       // {
-       //     switch(activityEvent.Activity.Event)
-       //     {
-       //         case ActivityTypeContract.AccountTradingDisabled:
-       //             message = AccountLockedNotification.FromActivityEvent(activityEvent);
-       //             return true;
-
-       //         case ActivityTypeContract.AccountTradingEnabled:
-       //             message = AccountUnlockedNotification.FromActivityEvent(activityEvent);
-       //             return true;
-
-       //         case ActivityTypeContract.AccountDepositSucceeded:
-       //             message = DepositSucceededNotification.FromActivityEvent(activityEvent);
-       //             return true;
-
-       //         case ActivityTypeContract.AccountDepositFailed:
-       //             message = DepositFailedNotification.FromActivityEvent(activityEvent);
-       //             return true;
-
-       //         case ActivityTypeContract.AccountWithdrawalSucceeded:
-       //             message = WithdrawalSucceededNotification.FromActivityEvent(activityEvent);
-       //             return true;
-
-       //         case ActivityTypeContract.AccountWithdrawalFailed:
-       //             message = WithdrawalFailedNotification.FromActivityEvent(activityEvent);
-       //             return true;
-
-       //         case ActivityTypeContract.AccountWithdrawalEnabled:
-       //             message = CashUnlockedNotification.FromActivityEvent(activityEvent);
-       //             return true;
-
-       //         case ActivityTypeContract.AccountWithdrawalDisabled:
-       //             message = CashLockedNotification.FromActivityEvent(activityEvent);
-       //             return true;
-
-       //         case ActivityTypeContract.MarginCall1:
-       //             message = MarginCall1Notification.FromActivityEvent(activityEvent);
-       //             return true;
-
-       //         case ActivityTypeContract.MarginCall2:
-       //             message = MarginCall2Notification.FromActivityEvent(activityEvent);
-       //             return true;
-
-       //         case ActivityTypeContract.Liquidation:
-       //             message = LiquidationNotification.FromActivityEvent(activityEvent);
-       //             return true;
-
-       //         case ActivityTypeContract.OrderExecution:
-       //         case ActivityTypeContract.OrderAcceptanceAndExecution:
-       //             message = OrderExecutedNotification.FromActivityEvent(activityEvent);
-       //             return true;
-
-       //         case ActivityTypeContract.OrderExpiry:
-       //             message = OrderExpiredNotification.FromActivityEvent(activityEvent);
-       //             return true;
-
-       //         case ActivityTypeContract.PositionClosing:
-       //         case ActivityTypeContract.PositionPartialClosing:
-       //             message = PositionClosedNotification.FromActivityEvent(activityEvent);
-       //             return true;
-       //     }
-
-       //     message = null;
-       //     return false;
-       // }
-        
     }
 }
