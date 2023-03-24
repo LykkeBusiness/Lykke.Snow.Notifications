@@ -21,7 +21,7 @@ namespace Lykke.Snow.Notifications.Tests.Fakes
             ctx = new NotificationsDbContext(contextOptions);
 
              ctx.DeviceRegistrations.Add(
-                new DeviceRegistrationEntity() { DeviceToken = "device-token-1", AccountId = "account-id-1", DeviceId = "device-id", RegisteredOn = DateTime.UtcNow });
+                new DeviceRegistrationEntity() { DeviceToken = "device-token-1", AccountId = "account-id-1", RegisteredOn = DateTime.UtcNow });
 
              ctx.SaveChanges();
         }
