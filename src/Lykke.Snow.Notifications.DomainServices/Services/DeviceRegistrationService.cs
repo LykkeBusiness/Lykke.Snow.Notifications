@@ -42,7 +42,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             
             try
             {
-                await _repository.InsertAsync(deviceRegistration);
+                await _repository.AddOrUpdateAsync(deviceRegistration);
                 
                 await _deviceConfigurationRepository.AddOrUpdateAsync(
                     DeviceConfiguration.Default(deviceId, deviceRegistration.AccountId, locale));
@@ -55,6 +55,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             }
         }
 
+        // TODO: remove device configuration
         public async Task<Result<DeviceRegistrationErrorCode>> UnregisterDeviceAsync(string deviceToken)
         {
             DeviceRegistration? result = null;

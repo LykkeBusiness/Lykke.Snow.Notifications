@@ -13,7 +13,13 @@ namespace Lykke.Snow.Notifications.MappingProfiles
         public MappingProfile()
         {
             CreateMap<DeviceRegistration, DeviceRegistrationEntity>().ReverseMap();
-            CreateMap<RegisterDeviceRequest, DeviceRegistration>();
+            CreateMap<RegisterDeviceRequest, DeviceRegistration>()
+                .ConstructUsing((ctx) => new DeviceRegistration(
+                    ctx.AccountId,
+                    ctx.DeviceToken,
+                    ctx.DeviceId,
+                    DateTime.UtcNow
+                ));
             
             #region DeviceConfiguration
 

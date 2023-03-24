@@ -44,26 +44,19 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
             return entitites;
         }
 
-        public async Task InsertAsync(DeviceRegistration deviceRegistration)
+        public async Task AddOrUpdateAsync(DeviceRegistration deviceRegistration)
         {
             await using var context = _contextFactory.CreateDataContext();
-            var entity = _mapper.Map<DeviceRegistrationEntity>(deviceRegistration);
-            
-            await context.DeviceRegistrations.AddAsync(entity);
-            
-            try
-            {
-                await context.SaveChangesAsync();
-            }
-            catch(DbUpdateException e)
-            {
-                if(e.ValueAlreadyExistsException())
-                {
-                    throw new EntityAlreadyExistsException(entity: deviceRegistration);
-                }
+            var existingEntity = await context.DeviceRegistrations
+                .SingleOrDefaultAsync(x => x.DeviceToken == deviceRegistration.DeviceToken);
                 
-                throw;
-            };
+            if(existingEntity == null)
+            {
+                await TryAddAsync(context, deviceRegistration);
+                return;
+            }
+            
+            await TryUpdateAsync(context, deviceRegistration, existingEntity);
         }
 
         public async Task DeleteAsync(int oid)
@@ -81,6 +74,41 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
             catch(DbUpdateConcurrencyException e) when (e.IsMissingDataException())
             {
                 throw new EntityNotFoundException(oid);
+            }
+        }
+
+        private async Task TryAddAsync(NotificationsDbContext context, DeviceRegistration deviceRegistration)
+        {
+            var entity = _mapper.Map<DeviceRegistrationEntity>(deviceRegistration);
+            await context.DeviceRegistrations.AddAsync(entity);
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (DbUpdateException e)
+            {
+                if (e.ValueAlreadyExistsException())
+                {
+                    throw new EntityAlreadyExistsException(entity: entity);
+                }
+
+                throw;
+            }
+        }
+
+        private async Task TryUpdateAsync(NotificationsDbContext context,
+            DeviceRegistration deviceRegistration,
+            DeviceRegistrationEntity existingEntity)
+        {
+            _mapper.Map(deviceRegistration, existingEntity);
+            context.DeviceRegistrations.Update(existingEntity);
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException e) when (e.IsMissingDataException())
+            {
+                throw new EntityNotFoundException(existingEntity.Oid);
             }
         }
     }

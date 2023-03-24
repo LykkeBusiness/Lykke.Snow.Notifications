@@ -57,7 +57,7 @@ namespace Lykke.Snow.Notifications.Tests
         public async Task RegisterDevice_HappyPath_ShouldNotReturnError(DeviceRegistration deviceRegistration)
         {
             var mockRepository = new Mock<IDeviceRegistrationRepository>();
-            mockRepository.Setup(mock => mock.InsertAsync(deviceRegistration))
+            mockRepository.Setup(mock => mock.AddOrUpdateAsync(deviceRegistration))
                 .Returns(Task.CompletedTask);
             
             var mockFcmIntegrationService = new Mock<IFcmIntegrationService>();
@@ -85,7 +85,7 @@ namespace Lykke.Snow.Notifications.Tests
             
             await sut.RegisterDeviceAsync(deviceRegistration, "any-device-id", "any-locale");
             
-            mockRepository.Verify(mock => mock.InsertAsync(It.Is<DeviceRegistration>(x => 
+            mockRepository.Verify(mock => mock.AddOrUpdateAsync(It.Is<DeviceRegistration>(x => 
                 x.AccountId == deviceRegistration.AccountId &&
                 x.DeviceToken == deviceRegistration.DeviceToken &&
                 x.RegisteredOn == deviceRegistration.RegisteredOn
@@ -99,7 +99,7 @@ namespace Lykke.Snow.Notifications.Tests
             var mockRepository = new Mock<IDeviceRegistrationRepository>();
             
             // Setup the mock so that it will throw EntityAlreadyExistsException
-            mockRepository.Setup(mock => mock.InsertAsync(deviceRegistration))
+            mockRepository.Setup(mock => mock.AddOrUpdateAsync(deviceRegistration))
                 .Throws<EntityAlreadyExistsException>();
 
             var mockFcmIntegrationService = new Mock<IFcmIntegrationService>();

@@ -116,12 +116,6 @@
             </summary>
             <value></value>
         </member>
-        <member name="M:Lykke.Snow.Notifications.Client.Model.Requests.UnregisterDeviceRequest.#ctor(System.String)">
-            <summary>
-            Constructor for UnregisterDeviceRequest
-            </summary>
-            <param name="deviceToken"></param>
-        </member>
         <member name="T:Lykke.Snow.Notifications.Client.Models.DeviceConfigurationContract">
             <summary>
             Device configuration contract

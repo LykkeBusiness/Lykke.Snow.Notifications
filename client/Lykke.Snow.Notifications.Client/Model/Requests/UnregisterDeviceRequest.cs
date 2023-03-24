@@ -12,6 +12,6 @@ namespace Lykke.Snow.Notifications.Client.Model.Requests
         /// </summary>
         /// <value></value>
         [Required]
-        public string DeviceToken { get; }
+        public string DeviceToken { get; set; }
     }
 }
