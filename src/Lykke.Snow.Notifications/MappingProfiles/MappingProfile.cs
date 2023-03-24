@@ -12,7 +12,10 @@ namespace Lykke.Snow.Notifications.MappingProfiles
     {
         public MappingProfile()
         {
-            CreateMap<DeviceRegistration, DeviceRegistrationEntity>().ReverseMap();
+            CreateMap<DeviceRegistration, DeviceRegistrationEntity>()
+                .ForMember(dest => dest.Oid, opt => opt.Ignore())
+                .ReverseMap();
+
             CreateMap<RegisterDeviceRequest, DeviceRegistration>()
                 .ConstructUsing((ctx) => new DeviceRegistration(
                     ctx.AccountId,
