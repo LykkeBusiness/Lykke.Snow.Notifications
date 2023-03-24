@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Common;
 using FirebaseAdmin.Messaging;
@@ -9,6 +10,7 @@ using Lykke.Snow.FirebaseIntegration.Exceptions;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
+using Lykke.Snow.Notifications.Domain.Repositories;
 using Lykke.Snow.Notifications.Domain.Services;
 using Microsoft.Extensions.Logging;
 
@@ -42,16 +44,20 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
         private readonly IDeviceRegistrationService _deviceRegistrationService;
 
         private readonly ILocalizationService _localizationService;
+        
+        private readonly IDeviceConfigurationRepository _deviceConfigurationRepository;
 
         public ActivityProjection(ILogger<ActivityProjection> logger,
             INotificationService notificationService,
             IDeviceRegistrationService deviceRegistrationService,
-            ILocalizationService localizationService)
+            ILocalizationService localizationService,
+            IDeviceConfigurationRepository deviceConfigurationRepository)
         {
             _logger = logger;
             _notificationService = notificationService;
             _deviceRegistrationService = deviceRegistrationService;
             _localizationService = localizationService;
+            _deviceConfigurationRepository = deviceConfigurationRepository;
         }
 
         [UsedImplicitly]
@@ -59,19 +65,14 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
         {
             _logger.LogInformation("A new activity event has just arrived {ActivityEvent}", e.ToJson());
             
-            NotificationType notificationType;
-            
-            if(!TryGetNotificationType(activityEvent: e, out notificationType))
+            if(!TryGetNotificationType(activityEvent: e, out var notificationTypeStr, out var notificationType))
             {
                 // We silently ignore if there's no notification type is defined for the activity.
                 return;
             }
-            
-            if(notificationType == NotificationType.NotSpecified)
-            {
-                // It was in the mapping dictionary, however, it's NotSpecified
-                throw new NotificationTypeConversionException($"Could not get a notification type for activity {e.Activity.Event}");
-            }
+
+            if(notificationTypeStr == null)
+                throw new NotificationTypeConversionException("could not get the NotificationType in string");
             
             var deviceRegistrationsResult = await _deviceRegistrationService.GetDeviceRegistrationsAsync(accountId: e.Activity.AccountId);
             
@@ -81,29 +82,26 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
                 return;
             }
 
-            var notificationTypeName = Enum.GetName(notificationType);
-
-            if(notificationTypeName == null)
-            {
-                throw new NotificationTypeConversionException($"Couldn't get the name in string for {notificationType}");
-            }
-
-            //TODO load configuration and language
-            var (title, body) = _localizationService.GetLocalizedText(
-                notificationType: notificationTypeName, 
-                language: "en", 
-                parameters: e.Activity.DescriptionAttributes);
-            
-            var notificationMessage = new NotificationMessage(
-                title, 
-                body, 
-                notificationType, 
-                new Dictionary<string, string>());
-
             foreach(var deviceRegistration in deviceRegistrationsResult.Value)
             {
                 try 
                 {
+                    var deviceConfiguration = await _deviceConfigurationRepository.GetAsync(deviceId: deviceRegistration.DeviceId);
+                        
+                    if(!Filter(deviceConfiguration, notificationTypeStr))
+                        continue;
+
+                    var (title, body) = _localizationService.GetLocalizedText(
+                        notificationType: notificationTypeStr, 
+                        language: deviceConfiguration.Locale, 
+                        parameters: e.Activity.DescriptionAttributes);
+
+                    var notificationMessage = new NotificationMessage(
+                        title, 
+                        body, 
+                        notificationType, 
+                        new Dictionary<string, string>());
+                    
                     await _notificationService.SendNotification(notificationMessage, deviceToken: deviceRegistration.DeviceToken);
 
                     _logger.LogInformation("Push notification has successfully been sent to the device {DeviceToken}: {PushNotificationPayload}",
@@ -120,15 +118,25 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
             }
         }
         
-        private bool TryGetNotificationType(ActivityEvent activityEvent, out NotificationType type)
+        private bool Filter(DeviceConfiguration deviceConfiguration, string notificationType)
+        {
+            var enabledNotificationTypes = deviceConfiguration.EnabledNotifications.Select(x => x.Type.ToString()).ToHashSet();
+            
+            return enabledNotificationTypes.Contains(notificationType);
+        }
+        
+        private bool TryGetNotificationType(ActivityEvent activityEvent, out string? typeStr, out NotificationType type)
         {
             if(!_notificationTypeMapping.ContainsKey(activityEvent.Activity.Event))
             {
+                typeStr = null;
                 type = NotificationType.NotSpecified;
                 return false;
             }
-
+            
             type = _notificationTypeMapping[activityEvent.Activity.Event];
+
+            typeStr = Enum.GetName(type);
 
             return true;
         }
