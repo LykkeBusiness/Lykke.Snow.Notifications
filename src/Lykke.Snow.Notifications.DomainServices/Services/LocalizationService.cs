@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Services;
 using Lykke.Snow.Notifications.DomainServices.Model;
@@ -40,12 +41,14 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             }
         }
 
-        public (string, string) GetLocalizedText(string notificationType, string language)
+        public (string, string) GetLocalizedText(string notificationType, string language, IReadOnlyList<string> parameters)
         {
             try 
             {
                 var title = _localizationData.Titles[notificationType][language];
                 var body = _localizationData.Bodies[notificationType][language];
+                
+                body = string.Format(body, parameters.ToArray());
                 
                 return (title, body);
             }
@@ -56,6 +59,10 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             catch(NullReferenceException)
             {
                 throw new TranslationNotFoundException(notificationType, language);
+            }
+            catch(FormatException)
+            {
+                throw new LocalizationFormatException(notificationType);
             }
         }
         
