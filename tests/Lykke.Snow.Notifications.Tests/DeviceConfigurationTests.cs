@@ -101,8 +101,8 @@ namespace Lykke.Snow.Notifications.Tests
             // Arrange
             var notifications = new List<DeviceConfiguration.Notification>
             {
-                new DeviceConfiguration.Notification("Deposit"), 
-                new DeviceConfiguration.Notification("Withdrawal"),
+                new DeviceConfiguration.Notification("DepositSucceeded"), 
+                new DeviceConfiguration.Notification("WithdrawalSucceeded"),
             };
 
             // Act
@@ -110,8 +110,8 @@ namespace Lykke.Snow.Notifications.Tests
 
             // Assert
             Assert.Equal(2, deviceConfig.Notifications.Count);
-            Assert.Contains(deviceConfig.Notifications, n => n.Type == NotificationType.Deposit);
-            Assert.Contains(deviceConfig.Notifications, n => n.Type == NotificationType.Withdrawal);
+            Assert.Contains(deviceConfig.Notifications, n => n.Type == NotificationType.DepositSucceeded);
+            Assert.Contains(deviceConfig.Notifications, n => n.Type == NotificationType.WithdrawalSucceeded);
         }
         
         [Fact]
@@ -121,12 +121,12 @@ namespace Lykke.Snow.Notifications.Tests
             var deviceConfig = new DeviceConfiguration("deviceId", "accountId", "en",
                 new List<DeviceConfiguration.Notification>
                 {
-                    new DeviceConfiguration.Notification("Deposit", false),
-                    new DeviceConfiguration.Notification("Withdrawal", true),
+                    new DeviceConfiguration.Notification("DepositSucceeded", false),
+                    new DeviceConfiguration.Notification("WithdrawalSucceeded", true),
                 });
 
             // Act
-            var result = deviceConfig.IsNotificationEnabled(NotificationType.Withdrawal);
+            var result = deviceConfig.IsNotificationEnabled(NotificationType.WithdrawalSucceeded);
 
             // Assert
             Assert.True(result);
@@ -139,12 +139,12 @@ namespace Lykke.Snow.Notifications.Tests
             var deviceConfig = new DeviceConfiguration("deviceId", "accountId", "en",
                 new List<DeviceConfiguration.Notification>
                 {
-                    new DeviceConfiguration.Notification("Deposit"),
-                    new DeviceConfiguration.Notification("Withdrawal", false),
+                    new DeviceConfiguration.Notification("DepositSucceeded"),
+                    new DeviceConfiguration.Notification("WithdrawalSucceeded", false),
                 });
 
             // Act
-            var result = deviceConfig.IsNotificationEnabled(NotificationType.Withdrawal);
+            var result = deviceConfig.IsNotificationEnabled(NotificationType.WithdrawalSucceeded);
 
             // Assert
             Assert.False(result);
@@ -157,8 +157,8 @@ namespace Lykke.Snow.Notifications.Tests
             var deviceConfig = new DeviceConfiguration("deviceId", "accountId", "en",
                 new List<DeviceConfiguration.Notification>
                 {
-                    new DeviceConfiguration.Notification("Deposit"),
-                    new DeviceConfiguration.Notification("AccountLock", true),
+                    new DeviceConfiguration.Notification("DepositSucceeded"),
+                    new DeviceConfiguration.Notification("AccountLocked", true),
                 });
 
             // Act, Assert
@@ -177,12 +177,12 @@ namespace Lykke.Snow.Notifications.Tests
             var deviceConfig = new DeviceConfiguration("deviceId", "accountId", "en",
                 new List<DeviceConfiguration.Notification>
                 {
-                    new DeviceConfiguration.Notification("Deposit"),
-                    new DeviceConfiguration.Notification("Withdrawal", true),
+                    new DeviceConfiguration.Notification("DepositSucceeded"),
+                    new DeviceConfiguration.Notification("WithdrawalSucceeded", true),
                 });
 
             // Act
-            var result = deviceConfig.IsNotificationEnabled("Withdrawal");
+            var result = deviceConfig.IsNotificationEnabled("WithdrawalSucceeded");
 
             // Assert
             Assert.True(result);
@@ -196,12 +196,12 @@ namespace Lykke.Snow.Notifications.Tests
             var deviceConfig = new DeviceConfiguration("deviceId", "accountId", "en",
                 new List<DeviceConfiguration.Notification>
                 {
-                    new DeviceConfiguration.Notification("Deposit"),
-                    new DeviceConfiguration.Notification("Withdrawal", false),
+                    new DeviceConfiguration.Notification("DepositSucceeded"),
+                    new DeviceConfiguration.Notification("WithdrawalSucceeded", false),
                 });
 
             // Act
-            var result = deviceConfig.IsNotificationEnabled("Withdrawal");
+            var result = deviceConfig.IsNotificationEnabled("WithdrawalSucceeded");
 
             // Assert
             Assert.False(result);
@@ -214,10 +214,10 @@ namespace Lykke.Snow.Notifications.Tests
             var deviceConfig = new DeviceConfiguration("deviceId", "accountId", "en",
                 new List<DeviceConfiguration.Notification>
                 {
-                    new DeviceConfiguration.Notification("Deposit", false),
-                    new DeviceConfiguration.Notification("InboxMessages", true),
+                    new DeviceConfiguration.Notification("DepositSucceeded", false),
+                    new DeviceConfiguration.Notification("InboxMessage", true),
                     new DeviceConfiguration.Notification("PositionClosed", true),
-                    new DeviceConfiguration.Notification("AccountLock", false),
+                    new DeviceConfiguration.Notification("AccountLocked", false),
                 });
 
             // Act
@@ -225,7 +225,7 @@ namespace Lykke.Snow.Notifications.Tests
 
             // Assert
             Assert.Equal(2, result.Count);
-            Assert.Contains(result, n => n.Type == NotificationType.InboxMessages && n.Enabled);
+            Assert.Contains(result, n => n.Type == NotificationType.InboxMessage && n.Enabled);
             Assert.Contains(result, n => n.Type == NotificationType.PositionClosed && n.Enabled);
         }
     }
