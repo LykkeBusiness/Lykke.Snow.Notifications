@@ -1,143 +1,143 @@
 {
   "Titles": {
-    "AccountLockedNotification": {
+    "AccountLocked": {
       "en": "Account locked",
       "es": "",
       "de": ""
     },
-    "AccountUnlockedNotification": {
+    "AccountUnlocked": {
       "en": "Account unlocked",
       "es": "",
       "de": ""
     },
-    "CashLockedNotification": {
+    "CashLocked": {
       "en": "Cash locked",
       "es": "",
       "de": ""
     },
-    "CashUnlockedNotification": {
+    "CashUnlocked": {
       "en": "Cash unlocked",
       "es": "",
       "de": ""
     },
-    "DepositSucceededNotification": {
+    "DepositSucceeded": {
       "en": "Deposit succeeded",
       "es": "",
       "de": ""
     },
-    "DepositFailedNotification": {
+    "DepositFailed": {
       "en": "Deposit failed",
       "es": "",
       "de": ""
     },
-    "LiquidationNotification": {
+    "Liquidation": {
       "en": "Liquidation",
       "es": "",
       "de": ""
     },
-    "MarginCall1Notification": {
+    "MarginCall1": {
       "en": "Margin call 1",
       "es": "",
       "de": ""
     },
-    "MarginCall2Notification": {
+    "MarginCall2": {
       "en": "Margin call 2",
       "es": "",
       "de": ""
     },
-    "OrderExecutedNotification": {
+    "OrderExecuted": {
       "en": "Order executed",
       "es": "",
       "de": ""
     },
-    "OrderExpiredNotification": {
+    "OrderExpired": {
       "en": "Order expired",
       "es": "",
       "de": ""
     },
-    "PositionClosedNotification": {
+    "PositionClosed": {
       "en": "Position closed",
       "es": "",
       "de": ""
     },
-    "WithdrawalSucceededNotification": {
+    "WithdrawalSucceeded": {
       "en": "Withdrawal succeeded",
       "es": "Retiro exitoso",
       "de": "Auszahlung erfolgreich"
     },
-    "WithdrawalFailedNotification": {
+    "WithdrawalFailed": {
       "en": "Withdrawal failed",
       "es": "",
       "de": ""
     }
   },
   "Bodies": {
-    "AccountLockedNotification": {
+    "AccountLocked": {
       "en": "Trading and withdrawal is not allowed.",
       "es": "",
       "de": ""
     },
-    "AccountUnlockedNotification": {
+    "AccountUnlocked": {
       "en": "Trading and withdrawal is allowed.",
       "es": "",
       "de": ""
     },
-    "CashLockedNotification": {
+    "CashLocked": {
       "en": "Withdrawal is not allowed",
       "es": "",
       "de": ""
     },
-    "CashUnlockedNotification": {
+    "CashUnlocked": {
       "en": "Withdrawal is allowed",
       "es": "",
       "de": ""
     },
-    "DepositSucceededNotification": {
+    "DepositSucceeded": {
       "en": "{0}{1} has been deposited to the account {2}.",
       "es": "",
       "de": ""
     },
-    "DepositFailedNotification": {
+    "DepositFailed": {
       "en": "The deposit of {0}{1} to the account {2} has failed.",
       "es": "",
       "de": ""
     },
-    "LiquidationNotification": {
-      "en": "Liquidation notification body????",
+    "Liquidation": {
+      "en": "Liquidation  body????",
       "es": "",
       "de": ""
     },
-    "MarginCall1Notification": {
-      "en": "Margincall1 notification body",
+    "MarginCall1": {
+      "en": "Margincall1  body",
       "es": "",
       "de": ""
     },
-    "MarginCall2Notification": {
-      "en": "Margincall2 notification body",
+    "MarginCall2": {
+      "en": "Margincall2  body",
       "es": "",
       "de": ""
     },
-    "OrderExecutedNotification": {
+    "OrderExecuted": {
       "en": "{0} {1} order for {2} {3} has been executed.",
       "es": "",
       "de": ""
     },
-    "OrderExpiredNotification": {
+    "OrderExpired": {
       "en": "{0} {1} order for {2} {3} has expired.",
       "es": "",
       "de": ""
     },
-    "PositionClosedNotification": {
+    "PositionClosed": {
       "en": "{0} position of {1} {2} has been closed. P&L of {3} has been realized.",
       "es": "",
       "de": ""
     },
-    "WithdrawalSucceededNotification": {
+    "WithdrawalSucceeded": {
       "en": "The withdrawal of {0} {1} to the account {2} has been completed successfully.",
       "es": "",
       "de": ""
     },
-    "WithdrawalFailedNotification": {
+    "WithdrawalFailed": {
       "en": "The withdrawal of {0}{1} to the account {2} has failed.",
       "es": "",
       "de": ""
