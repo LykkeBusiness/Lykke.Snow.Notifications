@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using AutoMapper;
-using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.SqlRepositories.Entities;
 using Lykke.Snow.Notifications.SqlRepositories.Exceptions;
