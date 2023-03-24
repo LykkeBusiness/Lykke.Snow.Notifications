@@ -364,6 +364,4 @@ appsettings.localhost.json
 appsettings.dev.json
 appsettings.test.json
 appsettings.prod.json
-appsettings.json
-
 

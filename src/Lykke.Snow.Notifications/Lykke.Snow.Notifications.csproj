@@ -14,7 +14,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\client\Lykke.Snow.Notifications.Client\Lykke.Snow.Notifications.Client.csproj" />
     <ProjectReference Include="..\Lykke.Snow.Notifications.Domain\Lykke.Snow.Notifications.Domain.csproj" />
     <ProjectReference Include="..\Lykke.Snow.Notifications.DomainServices\Lykke.Snow.Notifications.DomainServices.csproj" />
     <ProjectReference Include="..\Lykke.Snow.Notifications.SqlRepositories\Lykke.Snow.Notifications.SqlRepositories.csproj" />
