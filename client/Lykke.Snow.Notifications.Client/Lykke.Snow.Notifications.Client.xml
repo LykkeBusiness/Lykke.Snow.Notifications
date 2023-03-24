@@ -4,107 +4,36 @@
         <name>Lykke.Snow.Notifications.Client</name>
     </assembly>
     <members>
+        <member name="T:Lykke.Snow.Notifications.Client.IConfigurationApi">
+            <summary>
+            Notifications configuration API interface.
+            </summary>
+        </member>
+        <member name="M:Lykke.Snow.Notifications.Client.IConfigurationApi.Get(System.String)">
+            <summary>
+            Gets device configuration by device id
+            </summary>
+            <param name="deviceId">Device id</param>
+            <returns></returns>
+        </member>
+        <member name="M:Lykke.Snow.Notifications.Client.IConfigurationApi.Delete(System.String)">
+            <summary>
+            Removes device configuration by device id
+            </summary>
+            <param name="deviceId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lykke.Snow.Notifications.Client.IConfigurationApi.AddOrUpdate(Lykke.Snow.Notifications.Client.Models.DeviceConfigurationContract)">
+            <summary>
+            Creates or updates device configuration by device id
+            </summary>
+            <param name="deviceConfiguration"></param>
+            <returns></returns>
+        </member>
         <member name="T:Lykke.Snow.Notifications.Client.INotificationsApi">
             <summary>
             Notifications client API interface.
             </summary>
-        </member>
-        <member name="M:Lykke.Snow.Notifications.Client.INotificationsApi.RegisterDevice(Lykke.Snow.Notifications.Client.Model.Requests.RegisterDeviceRequest)">
-            <summary>
-            The endpoint that'll be used to store FCM token of the mobile device.
-            This endpoint should be called upon FCM SDK initialization on mobile device.
-            </summary>
-            <param name="request"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Lykke.Snow.Notifications.Client.INotificationsApi.UnregisterDevice(Lykke.Snow.Notifications.Client.Model.Requests.UnregisterDeviceRequest)">
-            <summary>
-            The endpoint that'll be used to remove FCM token of the mobile device from the database.
-            This endpoint should be called when FCM device token becomes stale.
-            </summary>
-            <param name="request"></param>
-            <returns></returns>
-        </member>
-        <member name="T:Lykke.Snow.Notifications.Client.Model.DeviceRegistrationErrorCodeContract">
-            <summary>
-            Device registration error codes
-            </summary>
-        </member>
-        <member name="F:Lykke.Snow.Notifications.Client.Model.DeviceRegistrationErrorCodeContract.None">
-            <summary>
-            No error, represents a successful operation.
-            </summary>
-        </member>
-        <member name="F:Lykke.Snow.Notifications.Client.Model.DeviceRegistrationErrorCodeContract.DoesNotExist">
-            <summary>
-            The attempt in unregistering the device token has failed because the token does not exist.
-            </summary>
-        </member>
-        <member name="F:Lykke.Snow.Notifications.Client.Model.DeviceRegistrationErrorCodeContract.AlreadyRegistered">
-            <summary>
-            The attempt in registering device token has failed becuase the device had already been registered. 
-            </summary>
-        </member>
-        <member name="F:Lykke.Snow.Notifications.Client.Model.DeviceRegistrationErrorCodeContract.DeviceTokenNotValid">
-            <summary>
-            The attemp in registering device token has failed because the token was not a valid FCM token. 
-            </summary>
-        </member>
-        <member name="T:Lykke.Snow.Notifications.Client.Model.Requests.RegisterDeviceRequest">
-            <summary>
-            Device registration request
-            </summary>
-        </member>
-        <member name="P:Lykke.Snow.Notifications.Client.Model.Requests.RegisterDeviceRequest.AccountId">
-            <summary>
-            AccountId that will be associated with the device
-            </summary>
-            <value></value>
-        </member>
-        <member name="P:Lykke.Snow.Notifications.Client.Model.Requests.RegisterDeviceRequest.DeviceToken">
-            <summary>
-            FCM registration token
-            </summary>
-            <value></value>
-        </member>
-        <member name="M:Lykke.Snow.Notifications.Client.Model.Requests.RegisterDeviceRequest.#ctor(System.String,System.String)">
-            <summary>
-            Constructor for RegisterDeviceRequest
-            </summary>
-            <param name="accountId"></param>
-            <param name="deviceToken"></param>
-        </member>
-        <member name="T:Lykke.Snow.Notifications.Client.Model.Requests.UnregisterDeviceRequest">
-            <summary>
-            Device unregistration request
-            </summary>
-        </member>
-        <member name="P:Lykke.Snow.Notifications.Client.Model.Requests.UnregisterDeviceRequest.DeviceToken">
-            <summary>
-            Device token to be unregistered.
-            </summary>
-            <value></value>
-        </member>
-        <member name="M:Lykke.Snow.Notifications.Client.Model.Requests.UnregisterDeviceRequest.#ctor(System.String)">
-            <summary>
-            Constructor for UnregisterDeviceRequest
-            </summary>
-            <param name="deviceToken"></param>
-        </member>
-        <member name="T:Lykke.Snow.Notifications.Client.AutoGeneratedINotificationsApi">
-            <inheritdoc />
-        </member>
-        <member name="P:Lykke.Snow.Notifications.Client.AutoGeneratedINotificationsApi.Client">
-            <inheritdoc />
-        </member>
-        <member name="M:Lykke.Snow.Notifications.Client.AutoGeneratedINotificationsApi.#ctor(System.Net.Http.HttpClient,Refit.IRequestBuilder)">
-            <inheritdoc />
-        </member>
-        <member name="M:Lykke.Snow.Notifications.Client.AutoGeneratedINotificationsApi.Lykke#Snow#Notifications#Client#INotificationsApi#RegisterDevice(Lykke.Snow.Notifications.Client.Model.Requests.RegisterDeviceRequest)">
-            <inheritdoc />
-        </member>
-        <member name="M:Lykke.Snow.Notifications.Client.AutoGeneratedINotificationsApi.Lykke#Snow#Notifications#Client#INotificationsApi#UnregisterDevice(Lykke.Snow.Notifications.Client.Model.Requests.UnregisterDeviceRequest)">
-            <inheritdoc />
         </member>
     </members>
 </doc>
