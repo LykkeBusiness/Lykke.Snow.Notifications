@@ -7,10 +7,9 @@ namespace Lykke.Snow.Notifications.Domain.Model
         public int Oid { get; set; }
         public string AccountId { get; }
         public string DeviceToken { get; }
-        public string DeviceId { get; }
         public DateTime RegisteredOn { get; }
 
-        public DeviceRegistration(string accountId, string deviceToken, string deviceId, DateTime registeredOn) 
+        public DeviceRegistration(string accountId, string deviceToken, DateTime registeredOn) 
         {
             if(string.IsNullOrEmpty(accountId))
                 throw new ArgumentNullException(nameof(accountId));
@@ -24,13 +23,9 @@ namespace Lykke.Snow.Notifications.Domain.Model
             if(registeredOn > DateTime.UtcNow)
                 throw new ArgumentException($"{nameof(registeredOn)} value cannot be in the future.");
             
-            if (string.IsNullOrEmpty(deviceId))
-                throw new ArgumentNullException(nameof(deviceId), "Device id cannot be null or empty");
-            
             AccountId = accountId;
             DeviceToken = deviceToken;
             RegisteredOn = registeredOn;
-            DeviceId = deviceId;
         }
     }
 }

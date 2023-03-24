@@ -27,19 +27,12 @@ namespace Lykke.Snow.Notifications.Client.Model.Requests
         /// <value></value>
         [Required]
         public string DeviceId { get; }
-        
-        
+
         /// <summary>
-        /// Constructor for RegisterDeviceRequest
+        /// The language for the device.
         /// </summary>
-        /// <param name="accountId"></param>
-        /// <param name="deviceToken"></param>
-        /// <param name="deviceId"></param>
-        public RegisterDeviceRequest(string accountId, string deviceToken, string deviceId)
-        {
-            DeviceToken = deviceToken;
-            AccountId = accountId;
-            DeviceId = deviceId;
-        }
+        /// <value></value>
+        [Required]
+        public string Locale { get; }
     }
 }

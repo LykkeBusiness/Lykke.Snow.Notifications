@@ -31,7 +31,9 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             _deviceConfigurationRepository = deviceConfigurationRepository;
         }
 
-        public async Task<Result<DeviceRegistrationErrorCode>> RegisterDeviceAsync(DeviceRegistration deviceRegistration)
+        public async Task<Result<DeviceRegistrationErrorCode>> RegisterDeviceAsync(DeviceRegistration deviceRegistration, 
+            string deviceId,
+            string locale)
         {
             var isValid = await _fcmIntegrationService.IsDeviceTokenValid(deviceToken: deviceRegistration.DeviceToken);
             
@@ -43,7 +45,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                 await _repository.InsertAsync(deviceRegistration);
                 
                 await _deviceConfigurationRepository.AddOrUpdateAsync(
-                    DeviceConfiguration.Default(deviceId: deviceRegistration.DeviceId, accountId: deviceRegistration.AccountId));
+                    DeviceConfiguration.Default(deviceId, deviceRegistration.AccountId, locale));
 
                 return new Result<DeviceRegistrationErrorCode>();
             }

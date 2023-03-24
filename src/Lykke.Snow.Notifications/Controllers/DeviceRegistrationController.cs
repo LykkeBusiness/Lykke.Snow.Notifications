@@ -33,7 +33,9 @@ namespace Lykke.Snow.Notifications.Controllers
         public async Task<ErrorCodeResponse<DeviceRegistrationErrorCodeContract>> RegisterDevice(RegisterDeviceRequest request)
         {
             var deviceRegistration = _mapper.Map<DeviceRegistration>(request);
-            var result = await _deviceRegistrationService.RegisterDeviceAsync(deviceRegistration);
+            var result = await _deviceRegistrationService.RegisterDeviceAsync(deviceRegistration, 
+                deviceId: request.DeviceId,
+                locale: request.Locale);
             
             return MapToResponse(result, Response);
         }
