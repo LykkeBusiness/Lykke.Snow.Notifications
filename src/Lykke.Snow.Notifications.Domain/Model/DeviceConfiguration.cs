@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Lykke.Snow.Notifications.Domain.Model;
 
 namespace Lykke.Snow.Notifications.Domain.Model
 {
