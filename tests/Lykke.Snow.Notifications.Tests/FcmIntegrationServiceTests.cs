@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Lykke.Snow.FirebaseIntegration.Exceptions;
 using Lykke.Snow.FirebaseIntegration.Services;
-using Lykke.Snow.Notifications.Tests.Model;
+using Lykke.Snow.Notifications.Domain.Enums;
+using Lykke.Snow.Notifications.Domain.Model;
 using Xunit;
 
 namespace Lykke.Snow.Notifications.Tests
@@ -12,13 +13,19 @@ namespace Lykke.Snow.Notifications.Tests
     {
         public IEnumerator<object[]> GetEnumerator()
         {
-            var message1 = new DummyMessage(title: "Notification title", body: "Notification body", new Dictionary<string, string>());
+            var message1 = new NotificationMessage(title: "Notification title", body: "Notification body", 
+                type: NotificationType.AccountLocked,
+                new Dictionary<string, string>());
+
             var token1 = "device-token-1";
             
             var keyValueBag = new Dictionary<string, string>();
             keyValueBag.Add("key1", "value1");
             keyValueBag.Add("key2", "value2");
-            var message2 = new DummyMessage(title: "Notification title 2", body: "Notification body 2", keyValueBag);
+            var message2 = new NotificationMessage(title: "Notification title 2", body: "Notification body 2",
+                NotificationType.CashLocked,
+                keyValueBag);
+
             var token2 = "device-token-2";
             
             yield return new object[] { message1, token1 };

@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using FirebaseAdmin.Messaging;
 using Lykke.Snow.FirebaseIntegration.Exceptions;
 using Lykke.Snow.FirebaseIntegration.Interfaces;
+using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.DomainServices.Services;
-using Lykke.Snow.Notifications.Tests.Model;
 using Moq;
 using Xunit;
 
@@ -19,7 +19,7 @@ namespace Lykke.Snow.Notifications.Tests
         {
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] { new DummyMessage("any-title", "any-body", new Dictionary<string, string>()), "any-device-token" };
+                yield return new object[] { new NotificationMessage("any-title", "any-body", NotificationType.DepositSucceeded, new Dictionary<string, string>()), "any-device-token" };
             }
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -29,9 +29,9 @@ namespace Lykke.Snow.Notifications.Tests
         public void InstantiateNotificationMessage_WithEmptyTitleAndBody_ShouldResultInException()
         {
             Assert.Throws<ArgumentNullException>(() => {
-                new DummyMessage(title: string.Empty, body: string.Empty, new Dictionary<string, string>());
-                new DummyMessage(title: string.Empty, body: "some-body", new Dictionary<string, string>());
-                new DummyMessage(title: "some-title", body: string.Empty, new Dictionary<string, string>());
+                new NotificationMessage(title: string.Empty, body: string.Empty, NotificationType.AccountLocked, new Dictionary<string, string>());
+                new NotificationMessage(title: string.Empty, body: "some-body", NotificationType.DepositFailed, new Dictionary<string, string>());
+                new NotificationMessage(title: "some-title", body: string.Empty, NotificationType.MarginCall1, new Dictionary<string, string>());
             });
         }
 
@@ -41,7 +41,8 @@ namespace Lykke.Snow.Notifications.Tests
             var sut = CreateSut();
             
             Assert.ThrowsAsync<ArgumentNullException>(async () => {
-                await sut.SendNotification(new DummyMessage("any-title", "any-body", new Dictionary<string, string>()), string.Empty);
+                await sut.SendNotification(new NotificationMessage("any-title", "any-body", NotificationType.OrderExecuted, 
+                    new Dictionary<string, string>()), string.Empty);
             });
         }
 

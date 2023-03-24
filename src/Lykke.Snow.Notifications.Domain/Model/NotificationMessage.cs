@@ -5,7 +5,7 @@ using Lykke.Snow.Notifications.Domain.Enums;
 namespace Lykke.Snow.Notifications.Domain.Model
 {
     /// <summary>
-    /// Represents the base class for all notification types. 
+    /// Represents the notification object
     /// </summary>
     public class NotificationMessage
     {
@@ -33,7 +33,7 @@ namespace Lykke.Snow.Notifications.Domain.Model
         /// <value></value>
         public IReadOnlyDictionary<string, string> KeyValueCollection { get; }
 
-        protected NotificationMessage(string title, string body, NotificationType type, Dictionary<string, string> keyValueCollection) 
+        public NotificationMessage(string title, string body, NotificationType type, Dictionary<string, string> keyValueCollection) 
         {
             if(string.IsNullOrEmpty(title))
                 throw new ArgumentNullException(nameof(title));

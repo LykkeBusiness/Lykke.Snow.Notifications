@@ -74,7 +74,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
                 return;
             }
             
-
             var (title, body) = _localizationService.GetLocalizedText()
 
             foreach(var deviceRegistration in deviceRegistrationsResult.Value)
