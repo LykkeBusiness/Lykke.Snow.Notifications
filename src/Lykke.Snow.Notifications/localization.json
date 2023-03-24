@@ -1,52 +1,52 @@
 {
   "Titles": {
     "AccountLockedNotification": {
-      "en": "accountlocked-title-en",
+      "en": "Account locked",
       "es": "accountlocked-title-es",
       "de": "accountlocked-title-de"
     },
     "AccountUnlockedNotification": {
-      "en": "",
+      "en": "Account unlocked",
       "es": "",
       "de": ""
     },
     "DepositSucceededNotification": {
-      "en": "",
+      "en": "Deposit succeeded",
       "es": "",
       "de": ""
     },
     "DepositFailedNotification": {
-      "en": "",
+      "en": "Deposit failed",
       "es": "",
       "de": ""
     },
     "WithdrawalSucceededNotification": {
-      "en": "",
-      "es": "",
-      "de": ""
+      "en": "Withdrawal succeeded",
+      "es": "Retiro exitoso",
+      "de": "Auszahlung erfolgreich"
     },
     "WithdrawalFailedNotification": {
-      "en": "",
+      "en": "Withdrawal failed",
       "es": "",
       "de": ""
     },
     "CashLockedNotification": {
-      "en": "",
+      "en": "Cash locked",
       "es": "",
       "de": ""
     },
     "CashUnlockedNotification": {
-      "en": "",
+      "en": "Cash unlocked",
       "es": "",
       "de": ""
     },
     "MarginCall1Notification": {
-      "en": "",
+      "en": "Margin call 1",
       "es": "",
       "de": ""
     },
     "MarginCall2Notification": {
-      "en": "",
+      "en": "Margin call 2",
       "es": "",
       "de": ""
     },
@@ -93,9 +93,9 @@
       "de": ""
     },
     "WithdrawalSucceededNotification": {
-      "en": "",
-      "es": "",
-      "de": ""
+      "en": "The withdrawal of {0} {1} to the account {2} has been completed successfully.",
+      "es": "El retiro de {0} {1} a la cuenta {2} se ha completado con éxito",
+      "de": "Die Auszahlung von {0} {1} auf das Konto {2} wurde erfolgreich abgeschlossen"
     },
     "WithdrawalFailedNotification": {
       "en": "",
