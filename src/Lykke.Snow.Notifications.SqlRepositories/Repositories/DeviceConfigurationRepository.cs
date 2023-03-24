@@ -49,7 +49,7 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
         /// When there is no device configuration for device id.
         /// Potentially possible in highly concurrent environments.
         /// </exception>
-        /// <exception cref="EntityAlreadyExistsExceptionFoundException">
+        /// <exception cref="EntityAlreadyExistsException">
         /// When there is already device configuration for device id.
         /// Potentially possible in highly concurrent environments.
         /// </exception>

@@ -46,6 +46,8 @@ namespace Lykke.Snow.Notifications.Startup
 
             services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
+            services.AddMemoryCache();
+
             return services;
         }
 
