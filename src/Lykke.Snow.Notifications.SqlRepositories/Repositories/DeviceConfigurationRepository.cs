@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
 using AutoMapper;
 using Lykke.Common.MsSql;
+using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Repositories;
 using Lykke.Snow.Notifications.SqlRepositories.Entities;
-using Lykke.Snow.Notifications.SqlRepositories.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lykke.Snow.Notifications.SqlRepositories.Repositories

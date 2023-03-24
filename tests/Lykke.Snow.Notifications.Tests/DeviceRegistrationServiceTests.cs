@@ -24,7 +24,7 @@ namespace Lykke.Snow.Notifications.Tests
             {
                 yield return new object[] 
                 { 
-                    new DeviceRegistration("any-account-id", "any-device-token", DateTime.UtcNow) { Oid = 1 } 
+                    new DeviceRegistration("any-account-id", "any-device-token", "any-device-id", DateTime.UtcNow) { Oid = 1 } 
                 };
             }
 
@@ -40,9 +40,9 @@ namespace Lykke.Snow.Notifications.Tests
                     "account-id-1",
                     new List<DeviceRegistration> 
                     {
-                        new DeviceRegistration("account-id-1", "device-token-1", DateTime.UtcNow), 
-                        new DeviceRegistration("account-id-1", "device-token-2", DateTime.UtcNow), 
-                        new DeviceRegistration("account-id-1", "device-token-3", DateTime.UtcNow)
+                        new DeviceRegistration("account-id-1", "device-token-1", "any-device-id", DateTime.UtcNow), 
+                        new DeviceRegistration("account-id-1", "device-token-2", "any-device-id", DateTime.UtcNow), 
+                        new DeviceRegistration("account-id-1", "device-token-3", "any-device-id", DateTime.UtcNow)
                     }
                 };
             }

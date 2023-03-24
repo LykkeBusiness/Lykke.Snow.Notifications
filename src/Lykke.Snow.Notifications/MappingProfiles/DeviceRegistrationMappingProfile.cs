@@ -15,6 +15,7 @@ namespace Lykke.Snow.Notifications.MappingProfiles
                 .ConstructUsing(ctx => 
                     new DeviceRegistration(ctx.AccountId,
                                            ctx.DeviceToken,
+                                           ctx.DeviceId,
                                            DateTime.UtcNow));
         }
     }
