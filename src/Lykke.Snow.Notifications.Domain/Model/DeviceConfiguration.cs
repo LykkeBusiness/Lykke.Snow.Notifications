@@ -77,13 +77,13 @@ namespace Lykke.Snow.Notifications.Domain.Model
         /// <param name="deviceId">Device id</param>
         /// <param name="accountId">Account id</param>
         /// <returns></returns>
-        public static DeviceConfiguration Default(string deviceId, string accountId)
+        public static DeviceConfiguration Default(string deviceId, string accountId, string locale = "en")
         {
             var allNotificationTypes = Enum.GetValues(typeof(NotificationType))
                 .Cast<NotificationType>()
                 .Select(t => new Notification(t.ToString()));
             
-            return new DeviceConfiguration(deviceId, accountId, notifications: allNotificationTypes.ToList());
+            return new DeviceConfiguration(deviceId, accountId, locale: locale, notifications: allNotificationTypes.ToList());
         }
     }
 }

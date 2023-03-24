@@ -81,7 +81,7 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
         public async Task RemoveAsync(string deviceId)
         {
             await using var context = _contextFactory.CreateDataContext();
-            
+
             var entity = await context.DeviceConfigurations
                 .Include(x => x.Notifications)
                 .FirstOrDefaultAsync(x => x.DeviceId == deviceId);
@@ -90,12 +90,12 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
                 throw new EntityNotFoundException(deviceId);
 
             context.DeviceConfigurations.Remove(entity);
-            
-            try 
+
+            try
             {
                 await context.SaveChangesAsync();
             }
-            catch(DbUpdateConcurrencyException e) when (e.IsMissingDataException())
+            catch (DbUpdateConcurrencyException e) when (e.IsMissingDataException())
             {
                 throw new EntityNotFoundException(deviceId);
             }

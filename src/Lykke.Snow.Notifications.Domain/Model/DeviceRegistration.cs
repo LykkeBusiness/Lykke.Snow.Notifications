@@ -17,15 +17,15 @@ namespace Lykke.Snow.Notifications.Domain.Model
 
             if(string.IsNullOrEmpty(deviceToken))
                 throw new ArgumentNullException(nameof(deviceToken));
+
+            if(string.IsNullOrEmpty(deviceId))
+                throw new ArgumentNullException(nameof(deviceId));
             
             if(registeredOn == default(DateTime))
                 throw new ArgumentException();
         
             if(registeredOn > DateTime.UtcNow)
                 throw new ArgumentException($"{nameof(registeredOn)} value cannot be in the future.");
-            
-            if (string.IsNullOrEmpty(deviceId))
-                throw new ArgumentNullException(nameof(deviceId), "Device id cannot be null or empty");
             
             AccountId = accountId;
             DeviceToken = deviceToken;
