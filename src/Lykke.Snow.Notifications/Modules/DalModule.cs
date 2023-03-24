@@ -2,6 +2,7 @@ using System.Data.Common;
 using Autofac;
 using Lykke.Common.MsSql;
 using Lykke.Snow.Notifications.Domain.Repositories;
+using Lykke.Snow.Notifications.DomainServices.Services;
 using Lykke.Snow.Notifications.SqlRepositories;
 using Lykke.Snow.Notifications.SqlRepositories.Repositories;
 
@@ -25,6 +26,12 @@ namespace Lykke.Snow.Notifications.Modules
             builder.RegisterType<DeviceRegistrationRepository>()
                 .As<IDeviceRegistrationRepository>()
                 .SingleInstance();
+
+            builder.RegisterType<DeviceConfigurationRepository>()
+                .As<IDeviceConfigurationRepository>()
+                .SingleInstance();
+            
+            builder.RegisterDecorator<DeviceConfigurationCache, IDeviceConfigurationRepository>();
         }
     }
 }

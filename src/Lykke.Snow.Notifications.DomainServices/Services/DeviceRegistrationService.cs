@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lykke.Snow.Common.Model;
+using Lykke.Snow.FirebaseIntegration.Interfaces;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
@@ -15,19 +16,35 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
     public class DeviceRegistrationService : IDeviceRegistrationService
     {
         private readonly IDeviceRegistrationRepository _repository;
+        private readonly IDeviceConfigurationRepository _deviceConfigurationRepository;
+        private readonly IFcmIntegrationService _fcmIntegrationService;
         private readonly ISystemClock _systemClock;
 
-        public DeviceRegistrationService(IDeviceRegistrationRepository repository, ISystemClock systemClock)
+        public DeviceRegistrationService(IDeviceRegistrationRepository repository,
+            ISystemClock systemClock,
+            IFcmIntegrationService fcmIntegrationService,
+            IDeviceConfigurationRepository deviceConfigurationRepository)
         {
             _repository = repository;
             _systemClock = systemClock;
+            _fcmIntegrationService = fcmIntegrationService;
+            _deviceConfigurationRepository = deviceConfigurationRepository;
         }
 
         public async Task<Result<DeviceRegistrationErrorCode>> RegisterDeviceAsync(DeviceRegistration deviceRegistration)
         {
+            var isValid = await _fcmIntegrationService.IsDeviceTokenValid(deviceToken: deviceRegistration.DeviceToken);
+            
+            if(!isValid)
+                return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DeviceTokenNotValid);
+            
             try
             {
                 await _repository.InsertAsync(deviceRegistration);
+                
+                await _deviceConfigurationRepository.AddOrUpdateAsync(
+                    DeviceConfiguration.Default(deviceId: deviceRegistration.DeviceId, accountId: deviceRegistration.AccountId));
+
                 return new Result<DeviceRegistrationErrorCode>();
             }
             catch(EntityAlreadyExistsException)
@@ -36,30 +53,27 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             }
         }
 
-        public async Task<Result<DeviceRegistrationErrorCode>> UnregisterDeviceAsync(string deviceToken, string accountId)
+        public async Task<Result<DeviceRegistrationErrorCode>> UnregisterDeviceAsync(string deviceToken)
         {
             DeviceRegistration? result = null;
             try
             {
                 result = await _repository.GetDeviceRegistrationAsync(deviceToken: deviceToken);
             }
-            catch(EntityNotFoundException)
-            {
-                return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DoesNotExist);
-            }
-            
-            if(result == null)
+            catch (EntityNotFoundException)
             {
                 return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DoesNotExist);
             }
 
-            if(result.AccountId != accountId)
-                return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.AccountIdNotValid);
-            
+            if (result == null)
+            {
+                return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DoesNotExist);
+            }
+
             try
             {
-               await _repository.DeleteAsync(oid: result.Oid);
-               return new Result<DeviceRegistrationErrorCode>();
+                await _repository.DeleteAsync(oid: result.Oid);
+                return new Result<DeviceRegistrationErrorCode>();
             }
             catch(EntityNotFoundException)
             {

@@ -6,6 +6,7 @@
         <Version>1.0.1</Version>
         <Nullable>enable</Nullable>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <NoWarn>CS8618</NoWarn>
     </PropertyGroup>
 
 </Project>
