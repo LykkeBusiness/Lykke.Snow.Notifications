@@ -26,7 +26,7 @@ namespace Lykke.Snow.Notifications.Tests.Repository
         {
             var mockMapper = new Mock<IMapper>();
             mockMapper.Setup(x => x.Map<DeviceRegistration>(It.IsAny<DeviceRegistrationEntity>()))
-                .Returns(new DeviceRegistration("account-id", "device-token", DateTime.UtcNow));
+                .Returns(new DeviceRegistration("account-id", "device-token", "device-id", DateTime.UtcNow));
             return new DeviceRegistrationRepository(new MssqlContextFactoryFake(), new Mock<IMapper>().Object);
         }
     }

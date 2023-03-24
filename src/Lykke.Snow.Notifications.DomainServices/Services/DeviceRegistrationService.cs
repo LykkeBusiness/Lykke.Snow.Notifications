@@ -32,7 +32,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
         }
 
         public async Task<Result<DeviceRegistrationErrorCode>> RegisterDeviceAsync(DeviceRegistration deviceRegistration, 
-            string deviceId,
             string locale)
         {
             var isValid = await _fcmIntegrationService.IsDeviceTokenValid(deviceToken: deviceRegistration.DeviceToken);
@@ -45,7 +44,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                 await _repository.AddOrUpdateAsync(deviceRegistration);
                 
                 await _deviceConfigurationRepository.AddOrUpdateAsync(
-                    DeviceConfiguration.Default(deviceId, deviceRegistration.AccountId, locale));
+                    DeviceConfiguration.Default(deviceRegistration.DeviceId, deviceRegistration.AccountId, locale));
 
                 return new Result<DeviceRegistrationErrorCode>();
             }
@@ -55,7 +54,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             }
         }
 
-        // TODO: remove device configuration
         public async Task<Result<DeviceRegistrationErrorCode>> UnregisterDeviceAsync(string deviceToken)
         {
             DeviceRegistration? result = null;
@@ -76,6 +74,9 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             try
             {
                 await _repository.DeleteAsync(oid: result.Oid);
+
+                await _deviceConfigurationRepository.RemoveAsync(deviceId: result.DeviceId);
+
                 return new Result<DeviceRegistrationErrorCode>();
             }
             catch(EntityNotFoundException)

@@ -24,7 +24,7 @@ namespace Lykke.Snow.Notifications.Tests
             {
                 yield return new object[] 
                 { 
-                    new DeviceRegistration("any-account-id", "any-device-token", DateTime.UtcNow) { Oid = 1 } 
+                    new DeviceRegistration("any-account-id", "any-device-token", "any-device-id", DateTime.UtcNow) { Oid = 1 } 
                 };
             }
 
@@ -40,9 +40,9 @@ namespace Lykke.Snow.Notifications.Tests
                     "account-id-1",
                     new List<DeviceRegistration> 
                     {
-                        new DeviceRegistration("account-id-1", "device-token-1", DateTime.UtcNow), 
-                        new DeviceRegistration("account-id-1", "device-token-2", DateTime.UtcNow), 
-                        new DeviceRegistration("account-id-1", "device-token-3", DateTime.UtcNow)
+                        new DeviceRegistration("account-id-1", "device-token-1", "device-id-1", DateTime.UtcNow), 
+                        new DeviceRegistration("account-id-1", "device-token-2", "device-id-2", DateTime.UtcNow), 
+                        new DeviceRegistration("account-id-1", "device-token-3", "device-id-3", DateTime.UtcNow)
                     }
                 };
             }
@@ -65,7 +65,7 @@ namespace Lykke.Snow.Notifications.Tests
             
             var sut = CreateSut(mockRepository.Object, mockFcmIntegrationService.Object);
             
-            var result = await sut.RegisterDeviceAsync(deviceRegistration, "any-device-id", "any-locale");
+            var result = await sut.RegisterDeviceAsync(deviceRegistration, "any-locale");
             
             Assert.True(result.IsSuccess);
             Assert.False(result.IsFailed);
@@ -83,13 +83,13 @@ namespace Lykke.Snow.Notifications.Tests
 
             var sut = CreateSut(mockRepository.Object, mockFcmIntegrationService.Object);
             
-            await sut.RegisterDeviceAsync(deviceRegistration, "any-device-id", "any-locale");
+            await sut.RegisterDeviceAsync(deviceRegistration, "any-locale");
             
             mockRepository.Verify(mock => mock.AddOrUpdateAsync(It.Is<DeviceRegistration>(x => 
                 x.AccountId == deviceRegistration.AccountId &&
                 x.DeviceToken == deviceRegistration.DeviceToken &&
                 x.RegisteredOn == deviceRegistration.RegisteredOn
-                )));
+                )), Times.Once);
         }
       
         [Theory]
@@ -108,7 +108,7 @@ namespace Lykke.Snow.Notifications.Tests
             
             var sut = CreateSut(mockRepository.Object, mockFcmIntegrationService.Object);
             
-            var actual = await sut.RegisterDeviceAsync(deviceRegistration, "any-device-id", "any-locale");
+            var actual = await sut.RegisterDeviceAsync(deviceRegistration, "any-locale");
 
             Assert.True(actual.IsFailed);
             Assert.False(actual.IsSuccess);
@@ -125,7 +125,7 @@ namespace Lykke.Snow.Notifications.Tests
             
             var sut = CreateSut(fcmIntegrationServiceArg: mockFcmIntegrationService.Object);
             
-            var actual = await sut.RegisterDeviceAsync(deviceRegistration, "any-device-id", "any-locale");
+            var actual = await sut.RegisterDeviceAsync(deviceRegistration, "any-locale");
 
             Assert.True(actual.IsFailed);
             Assert.False(actual.IsSuccess);
@@ -148,14 +148,14 @@ namespace Lykke.Snow.Notifications.Tests
             var deviceId = "any-device-id";
             var locale = "any-locale";
 
-            var actual = await sut.RegisterDeviceAsync(deviceRegistration, deviceId, locale);
+            var actual = await sut.RegisterDeviceAsync(deviceRegistration, locale);
             
             mockDeviceConfigurationRepository.Verify(x => x.AddOrUpdateAsync(It.Is<DeviceConfiguration>(
                 dc => 
                 dc.AccountId == deviceRegistration.AccountId &&
                 dc.DeviceId == deviceId &&
                 dc.Locale == locale
-            )));
+            )), Times.Once);
         }
         #endregion
 
@@ -236,7 +236,7 @@ namespace Lykke.Snow.Notifications.Tests
             await sut.UnregisterDeviceAsync(deviceToken: deviceRegistration.DeviceToken);
 
             mockRepository.Verify(mock => 
-                mock.DeleteAsync(It.Is<int>(x => x == deviceRegistration.Oid)));
+                mock.DeleteAsync(It.Is<int>(x => x == deviceRegistration.Oid)), Times.Once);
         }
         
        [Theory]
@@ -260,6 +260,26 @@ namespace Lykke.Snow.Notifications.Tests
             Assert.True(actual.IsFailed);
             Assert.False(actual.IsSuccess);
             Assert.Equal(DeviceRegistrationErrorCode.DoesNotExist, actual.Error);
+       }
+
+       [Theory]
+       [ClassData(typeof(DeviceRegistrationTestData))]
+       public async Task UnregisterDevice_ShouldPassDeviceId_ToRemoveDeviceConfiguration(DeviceRegistration deviceRegistration)
+       {
+            var mockRepository = new Mock<IDeviceRegistrationRepository>();
+
+            // Setup the mock so that GetDeviceRegistrationAsync() will return the given registration without any error
+            mockRepository.Setup(mock => mock.GetDeviceRegistrationAsync(deviceRegistration.DeviceToken))
+                .ReturnsAsync(deviceRegistration);
+            
+            var mockDeviceConfigurationRepository = new Mock<IDeviceConfigurationRepository>();
+            
+            var sut = CreateSut(mockRepository.Object, deviceConfigurationRepositoryArg: mockDeviceConfigurationRepository.Object);
+            
+            var actual = await sut.UnregisterDeviceAsync(deviceToken: deviceRegistration.DeviceToken);
+            
+            mockDeviceConfigurationRepository.Verify(x => x.RemoveAsync(deviceRegistration.DeviceId), Times.Once);
+
        }
        #endregion
 

@@ -34,7 +34,6 @@ namespace Lykke.Snow.Notifications.Controllers
         {
             var deviceRegistration = _mapper.Map<DeviceRegistration>(request);
             var result = await _deviceRegistrationService.RegisterDeviceAsync(deviceRegistration, 
-                deviceId: request.DeviceId,
                 locale: request.Locale);
             
             return MapToResponse(result, Response);
