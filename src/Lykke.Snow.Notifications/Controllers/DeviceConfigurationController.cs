@@ -5,6 +5,7 @@ using AutoMapper;
 using Lykke.Snow.Contracts.Responses;
 using Lykke.Snow.Notifications.Client;
 using Lykke.Snow.Notifications.Client.Models;
+using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Repositories;
 using Lykke.Snow.Notifications.SqlRepositories.Exceptions;
 using Microsoft.AspNetCore.Authorization;

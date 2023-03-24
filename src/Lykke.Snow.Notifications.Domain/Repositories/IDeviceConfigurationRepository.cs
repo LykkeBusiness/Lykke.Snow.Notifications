@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Lykke.Snow.Notifications.Domain.Model;
 
 namespace Lykke.Snow.Notifications.Domain.Repositories
 {
