@@ -2,31 +2,11 @@
   "Titles": {
     "AccountLockedNotification": {
       "en": "Account locked",
-      "es": "accountlocked-title-es",
-      "de": "accountlocked-title-de"
+      "es": "",
+      "de": ""
     },
     "AccountUnlockedNotification": {
       "en": "Account unlocked",
-      "es": "",
-      "de": ""
-    },
-    "DepositSucceededNotification": {
-      "en": "Deposit succeeded",
-      "es": "",
-      "de": ""
-    },
-    "DepositFailedNotification": {
-      "en": "Deposit failed",
-      "es": "",
-      "de": ""
-    },
-    "WithdrawalSucceededNotification": {
-      "en": "Withdrawal succeeded",
-      "es": "Retiro exitoso",
-      "de": "Auszahlung erfolgreich"
-    },
-    "WithdrawalFailedNotification": {
-      "en": "Withdrawal failed",
       "es": "",
       "de": ""
     },
@@ -40,6 +20,21 @@
       "es": "",
       "de": ""
     },
+    "DepositSucceededNotification": {
+      "en": "Deposit succeeded",
+      "es": "",
+      "de": ""
+    },
+    "DepositFailedNotification": {
+      "en": "Deposit failed",
+      "es": "",
+      "de": ""
+    },
+    "LiquidationNotification": {
+      "en": "Liquidation",
+      "es": "",
+      "de": ""
+    },
     "MarginCall1Notification": {
       "en": "Margin call 1",
       "es": "",
@@ -50,95 +45,100 @@
       "es": "",
       "de": ""
     },
-    "LiquidationNotification": {
-      "en": "",
-      "es": "",
-      "de": ""
-    },
     "OrderExecutedNotification": {
-      "en": "",
+      "en": "Order executed",
       "es": "",
       "de": ""
     },
     "OrderExpiredNotification": {
-      "en": "",
+      "en": "Order expired",
       "es": "",
       "de": ""
     },
     "PositionClosedNotification": {
-      "en": "",
+      "en": "Position closed",
+      "es": "",
+      "de": ""
+    },
+    "WithdrawalSucceededNotification": {
+      "en": "Withdrawal succeeded",
+      "es": "Retiro exitoso",
+      "de": "Auszahlung erfolgreich"
+    },
+    "WithdrawalFailedNotification": {
+      "en": "Withdrawal failed",
       "es": "",
       "de": ""
     }
   },
   "Bodies": {
     "AccountLockedNotification": {
-      "en": "accountlocked-body-en",
-      "es": "accountlocked-body-es",
-      "de": "accountlocked-body-de"
+      "en": "Trading and withdrawal is not allowed.",
+      "es": "",
+      "de": ""
     },
     "AccountUnlockedNotification": {
-      "en": "",
+      "en": "Trading and withdrawal is allowed.",
+      "es": "",
+      "de": ""
+    },
+    "CashLockedNotification": {
+      "en": "Withdrawal is not allowed",
+      "es": "",
+      "de": ""
+    },
+    "CashUnlockedNotification": {
+      "en": "Withdrawal is allowed",
       "es": "",
       "de": ""
     },
     "DepositSucceededNotification": {
-      "en": "",
+      "en": "{0}{1} has been deposited to the account {2}.",
       "es": "",
       "de": ""
     },
     "DepositFailedNotification": {
-      "en": "",
+      "en": "The deposit of {0}{1} to the account {2} has failed.",
+      "es": "",
+      "de": ""
+    },
+    "LiquidationNotification": {
+      "en": "Liquidation notification body????",
+      "es": "",
+      "de": ""
+    },
+    "MarginCall1Notification": {
+      "en": "Margincall1 notification body",
+      "es": "",
+      "de": ""
+    },
+    "MarginCall2Notification": {
+      "en": "Margincall2 notification body",
+      "es": "",
+      "de": ""
+    },
+    "OrderExecutedNotification": {
+      "en": "{0} {1} order for {2} {3} has been executed.",
+      "es": "",
+      "de": ""
+    },
+    "OrderExpiredNotification": {
+      "en": "{0} {1} order for {2} {3} has expired.",
+      "es": "",
+      "de": ""
+    },
+    "PositionClosedNotification": {
+      "en": "{0} position of {1} {2} has been closed. P&L of {3} has been realized.",
       "es": "",
       "de": ""
     },
     "WithdrawalSucceededNotification": {
       "en": "The withdrawal of {0} {1} to the account {2} has been completed successfully.",
-      "es": "El retiro de {0} {1} a la cuenta {2} se ha completado con éxito",
-      "de": "Die Auszahlung von {0} {1} auf das Konto {2} wurde erfolgreich abgeschlossen"
+      "es": "",
+      "de": ""
     },
     "WithdrawalFailedNotification": {
-      "en": "",
-      "es": "",
-      "de": ""
-    },
-    "CashLockedNotification": {
-      "en": "",
-      "es": "",
-      "de": ""
-    },
-    "CashUnlockedNotification": {
-      "en": "",
-      "es": "",
-      "de": ""
-    },
-    "MarginCall1Notification": {
-      "en": "",
-      "es": "",
-      "de": ""
-    },
-    "MarginCall2Notification": {
-      "en": "",
-      "es": "",
-      "de": ""
-    },
-    "LiquidationNotification": {
-      "en": "",
-      "es": "",
-      "de": ""
-    },
-    "OrderExecutedNotification": {
-      "en": "",
-      "es": "",
-      "de": ""
-    },
-    "OrderExpiredNotification": {
-      "en": "",
-      "es": "",
-      "de": ""
-    },
-    "PositionClosedNotification": {
-      "en": "",
+      "en": "The withdrawal of {0}{1} to the account {2} has failed.",
       "es": "",
       "de": ""
     }
