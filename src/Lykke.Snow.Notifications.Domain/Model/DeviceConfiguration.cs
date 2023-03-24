@@ -70,5 +70,20 @@ namespace Lykke.Snow.Notifications.Domain.Model
             Locale = locale;
             Notifications = notifications ?? new List<Notification>();
         }
+
+        /// <summary>
+        /// Creates default device configuration with all notification types enabled
+        /// </summary>
+        /// <param name="deviceId">Device id</param>
+        /// <param name="accountId">Account id</param>
+        /// <returns></returns>
+        public static DeviceConfiguration Default(string deviceId, string accountId)
+        {
+            var allNotificationTypes = Enum.GetValues(typeof(NotificationType))
+                .Cast<NotificationType>()
+                .Select(t => new Notification(t.ToString()));
+            
+            return new DeviceConfiguration(deviceId, accountId, notifications: allNotificationTypes.ToList());
+        }
     }
 }

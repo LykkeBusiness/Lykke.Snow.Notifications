@@ -228,5 +228,29 @@ namespace Lykke.Snow.Notifications.Tests
             Assert.Contains(result, n => n.Type == NotificationType.InboxMessages && n.Enabled);
             Assert.Contains(result, n => n.Type == NotificationType.PositionClosed && n.Enabled);
         }
+        
+        [Fact]
+        public void Default_CreatesDeviceConfigurationWithAllNotificationsEnabled()
+        {
+            // Arrange
+            var deviceId = "test-device-id";
+            var accountId = "test-account-id";
+            var defaultLocale = "en";
+
+            // Act
+            var config = DeviceConfiguration.Default(deviceId, accountId);
+
+            // Assert
+            Assert.Equal(deviceId, config.DeviceId);
+            Assert.Equal(accountId, config.AccountId);
+            Assert.Equal(defaultLocale, config.Locale);
+            Assert.NotNull(config.Notifications);
+
+            // Ensure all notification types are enabled
+            foreach (NotificationType type in Enum.GetValues(typeof(NotificationType)))
+            {
+                Assert.True(config.IsNotificationEnabled(type));
+            }
+        }
     }
 }
