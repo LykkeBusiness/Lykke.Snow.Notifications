@@ -5,6 +5,7 @@ using System.Linq;
 using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Services;
 using Lykke.Snow.Notifications.DomainServices.Model;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Lykke.Snow.Notifications.DomainServices.Services
@@ -12,10 +13,13 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
     public class LocalizationService : ILocalizationService
     {
         private readonly LocalizationData _localizationData;
+        private ILogger<LocalizationService> _logger;
 
-        public LocalizationService(string localizationFilePath)
+        public LocalizationService(string localizationFilePath, 
+            ILogger<LocalizationService> logger)
         {
             _localizationData = Initialize(localizationFilePath);
+            _logger = logger;
         }
 
         private LocalizationData Initialize(string localizationFilePath)
@@ -37,7 +41,9 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             }
             catch(JsonReaderException)
             {
-                throw new LocalizationFileParsingException();
+                var ex = new LocalizationFileParsingException();
+                _logger.LogError(ex, ex.Message);
+                throw;
             }
         }
 
@@ -54,15 +60,21 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             }
             catch(KeyNotFoundException)
             {
-                throw new TranslationNotFoundException(notificationType, language);
+                var ex = new TranslationNotFoundException(notificationType, language);
+                _logger.LogError(ex, ex.Message);
+                throw;
             }
             catch(NullReferenceException)
             {
-                throw new TranslationNotFoundException(notificationType, language);
+                var ex = new TranslationNotFoundException(notificationType, language);
+                _logger.LogError(ex, ex.Message);
+                throw;
             }
             catch(FormatException)
             {
-                throw new LocalizationFormatException(notificationType, language);
+                var ex = new LocalizationFormatException(notificationType, language);
+                _logger.LogError(ex, ex.Message);
+                throw;
             }
         }
         
