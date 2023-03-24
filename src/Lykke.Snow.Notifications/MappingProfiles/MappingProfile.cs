@@ -1,8 +1,9 @@
+using System;
 using System.Linq;
 using AutoMapper;
+using Lykke.Snow.Notifications.Client.Model.Requests;
 using Lykke.Snow.Notifications.Client.Models;
 using Lykke.Snow.Notifications.Domain.Model;
-using Lykke.Snow.Notifications.Domain.Repositories;
 using Lykke.Snow.Notifications.SqlRepositories.Entities;
 
 namespace Lykke.Snow.Notifications.MappingProfiles
@@ -12,6 +13,12 @@ namespace Lykke.Snow.Notifications.MappingProfiles
         public MappingProfile()
         {
             CreateMap<DeviceRegistration, DeviceRegistrationEntity>().ReverseMap();
+            CreateMap<RegisterDeviceRequest, DeviceRegistration>()
+                .ConstructUsing(ctx => 
+                    new DeviceRegistration(ctx.AccountId,
+                                           ctx.DeviceToken,
+                                           ctx.DeviceId,
+                                           DateTime.UtcNow));
             
             #region DeviceConfiguration
 

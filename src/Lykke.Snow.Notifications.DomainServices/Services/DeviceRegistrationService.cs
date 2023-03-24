@@ -16,16 +16,19 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
     public class DeviceRegistrationService : IDeviceRegistrationService
     {
         private readonly IDeviceRegistrationRepository _repository;
+        private readonly IDeviceConfigurationRepository _deviceConfigurationRepository;
         private readonly IFcmIntegrationService _fcmIntegrationService;
         private readonly ISystemClock _systemClock;
 
-        public DeviceRegistrationService(IDeviceRegistrationRepository repository, 
-            ISystemClock systemClock, 
-            IFcmIntegrationService fcmIntegrationService)
+        public DeviceRegistrationService(IDeviceRegistrationRepository repository,
+            ISystemClock systemClock,
+            IFcmIntegrationService fcmIntegrationService,
+            IDeviceConfigurationRepository deviceConfigurationRepository)
         {
             _repository = repository;
             _systemClock = systemClock;
             _fcmIntegrationService = fcmIntegrationService;
+            _deviceConfigurationRepository = deviceConfigurationRepository;
         }
 
         public async Task<Result<DeviceRegistrationErrorCode>> RegisterDeviceAsync(DeviceRegistration deviceRegistration)
@@ -38,6 +41,10 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             try
             {
                 await _repository.InsertAsync(deviceRegistration);
+                
+                await _deviceConfigurationRepository.AddOrUpdateAsync(
+                    DeviceConfiguration.Default(deviceId: deviceRegistration.DeviceId, accountId: deviceRegistration.AccountId));
+
                 return new Result<DeviceRegistrationErrorCode>();
             }
             catch(EntityAlreadyExistsException)
