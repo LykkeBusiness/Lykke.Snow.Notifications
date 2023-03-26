@@ -4,7 +4,7 @@
     <LangVersion>8.0</LangVersion>
     <Version>1.0.0</Version>
     <WarningsNotAsErrors>CS8604</WarningsNotAsErrors>
-    <NoWarn>CS8604</NoWarn>
+    <NoWarn>CS8604,CS8601</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
