@@ -22,6 +22,14 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             _logger = logger;
         }
 
+        // Constructor for unit tests
+        public LocalizationService(LocalizationData localizationData, 
+            ILogger<LocalizationService> logger)
+        {
+            _localizationData = localizationData;
+            _logger = logger;
+        }
+
         private LocalizationData Initialize(string localizationFilePath)
         {
             ThrowIfPathIsNotValid(localizationFilePath);
