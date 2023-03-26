@@ -5,18 +5,22 @@ using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Services;
 using FirebaseAdmin.Messaging;
 using Lykke.Snow.FirebaseIntegration.Exceptions;
-using Microsoft.Extensions.Logging;
+using Lykke.Snow.Notifications.Domain.Enums;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Lykke.Snow.Notifications.DomainServices.Services
 {
     public class NotificationService : INotificationService
     {
         private readonly IFcmIntegrationService _fcmIntegrationService;
+        private readonly ILocalizationService _localizationService;
 
-        public NotificationService(IFcmIntegrationService fcmIntegrationService)
+        public NotificationService(IFcmIntegrationService fcmIntegrationService, ILocalizationService localizationService)
         {
             _fcmIntegrationService =
                 fcmIntegrationService ?? throw new ArgumentNullException(nameof(fcmIntegrationService));
+            _localizationService = localizationService;
         }
 
         public async Task SendNotification(NotificationMessage message, string deviceToken)
@@ -64,6 +68,31 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                 },
                 Data = messageArg.KeyValueCollection
             };
+        }
+
+        public NotificationMessage BuildLocalizedNotificationMessage(NotificationType notificationType, string[] args, string locale)
+        {
+            var (title, body) = _localizationService.GetLocalizedText(
+                notificationType: Enum.GetName(notificationType), 
+                language: locale, 
+                parameters: args);
+
+            var notificationMessage = new NotificationMessage(
+                title, 
+                body, 
+                notificationType, 
+                new Dictionary<string, string>());
+            
+            return notificationMessage;
+        }
+
+        public bool IsDeviceTargeted(DeviceConfiguration deviceConfiguration, NotificationType type)
+        {
+            var enabledNotificationTypes = deviceConfiguration.EnabledNotifications.Select(x => x.Type.ToString()).ToHashSet();
+
+            var typeInStr = Enum.GetName(type);
+
+            return enabledNotificationTypes.Contains(typeInStr);
         }
     }
 }

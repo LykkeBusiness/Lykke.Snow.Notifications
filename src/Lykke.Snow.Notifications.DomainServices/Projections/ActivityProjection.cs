@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Common;
 using FirebaseAdmin.Messaging;
@@ -8,8 +6,6 @@ using JetBrains.Annotations;
 using Lykke.MarginTrading.Activities.Contracts.Models;
 using Lykke.Snow.FirebaseIntegration.Exceptions;
 using Lykke.Snow.Notifications.Domain.Enums;
-using Lykke.Snow.Notifications.Domain.Exceptions;
-using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Repositories;
 using Lykke.Snow.Notifications.Domain.Services;
 using Microsoft.Extensions.Logging;
@@ -43,8 +39,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
 
         private readonly IDeviceRegistrationService _deviceRegistrationService;
 
-        private readonly ILocalizationService _localizationService;
-        
         private readonly IDeviceConfigurationRepository _deviceConfigurationRepository;
 
         public ActivityProjection(ILogger<ActivityProjection> logger,
@@ -56,7 +50,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
             _logger = logger;
             _notificationService = notificationService;
             _deviceRegistrationService = deviceRegistrationService;
-            _localizationService = localizationService;
             _deviceConfigurationRepository = deviceConfigurationRepository;
         }
 
@@ -65,20 +58,14 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
         {
             _logger.LogInformation("A new activity event has just arrived {ActivityEvent}", e.ToJson());
             
-            if(!TryGetNotificationType(activityEvent: e, out var notificationTypeStr, out var notificationType))
-            {
-                // We silently ignore if there's no notification type is defined for the activity.
+            if(!TryGetNotificationType(activityEvent: e, out var notificationType))
                 return;
-            }
 
-            if(notificationTypeStr == null)
-                throw new NotificationTypeConversionException("could not get the NotificationType in string");
-            
             var deviceRegistrationsResult = await _deviceRegistrationService.GetDeviceRegistrationsAsync(accountId: e.Activity.AccountId);
             
             if(deviceRegistrationsResult.IsFailed)
             {
-                _logger.LogWarning("Could not get device tokens for the account {AccountId}", e.Activity.AccountId);
+                _logger.LogWarning("Could not get device tokens for the account {AccountId}. ErrorCode: {ErrorCode}", e.Activity.AccountId, deviceRegistrationsResult.Error);
                 return;
             }
 
@@ -88,20 +75,14 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
                 {
                     var deviceConfiguration = await _deviceConfigurationRepository.GetAsync(deviceId: deviceRegistration.DeviceId);
                         
-                    if(!Filter(deviceConfiguration, notificationTypeStr))
+                    if(!_notificationService.IsDeviceTargeted(deviceConfiguration, notificationType))
                         continue;
-
-                    var (title, body) = _localizationService.GetLocalizedText(
-                        notificationType: notificationTypeStr, 
-                        language: deviceConfiguration.Locale, 
-                        parameters: e.Activity.DescriptionAttributes);
-
-                    var notificationMessage = new NotificationMessage(
-                        title, 
-                        body, 
+                
+                    var notificationMessage = _notificationService.BuildLocalizedNotificationMessage(
                         notificationType, 
-                        new Dictionary<string, string>());
-                    
+                        args: e.Activity.DescriptionAttributes, 
+                        locale: deviceConfiguration.Locale);
+
                     await _notificationService.SendNotification(notificationMessage, deviceToken: deviceRegistration.DeviceToken);
 
                     _logger.LogInformation("Push notification has successfully been sent to the device {DeviceToken}: {PushNotificationPayload}",
@@ -114,29 +95,18 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
                         _logger.LogWarning("The notification could not be delivered to the device {DeviceToken} because it is no longer active.", deviceRegistration.DeviceToken);
                     }
                 }
-
             }
         }
         
-        private bool Filter(DeviceConfiguration deviceConfiguration, string notificationType)
-        {
-            var enabledNotificationTypes = deviceConfiguration.EnabledNotifications.Select(x => x.Type.ToString()).ToHashSet();
-            
-            return enabledNotificationTypes.Contains(notificationType);
-        }
-        
-        private bool TryGetNotificationType(ActivityEvent activityEvent, out string? typeStr, out NotificationType type)
+        private bool TryGetNotificationType(ActivityEvent activityEvent, out NotificationType type)
         {
             if(!_notificationTypeMapping.ContainsKey(activityEvent.Activity.Event))
             {
-                typeStr = null;
                 type = NotificationType.NotSpecified;
                 return false;
             }
             
             type = _notificationTypeMapping[activityEvent.Activity.Event];
-
-            typeStr = Enum.GetName(type);
 
             return true;
         }
