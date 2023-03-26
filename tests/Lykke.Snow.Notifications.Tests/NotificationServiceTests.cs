@@ -7,6 +7,7 @@ using Lykke.Snow.FirebaseIntegration.Exceptions;
 using Lykke.Snow.FirebaseIntegration.Interfaces;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Model;
+using Lykke.Snow.Notifications.Domain.Services;
 using Lykke.Snow.Notifications.DomainServices.Services;
 using Moq;
 using Xunit;
@@ -79,16 +80,21 @@ namespace Lykke.Snow.Notifications.Tests
             Assert.Equal(exceptionToBeThrown.Data, exception.Data);
         }
         
-        private NotificationService CreateSut(IFcmIntegrationService fcmServiceArg = null)
+        private NotificationService CreateSut(IFcmIntegrationService fcmServiceArg = null, ILocalizationService localizationServiceArg = null)
         {
             var fcmService = new Mock<IFcmIntegrationService>().Object;
+            var localizationService = new Mock<ILocalizationService>().Object;
 
             if(fcmServiceArg != null)
             {
                 fcmService = fcmServiceArg;
             }
+            if(localizationServiceArg != null)
+            {
+                localizationService = localizationServiceArg; 
+            }
 
-            return new NotificationService(fcmService);
+            return new NotificationService(fcmService, localizationService);
         }
     }
 }
