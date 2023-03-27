@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common;
@@ -81,7 +82,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
                     var notificationMessage = _notificationService.BuildLocalizedNotificationMessage(
                         notificationType, 
                         args: e.Activity.DescriptionAttributes, 
-                        locale: deviceConfiguration.Locale);
+                        locale: Enum.GetName(deviceConfiguration.Locale));
 
                     await _notificationService.SendNotification(notificationMessage, deviceToken: deviceRegistration.DeviceToken);
 

@@ -88,11 +88,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
         public bool IsDeviceTargeted(DeviceConfiguration deviceConfiguration, NotificationType type)
         {
-            var enabledNotificationTypes = deviceConfiguration.EnabledNotifications.Select(x => x.Type.ToString()).ToHashSet();
-
-            var typeInStr = Enum.GetName(type);
-
-            return enabledNotificationTypes.Contains(typeInStr);
+            return deviceConfiguration.IsNotificationEnabled(type);
         }
     }
 }
