@@ -5,9 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Lykke.Snow.Notifications
 {
-    internal sealed class Program
+    public sealed class Program
     {
-        public static string ApiName = "Notifications";
+        public const string ApiName = "Notifications";
 
         public static async Task Main(string[] args)
         {
