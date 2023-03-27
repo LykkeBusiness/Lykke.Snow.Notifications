@@ -65,7 +65,7 @@ namespace Lykke.Snow.Notifications.Tests
             
             var sut = CreateSut(mockRepository.Object, mockFcmIntegrationService.Object);
             
-            var result = await sut.RegisterDeviceAsync(deviceRegistration, "any-locale");
+            var result = await sut.RegisterDeviceAsync(deviceRegistration, "en");
             
             Assert.True(result.IsSuccess);
             Assert.False(result.IsFailed);
@@ -83,7 +83,7 @@ namespace Lykke.Snow.Notifications.Tests
 
             var sut = CreateSut(mockRepository.Object, mockFcmIntegrationService.Object);
             
-            await sut.RegisterDeviceAsync(deviceRegistration, "any-locale");
+            await sut.RegisterDeviceAsync(deviceRegistration, "en");
             
             mockRepository.Verify(mock => mock.AddOrUpdateAsync(It.Is<DeviceRegistration>(x => 
                 x.AccountId == deviceRegistration.AccountId &&
@@ -108,7 +108,7 @@ namespace Lykke.Snow.Notifications.Tests
             
             var sut = CreateSut(mockRepository.Object, mockFcmIntegrationService.Object);
             
-            var actual = await sut.RegisterDeviceAsync(deviceRegistration, "any-locale");
+            var actual = await sut.RegisterDeviceAsync(deviceRegistration, "en");
 
             Assert.True(actual.IsFailed);
             Assert.False(actual.IsSuccess);
@@ -146,7 +146,7 @@ namespace Lykke.Snow.Notifications.Tests
                 deviceConfigurationRepositoryArg: mockDeviceConfigurationRepository.Object);
             
             var deviceId = "any-device-id";
-            var locale = "any-locale";
+            var locale = "EN";
 
             var actual = await sut.RegisterDeviceAsync(deviceRegistration, locale);
             
@@ -154,7 +154,7 @@ namespace Lykke.Snow.Notifications.Tests
                 dc => 
                 dc.AccountId == deviceRegistration.AccountId &&
                 dc.DeviceId == deviceId &&
-                dc.Locale == locale
+                dc.Locale == Enum.Parse<Locale>(locale)
             )), Times.Once);
         }
         #endregion
