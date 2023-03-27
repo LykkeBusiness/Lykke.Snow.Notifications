@@ -128,7 +128,7 @@ namespace Lykke.Snow.Notifications.Tests
         {
             var sut = CreateSut(data);
             
-            Assert.Throws<LocalizationFormatException>(() => sut.GetLocalizedText(notificationType, language, args));
+            var ex = Assert.Throws<LocalizationFormatException>(() => sut.GetLocalizedText(notificationType, language, args));
         }
         
         private LocalizationService CreateSut(LocalizationData localizationDataArg)
