@@ -63,7 +63,7 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
                 }
                 
                 throw;
-            };
+            }
         }
 
         public async Task DeleteAsync(int oid)

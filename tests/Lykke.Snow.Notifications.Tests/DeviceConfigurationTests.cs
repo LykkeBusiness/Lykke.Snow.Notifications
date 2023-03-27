@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Model;
 using Xunit;
 
@@ -79,7 +80,7 @@ namespace Lykke.Snow.Notifications.Tests
         public void Constructor_SetsLocaleProperty()
         {
             // Arrange, Act
-            var deviceConfig = new DeviceConfiguration("deviceId", "accountId", "en");
+            var deviceConfig = new DeviceConfiguration("deviceId", "accountId");
 
             // Assert
             Assert.Equal("en", deviceConfig.Locale);
@@ -122,7 +123,7 @@ namespace Lykke.Snow.Notifications.Tests
                 new List<DeviceConfiguration.Notification>
                 {
                     new DeviceConfiguration.Notification("DepositSucceeded", false),
-                    new DeviceConfiguration.Notification("WithdrawalSucceeded", true),
+                    new DeviceConfiguration.Notification("WithdrawalSucceeded"),
                 });
 
             // Act
@@ -158,7 +159,7 @@ namespace Lykke.Snow.Notifications.Tests
                 new List<DeviceConfiguration.Notification>
                 {
                     new DeviceConfiguration.Notification("DepositSucceeded"),
-                    new DeviceConfiguration.Notification("AccountLocked", true),
+                    new DeviceConfiguration.Notification("AccountLocked"),
                 });
 
             // Act, Assert
@@ -178,7 +179,7 @@ namespace Lykke.Snow.Notifications.Tests
                 new List<DeviceConfiguration.Notification>
                 {
                     new DeviceConfiguration.Notification("DepositSucceeded"),
-                    new DeviceConfiguration.Notification("WithdrawalSucceeded", true),
+                    new DeviceConfiguration.Notification("WithdrawalSucceeded"),
                 });
 
             // Act
@@ -215,8 +216,8 @@ namespace Lykke.Snow.Notifications.Tests
                 new List<DeviceConfiguration.Notification>
                 {
                     new DeviceConfiguration.Notification("DepositSucceeded", false),
-                    new DeviceConfiguration.Notification("InboxMessage", true),
-                    new DeviceConfiguration.Notification("PositionClosed", true),
+                    new DeviceConfiguration.Notification("InboxMessage"),
+                    new DeviceConfiguration.Notification("PositionClosed"),
                     new DeviceConfiguration.Notification("AccountLocked", false),
                 });
 
