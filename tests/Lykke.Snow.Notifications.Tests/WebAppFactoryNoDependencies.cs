@@ -16,7 +16,7 @@ namespace Lykke.Snow.Notifications.Tests
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            builder.UseEnvironment("test");
+            builder.UseEnvironment("integration-tests");
             builder.UseSetting("SettingsUrl", "appsettings.test.json");
             
             builder.ConfigureServices(services =>
