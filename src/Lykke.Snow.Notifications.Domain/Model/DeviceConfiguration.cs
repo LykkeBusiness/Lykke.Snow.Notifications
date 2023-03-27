@@ -32,22 +32,48 @@ namespace Lykke.Snow.Notifications.Domain.Model
 
         public string DeviceId { get; }
         public string AccountId { get; }
-        public string Locale { get; set; }
+        public Locale Locale { get; }
         public IReadOnlyList<Notification> Notifications { get; }
 
-        public IEnumerable<Notification> EnabledNotifications => Notifications.Where(n => n.Enabled);
+        /// <summary>
+        /// The list of enabled notification types. Potentially, can be replaced
+        /// with the list of enabled notifications if and when we have additional
+        /// properties for a notification 
+        /// </summary>
+        public HashSet<NotificationType> EnabledNotificationTypes =>
+            Notifications.Where(n => n.Enabled).Select(n => n.Type).ToHashSet();
 
+        /// <summary>
+        /// Returns true if notification type is enabled
+        /// </summary>
+        /// <param name="type">Notification type enum</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public bool IsNotificationEnabled(NotificationType type)
         {
             if (Enum.IsDefined(typeof(NotificationType), type))
-                return EnabledNotifications.Any(n => n.Type == type);
-            
+                return EnabledNotificationTypes.Contains(type);
+
             throw new ArgumentException($"Notification type [{type}] is not supported");
         }
 
+        /// <summary>
+        /// Returns true if notification type is enabled
+        /// </summary>
+        /// <param name="type">Notification type string</param>
+        /// <returns></returns>
         public bool IsNotificationEnabled(string type) =>
             IsNotificationEnabled(Enum.Parse<NotificationType>(type, true));
 
+        /// <summary>
+        /// Creates new device configuration
+        /// </summary>
+        /// <param name="deviceId">Device id</param>
+        /// <param name="accountId">Account id</param>
+        /// <param name="locale">Supported locale</param>
+        /// <param name="notifications">Notification list</param>
+        /// <exception cref="ArgumentNullException">When device id is empty or account id is empty</exception>
+        /// <exception cref="ArgumentException">When locale is not supported</exception>
         public DeviceConfiguration(string deviceId,
             string accountId,
             string? locale = "en",
@@ -61,13 +87,12 @@ namespace Lykke.Snow.Notifications.Domain.Model
             if (string.IsNullOrWhiteSpace(accountId))
                 throw new ArgumentNullException(nameof(accountId), "Account id cannot be null or empty");
 
-            // todo: check the locale to ne in the list of allowed locales
-            if (string.IsNullOrWhiteSpace(locale))
-                throw new ArgumentNullException(nameof(locale), "Locale cannot be null or empty");
+            if (!Enum.TryParse<Locale>(locale, true, out var localeParsed))
+                throw new ArgumentException($"Locale type [{locale}] is not supported");
 
             DeviceId = deviceId;
             AccountId = accountId;
-            Locale = locale;
+            Locale = localeParsed;
             Notifications = notifications ?? new List<Notification>();
         }
 
