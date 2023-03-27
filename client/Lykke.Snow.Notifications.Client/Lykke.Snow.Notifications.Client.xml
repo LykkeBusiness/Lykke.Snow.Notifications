@@ -189,6 +189,11 @@
             </summary>
             <param name="errorCode">Error code</param>
         </member>
+        <member name="M:Lykke.Snow.Notifications.Client.Models.DeviceConfigurationResponse.#ctor">
+            <summary>
+            Constructor for deserialization
+            </summary>
+        </member>
         <member name="M:Lykke.Snow.Notifications.Client.Models.DeviceConfigurationResponse.op_Implicit(Lykke.Snow.Notifications.Client.Models.DeviceConfigurationErrorCodeContract)~Lykke.Snow.Notifications.Client.Models.DeviceConfigurationResponse">
             <summary>
             Implicit conversion from <see cref="T:Lykke.Snow.Notifications.Client.Models.DeviceConfigurationErrorCodeContract"/>

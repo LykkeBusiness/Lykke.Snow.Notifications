@@ -1,6 +1,7 @@
 using System;
 using JetBrains.Annotations;
 using Lykke.Snow.Contracts.Responses;
+using Newtonsoft.Json;
 
 namespace Lykke.Snow.Notifications.Client.Models
 {
@@ -36,6 +37,14 @@ namespace Lykke.Snow.Notifications.Client.Models
             
             DeviceConfiguration = null;
             ErrorCode = errorCode;
+        }
+        
+        /// <summary>
+        /// Constructor for deserialization
+        /// </summary>
+        [JsonConstructor]
+        private DeviceConfigurationResponse()
+        {
         }
 
         /// <summary>

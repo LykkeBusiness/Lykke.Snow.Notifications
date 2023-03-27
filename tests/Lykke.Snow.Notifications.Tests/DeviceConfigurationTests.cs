@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Model;
 using Xunit;
 
@@ -49,10 +49,24 @@ namespace Lykke.Snow.Notifications.Tests
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public void Constructor_ThrowsArgumentNullException_WhenLocaleIsEmpty(string locale)
+        [InlineData("not supported locale")]
+        public void Constructor_ThrowsArgumentNullException_WhenLocaleIsEmptyOrNotSupported(string locale)
         {
             // Arrange, Act, Assert
-            Assert.Throws<ArgumentNullException>(() => new DeviceConfiguration("deviceId", "accountId", locale));
+            Assert.Throws<ArgumentException>(() => new DeviceConfiguration("deviceId", "accountId", locale));
+        }
+        
+        [Theory]
+        [InlineData(Locale.EN)]
+        [InlineData(Locale.ES)]
+        [InlineData(Locale.DE)]
+        public void Constructor_Accepts_SupportedLocales(Locale locale)
+        {
+            // Arrange & Act
+            var exception = Record.Exception(() => new DeviceConfiguration("deviceId", "accountId", locale.ToString()));
+
+            // Assert
+            Assert.Null(exception);
         }
         
         [Fact]
@@ -79,10 +93,10 @@ namespace Lykke.Snow.Notifications.Tests
         public void Constructor_SetsLocaleProperty()
         {
             // Arrange, Act
-            var deviceConfig = new DeviceConfiguration("deviceId", "accountId", "en");
+            var deviceConfig = new DeviceConfiguration("deviceId", "accountId");
 
             // Assert
-            Assert.Equal("en", deviceConfig.Locale);
+            Assert.Equal(Locale.EN, deviceConfig.Locale);
         }
 
         [Fact]
@@ -122,7 +136,7 @@ namespace Lykke.Snow.Notifications.Tests
                 new List<DeviceConfiguration.Notification>
                 {
                     new DeviceConfiguration.Notification("DepositSucceeded", false),
-                    new DeviceConfiguration.Notification("WithdrawalSucceeded", true),
+                    new DeviceConfiguration.Notification("WithdrawalSucceeded"),
                 });
 
             // Act
@@ -158,7 +172,7 @@ namespace Lykke.Snow.Notifications.Tests
                 new List<DeviceConfiguration.Notification>
                 {
                     new DeviceConfiguration.Notification("DepositSucceeded"),
-                    new DeviceConfiguration.Notification("AccountLocked", true),
+                    new DeviceConfiguration.Notification("AccountLocked"),
                 });
 
             // Act, Assert
@@ -178,7 +192,7 @@ namespace Lykke.Snow.Notifications.Tests
                 new List<DeviceConfiguration.Notification>
                 {
                     new DeviceConfiguration.Notification("DepositSucceeded"),
-                    new DeviceConfiguration.Notification("WithdrawalSucceeded", true),
+                    new DeviceConfiguration.Notification("WithdrawalSucceeded"),
                 });
 
             // Act
@@ -215,18 +229,18 @@ namespace Lykke.Snow.Notifications.Tests
                 new List<DeviceConfiguration.Notification>
                 {
                     new DeviceConfiguration.Notification("DepositSucceeded", false),
-                    new DeviceConfiguration.Notification("InboxMessage", true),
-                    new DeviceConfiguration.Notification("PositionClosed", true),
+                    new DeviceConfiguration.Notification("InboxMessage"),
+                    new DeviceConfiguration.Notification("PositionClosed"),
                     new DeviceConfiguration.Notification("AccountLocked", false),
                 });
 
             // Act
-            var result = deviceConfig.EnabledNotifications.ToList();
+            var result = deviceConfig.EnabledNotificationTypes;
 
             // Assert
             Assert.Equal(2, result.Count);
-            Assert.Contains(result, n => n.Type == NotificationType.InboxMessage && n.Enabled);
-            Assert.Contains(result, n => n.Type == NotificationType.PositionClosed && n.Enabled);
+            Assert.Contains(result, n => n == NotificationType.InboxMessage);
+            Assert.Contains(result, n => n == NotificationType.PositionClosed);
         }
         
         [Fact]
@@ -235,7 +249,7 @@ namespace Lykke.Snow.Notifications.Tests
             // Arrange
             var deviceId = "test-device-id";
             var accountId = "test-account-id";
-            var defaultLocale = "en";
+            var defaultLocale = Locale.EN;
 
             // Act
             var config = DeviceConfiguration.Default(deviceId, accountId);

@@ -1,4 +1,4 @@
-﻿namespace Lykke.Snow.Notifications.Domain.Model
+﻿namespace Lykke.Snow.Notifications.Domain.Enums
 {
     public enum NotificationType
     {
