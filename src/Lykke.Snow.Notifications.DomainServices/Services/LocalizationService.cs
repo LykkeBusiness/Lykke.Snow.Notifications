@@ -82,7 +82,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             }
             catch(FormatException)
             {
-                var ex = new LocalizationFormatException(notificationType, language, _localizationData.Bodies[notificationType][language], arguments);
+                var ex = new LocalizationFormatException(notificationType, language, _localizationData.Bodies[notificationType][language], parameters);
                 _logger.LogError(ex, ex.Message);
                 throw ex;
             }
