@@ -70,19 +70,19 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             {
                 var ex = new TranslationNotFoundException(notificationType, language);
                 _logger.LogError(ex, ex.Message);
-                throw;
+                throw ex;
             }
             catch(NullReferenceException)
             {
                 var ex = new TranslationNotFoundException(notificationType, language);
                 _logger.LogError(ex, ex.Message);
-                throw;
+                throw ex;
             }
             catch(FormatException)
             {
                 var ex = new LocalizationFormatException(notificationType, language);
                 _logger.LogError(ex, ex.Message);
-                throw;
+                throw ex;
             }
         }
         
