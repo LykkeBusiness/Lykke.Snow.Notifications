@@ -90,5 +90,16 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
         {
             return deviceConfiguration.IsNotificationEnabled(type);
         }
+
+        public NotificationMessage BuildNotificationMessage(NotificationType notificationType, string title, string body)
+        {
+            var notificationMessage = new NotificationMessage(
+                title, 
+                body, 
+                notificationType, 
+                new Dictionary<string, string>());
+            
+            return notificationMessage;
+        }
     }
 }

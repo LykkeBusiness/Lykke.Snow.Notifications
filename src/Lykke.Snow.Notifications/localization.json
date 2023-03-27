@@ -22,8 +22,8 @@
     },
     "DepositSucceeded": {
       "en": "Deposit succeeded",
-      "es": "",
-      "de": ""
+      "es": "Depósito realizado correctamente",
+      "de": "Einzahlung erfolgreich"
     },
     "DepositFailed": {
       "en": "Deposit failed",
@@ -94,8 +94,8 @@
     },
     "DepositSucceeded": {
       "en": "{0}{1} has been deposited to the account.",
-      "es": "",
-      "de": ""
+      "es": "{0}{1} se ha depositado en la cuenta.",
+      "de": "{0}{1} wurde auf das Konto eingezahlt."
     },
     "DepositFailed": {
       "en": "The deposit of {0}{1} to the account {2} has failed.",
