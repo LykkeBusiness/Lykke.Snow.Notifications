@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Model;
 using Xunit;
@@ -236,12 +235,12 @@ namespace Lykke.Snow.Notifications.Tests
                 });
 
             // Act
-            var result = deviceConfig.EnabledNotifications.ToList();
+            var result = deviceConfig.EnabledNotificationTypes;
 
             // Assert
             Assert.Equal(2, result.Count);
-            Assert.Contains(result, n => n.Type == NotificationType.InboxMessage && n.Enabled);
-            Assert.Contains(result, n => n.Type == NotificationType.PositionClosed && n.Enabled);
+            Assert.Contains(result, n => n == NotificationType.InboxMessage);
+            Assert.Contains(result, n => n == NotificationType.PositionClosed);
         }
         
         [Fact]

@@ -25,7 +25,7 @@ namespace Lykke.Snow.Notifications.MappingProfiles
                 .ForMember(x => x.CreatedOn, opt => opt.Ignore());
 
             CreateMap<DeviceConfiguration, DeviceConfigurationContract>()
-                .ForMember(x => x.NotificationsOn, opt => opt.MapFrom(x => x.EnabledNotifications.Select(n => n.Type)));
+                .ForMember(x => x.NotificationsOn, opt => opt.MapFrom(x => x.EnabledNotificationTypes));
 
             CreateMap<DeviceConfigurationContract, DeviceConfiguration>()
                 .ForCtorParam("notifications",
