@@ -85,7 +85,7 @@ namespace Lykke.Snow.Notifications.Tests
                 Assert.Equal(DeviceConfigurationErrorCodeContract.None, result.ErrorCode);
                 Assert.Equal(deviceConfiguration.DeviceId, result.DeviceConfiguration?.DeviceId);
                 Assert.Equal(deviceConfiguration.AccountId, result.DeviceConfiguration?.AccountId);
-                Assert.Equal(deviceConfiguration.Locale, result.DeviceConfiguration?.Locale);
+                Assert.Equal(deviceConfiguration.Locale, result.DeviceConfiguration?.Locale, StringComparer.OrdinalIgnoreCase);
                 Assert.Equal(deviceConfiguration.NotificationsOn, result.DeviceConfiguration?.NotificationsOn);
             });
         }
@@ -115,15 +115,34 @@ namespace Lykke.Snow.Notifications.Tests
             await getResponse.AssertErrorAsync(DeviceConfigurationErrorCodeContract.DoesNotExist);
         }
 
-        [Fact]
-        public async Task AddOrUpdate_ReturnsInvalidInput_ForInvalidDeviceConfiguration()
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        [InlineData("InvalidNotificationType")]
+        public async Task AddOrUpdate_ReturnsInvalidInput_ForInvalidNotificationType(string notificationType)
         {
             var invalidDeviceConfiguration = new DeviceConfigurationContract
             {
                 DeviceId = "TestDevice",
                 AccountId = "TestAccount",
                 Locale = "en",
-                NotificationsOn = new[] { "InvalidType" }
+                NotificationsOn = new[] { notificationType }
+            };
+
+            var response = await _client.PostAsJsonAsync("/api/DeviceConfiguration", invalidDeviceConfiguration);
+            await response.AssertErrorAsync(DeviceConfigurationErrorCodeContract.InvalidInput);
+        }
+
+        [Fact]
+        public async Task AddOrUpdate_ReturnsInvalidInput_ForInvalidLocale()
+        {
+            var invalidDeviceConfiguration = new DeviceConfigurationContract
+            {
+                DeviceId = "TestDevice",
+                AccountId = "TestAccount",
+                Locale = "UnsupportedLocale",
+                NotificationsOn = new[] { NotificationType.DepositSucceeded.ToString() }
             };
 
             var response = await _client.PostAsJsonAsync("/api/DeviceConfiguration", invalidDeviceConfiguration);

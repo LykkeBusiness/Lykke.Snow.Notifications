@@ -50,10 +50,24 @@ namespace Lykke.Snow.Notifications.Tests
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public void Constructor_ThrowsArgumentNullException_WhenLocaleIsEmpty(string locale)
+        [InlineData("not supported locale")]
+        public void Constructor_ThrowsArgumentNullException_WhenLocaleIsEmptyOrNotSupported(string locale)
         {
             // Arrange, Act, Assert
-            Assert.Throws<ArgumentNullException>(() => new DeviceConfiguration("deviceId", "accountId", locale));
+            Assert.Throws<ArgumentException>(() => new DeviceConfiguration("deviceId", "accountId", locale));
+        }
+        
+        [Theory]
+        [InlineData(Locale.EN)]
+        [InlineData(Locale.ES)]
+        [InlineData(Locale.DE)]
+        public void Constructor_Accepts_SupportedLocales(Locale locale)
+        {
+            // Arrange & Act
+            var exception = Record.Exception(() => new DeviceConfiguration("deviceId", "accountId", locale.ToString()));
+
+            // Assert
+            Assert.Null(exception);
         }
         
         [Fact]
@@ -83,7 +97,7 @@ namespace Lykke.Snow.Notifications.Tests
             var deviceConfig = new DeviceConfiguration("deviceId", "accountId");
 
             // Assert
-            Assert.Equal("en", deviceConfig.Locale);
+            Assert.Equal(Locale.EN, deviceConfig.Locale);
         }
 
         [Fact]
@@ -236,7 +250,7 @@ namespace Lykke.Snow.Notifications.Tests
             // Arrange
             var deviceId = "test-device-id";
             var accountId = "test-account-id";
-            var defaultLocale = "en";
+            var defaultLocale = Locale.EN;
 
             // Act
             var config = DeviceConfiguration.Default(deviceId, accountId);

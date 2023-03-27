@@ -32,9 +32,8 @@ namespace Lykke.Snow.Notifications.Domain.Model
 
         public string DeviceId { get; }
         public string AccountId { get; }
-        public string Locale { get; set; }
+        public Locale Locale { get; }
         public IReadOnlyList<Notification> Notifications { get; }
-
         public IEnumerable<Notification> EnabledNotifications => Notifications.Where(n => n.Enabled);
 
         public bool IsNotificationEnabled(NotificationType type)
@@ -61,13 +60,12 @@ namespace Lykke.Snow.Notifications.Domain.Model
             if (string.IsNullOrWhiteSpace(accountId))
                 throw new ArgumentNullException(nameof(accountId), "Account id cannot be null or empty");
 
-            // todo: check the locale to ne in the list of allowed locales
-            if (string.IsNullOrWhiteSpace(locale))
-                throw new ArgumentNullException(nameof(locale), "Locale cannot be null or empty");
+            if (!Enum.TryParse<Locale>(locale, true, out var localeParsed))
+                throw new ArgumentException($"Locale type [{locale}] is not supported");
 
             DeviceId = deviceId;
             AccountId = accountId;
-            Locale = locale;
+            Locale = localeParsed;
             Notifications = notifications ?? new List<Notification>();
         }
 

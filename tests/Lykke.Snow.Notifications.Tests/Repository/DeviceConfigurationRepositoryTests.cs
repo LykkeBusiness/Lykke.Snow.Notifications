@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.MappingProfiles;
 using Lykke.Snow.Notifications.SqlRepositories.Entities;
@@ -68,11 +69,11 @@ namespace Lykke.Snow.Notifications.Tests.Repository
             // Arrange
             const string deviceId = "test-device-4";
             var repo = new DeviceConfigurationRepository(new MssqlContextFactoryFake(), _mapper);
-            await SeedDatabaseAsync(deviceId, "test-account-4", "fr");
+            await SeedDatabaseAsync(deviceId, "test-account-4", Locale.DE.ToString());
 
             var updatedDeviceConfiguration = new DeviceConfiguration(deviceId,
                 "test-account-updated-4",
-                locale: "fr-updated",
+                locale: Locale.ES.ToString(),
                 notifications: new List<DeviceConfiguration.Notification>
                 {
                     new DeviceConfiguration.Notification("DepositSucceeded")

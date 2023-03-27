@@ -72,6 +72,10 @@ namespace Lykke.Snow.Notifications.Controllers
 
                 return DeviceConfigurationErrorCodeContract.None;
             }
+            catch (ArgumentException)
+            {
+                return DeviceConfigurationErrorCodeContract.InvalidInput;
+            }
             catch (AutoMapperMappingException e) when (e.InnerException is ArgumentException)
             {
                 return DeviceConfigurationErrorCodeContract.InvalidInput;
