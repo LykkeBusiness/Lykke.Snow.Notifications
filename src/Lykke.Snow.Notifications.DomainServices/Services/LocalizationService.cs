@@ -59,6 +59,8 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
         {
             try 
             {
+                language = language.ToLower();
+
                 var title = _localizationData.Titles[notificationType][language];
                 var body = _localizationData.Bodies[notificationType][language];
                 
