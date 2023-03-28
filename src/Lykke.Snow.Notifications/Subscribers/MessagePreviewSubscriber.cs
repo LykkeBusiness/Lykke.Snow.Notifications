@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
@@ -58,21 +57,28 @@ namespace Lykke.Snow.Notifications.Subscribers
                     .Start();
         }
 
-        private async Task ProcessMessageAsync(MessagePreviewEvent arg)
+        private async Task ProcessMessageAsync(MessagePreviewEvent e)
         {
-            _logger.LogInformation("A new MessagePreviewEvent has arrived {Event}", arg.ToJson());
+            _logger.LogInformation("A new MessagePreviewEvent has arrived {Event}", e.ToJson());
             
-            // TODO: may need to do nullity check against arg.Recipients.
+            if(e.Recipients == null)
+                return;
             
-            var accountIds = arg.Recipients.First();
+           var accountIds = e.Recipients.ToArray();
             
-           var deviceRegistrationsResult = await _deviceRegistrationService.GetDeviceRegistrationsAsync(accountId: accountId);
+           var deviceRegistrationsResult = await _deviceRegistrationService.GetDeviceRegistrationsAsync(accountIds: accountIds);
            
            if(deviceRegistrationsResult.IsFailed)
            {
-               _logger.LogWarning("Could not get device tokens for the account {AccountId}. ErrorCode: {ErrorCode}", accountId, deviceRegistrationsResult.Error);
+               _logger.LogWarning("Could not get device tokens for the list of Account ids {AccountIds}. ErrorCode: {ErrorCode}", 
+                    string.Join(", ", accountIds), deviceRegistrationsResult.Error);
+
                return;
            }
+               
+          var notificationMessage = _notificationService.BuildNotificationMessage(NotificationType.InboxMessage, 
+               title: e.Subject,
+               body: e.Content);
 
            foreach(var deviceRegistration in deviceRegistrationsResult.Value)
            {
@@ -82,10 +88,6 @@ namespace Lykke.Snow.Notifications.Subscribers
                        
                    if(!_notificationService.IsDeviceTargeted(deviceConfiguration, NotificationType.InboxMessage))
                        continue;
-               
-                   var notificationMessage = _notificationService.BuildNotificationMessage(NotificationType.InboxMessage, 
-                        title: "Inbox",
-                        body: arg.Content);
 
                    await _notificationService.SendNotification(notificationMessage, deviceToken: deviceRegistration.DeviceToken);
 
