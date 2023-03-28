@@ -93,7 +93,7 @@
       "de": ""
     },
     "DepositSucceeded": {
-      "en": "{0}{1} has been deposited to the account.",
+      "en": "{0}{1} has been deposited to the account {2}.",
       "es": "{0}{1} se ha depositado en la cuenta.",
       "de": "{0}{1} wurde auf das Konto eingezahlt."
     },
@@ -103,17 +103,17 @@
       "de": ""
     },
     "Liquidation": {
-      "en": "Liquidation  body????",
+      "en": "The sum of margin requirements of all positions in relation to total capital exceeded max allowed value. Liquidation of your open positions is started in order to release margin.",
       "es": "",
       "de": ""
     },
     "MarginCall1": {
-      "en": "Margincall1  body",
+      "en": "The sum of margin requirements of all positions in relation to total capital has reached a high value.",
       "es": "",
       "de": ""
     },
     "MarginCall2": {
-      "en": "Margincall2  body",
+      "en": "The sum of margin requirements of all positions in relation to total capital has reached a very high value. Please, check your trading account.",
       "es": "",
       "de": ""
     },
