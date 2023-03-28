@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Lykke.Snow.Notifications.Domain.Exceptions;
@@ -46,12 +47,12 @@ namespace Lykke.Snow.Notifications.Tests
         {
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText), "AccountLocked", "en", new string[]{}, "Account locked", "Account has been locked." };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText), "AccountLocked", "es", new string[]{}, "Coenta bloqueada", "La cuenta ha sido bloqueada" };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText), "AccountLocked", "de", new string[]{}, "Konto gesperrt", "Konto wurde gesperrt" };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText), "DepositSucceeded", "en", new string[]{ "100", "EUR", "A001" }, "Deposit Succeeded", "100EUR has been deposited to the account A001." };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText), "DepositSucceeded", "es", new string[]{ "100", "EUR", "A001" }, "Depósito exitoso", "100EUR se ha depositado en la cuenta A001." };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText), "DepositSucceeded", "de", new string[]{ "100", "EUR", "A001" }, "Einzahlung erfolgreich", "100EUR wurde auf das Konto A001 eingezahlt." };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText) ?? throw new ArgumentNullException(), "AccountLocked", "en", new string[]{}, "Account locked", "Account has been locked." };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText) ?? throw new ArgumentNullException(), "AccountLocked", "es", new string[]{}, "Coenta bloqueada", "La cuenta ha sido bloqueada" };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText) ?? throw new ArgumentNullException(), "AccountLocked", "de", new string[]{}, "Konto gesperrt", "Konto wurde gesperrt" };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText) ?? throw new ArgumentNullException(), "DepositSucceeded", "en", new string[]{ "100", "EUR", "A001" }, "Deposit Succeeded", "100EUR has been deposited to the account A001." };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText) ?? throw new ArgumentNullException(), "DepositSucceeded", "es", new string[]{ "100", "EUR", "A001" }, "Depósito exitoso", "100EUR se ha depositado en la cuenta A001." };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText) ?? throw new ArgumentNullException(), "DepositSucceeded", "de", new string[]{ "100", "EUR", "A001" }, "Einzahlung erfolgreich", "100EUR wurde auf das Konto A001 eingezahlt." };
             }
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -61,9 +62,9 @@ namespace Lykke.Snow.Notifications.Tests
         {
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText), "en", "notification-type-that-does-not-exist" };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText), "es", "notification-type-that-does-not-exist" };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText), "de", "notification-type-that-does-not-exist" };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText) ?? throw new ArgumentNullException(), "en", "notification-type-that-does-not-exist" };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText) ?? throw new ArgumentNullException(), "es", "notification-type-that-does-not-exist" };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText) ?? throw new ArgumentNullException(), "de", "notification-type-that-does-not-exist" };
             }
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -73,8 +74,8 @@ namespace Lykke.Snow.Notifications.Tests
         {
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText), "language-that-does-not-exist", "AccountLocked" };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText), "language-that-does-not-exist", "DepositSucceeded" };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText) ?? throw new ArgumentNullException(), "language-that-does-not-exist", "AccountLocked" };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText) ?? throw new ArgumentNullException(), "language-that-does-not-exist", "DepositSucceeded" };
             }
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -84,9 +85,9 @@ namespace Lykke.Snow.Notifications.Tests
         {
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText), "en", "DepositSucceeded", new string [] { "we pass two args", "while we should've three" } };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText), "es", "DepositSucceeded", new string [] { "we pass two args", "while we should've three" } };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText), "de", "DepositSucceeded", new string [] { "we pass two args", "while we should've three" } };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText) ?? throw new ArgumentNullException(), "en", "DepositSucceeded", new string [] { "we pass two args", "while we should've three" } };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText) ?? throw new ArgumentNullException(), "es", "DepositSucceeded", new string [] { "we pass two args", "while we should've three" } };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText) ?? throw new ArgumentNullException(), "de", "DepositSucceeded", new string [] { "we pass two args", "while we should've three" } };
             }
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
