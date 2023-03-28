@@ -40,7 +40,7 @@ namespace Lykke.Snow.Notifications.Controllers
             return MapToResponse(result, Response);
         }
 
-        [HttpPost]
+        [HttpDelete]
         [ProducesResponseType(typeof(ErrorCodeResponse<DeviceRegistrationErrorCodeContract>), (int) HttpStatusCode.OK)]
         public async Task<ErrorCodeResponse<DeviceRegistrationErrorCodeContract>> UnregisterDevice(UnregisterDeviceRequest request)
         {
