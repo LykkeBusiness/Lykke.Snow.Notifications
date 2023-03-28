@@ -65,8 +65,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
         [UsedImplicitly]
         public async Task Handle(ActivityEvent e)
         {
-            _logger.LogInformation("A new activity event has just arrived {ActivityEvent}", e.ToJson());
-            
             if(!TryGetNotificationType(activityEvent: e, out var notificationType))
                 return;
 
