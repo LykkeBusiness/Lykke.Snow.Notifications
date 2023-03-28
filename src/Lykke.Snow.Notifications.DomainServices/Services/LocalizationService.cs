@@ -18,6 +18,9 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
         public LocalizationService(string localizationFilePath, 
             ILogger<LocalizationService> logger)
         {
+            if (string.IsNullOrEmpty(localizationFilePath))
+                throw new ArgumentNullException(nameof(localizationFilePath));
+            
             _localizationData = Initialize(localizationFilePath);
             _logger = logger;
         }
@@ -87,9 +90,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
         
         private static void ThrowIfPathIsNotValid(string localizationFilePath)
         {
-            if (string.IsNullOrEmpty(localizationFilePath))
-                throw new ArgumentNullException(nameof(localizationFilePath));
-            
             if (!File.Exists(localizationFilePath))
                 throw new LocalizationFileNotFoundException(localizationFilePath);
         }
