@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Common;
 using FirebaseAdmin.Messaging;
@@ -15,7 +16,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
 {
     public class ActivityProjection
     {
-        private Dictionary<ActivityTypeContract, NotificationType> _notificationTypeMapping = new Dictionary<ActivityTypeContract, NotificationType>()
+        private static Dictionary<ActivityTypeContract, NotificationType> _notificationTypeMapping = new Dictionary<ActivityTypeContract, NotificationType>()
         {
             { ActivityTypeContract.AccountTradingDisabled, NotificationType.AccountLocked },
             { ActivityTypeContract.AccountTradingEnabled, NotificationType.AccountUnlocked },
@@ -32,6 +33,13 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
             { ActivityTypeContract.OrderExpiry, NotificationType.OrderExpired },
             { ActivityTypeContract.PositionClosing, NotificationType.PositionClosed },
             { ActivityTypeContract.PositionPartialClosing, NotificationType.PositionClosed }
+        };
+
+        private static Dictionary<ActivityTypeContract, Func<ActivityEvent, string[]>> descriptionEnrichments = 
+            new Dictionary<ActivityTypeContract, Func<ActivityEvent, string[]>>
+        {
+            {ActivityTypeContract.AccountWithdrawalSucceeded, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }},
+            {ActivityTypeContract.AccountDepositSucceeded, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }}
         };
 
         private readonly ILogger<ActivityProjection> _logger;
@@ -69,6 +77,13 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
                 _logger.LogWarning("Could not get device tokens for the account {AccountId}. ErrorCode: {ErrorCode}", e.Activity.AccountId, deviceRegistrationsResult.Error);
                 return;
             }
+            
+            var notificationArguments = e.Activity.DescriptionAttributes;
+            
+            // Not all activities have enough number of description attributes
+            // to fill in localization template. Here we enrich them.
+            if(descriptionEnrichments.ContainsKey(e.Activity.Event))
+                notificationArguments = descriptionEnrichments[e.Activity.Event](e);
 
             foreach(var deviceRegistration in deviceRegistrationsResult.Value)
             {
@@ -81,7 +96,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
                 
                     var notificationMessage = _notificationService.BuildLocalizedNotificationMessage(
                         notificationType, 
-                        args: e.Activity.DescriptionAttributes, 
+                        args: notificationArguments, 
                         locale: Enum.GetName(deviceConfiguration.Locale));
 
                     await _notificationService.SendNotification(notificationMessage, deviceToken: deviceRegistration.DeviceToken);
