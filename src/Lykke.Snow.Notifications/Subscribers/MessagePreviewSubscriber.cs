@@ -62,12 +62,9 @@ namespace Lykke.Snow.Notifications.Subscribers
         {
             _logger.LogInformation("A new MessagePreviewEvent has arrived {Event}", arg.ToJson());
             
-            // TODO: what happens if there are multiple recipients?
-            // TODO: is it always guaranteed to have accountId? can it be equal to something else?
             // TODO: may need to do nullity check against arg.Recipients.
-            var accountId = arg.Recipients.First();
             
-            // TODO: make nullity check on message content
+            var accountIds = arg.Recipients.First();
             
            var deviceRegistrationsResult = await _deviceRegistrationService.GetDeviceRegistrationsAsync(accountId: accountId);
            
