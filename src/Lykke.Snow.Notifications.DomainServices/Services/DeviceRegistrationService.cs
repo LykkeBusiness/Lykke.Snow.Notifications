@@ -98,5 +98,17 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             return new Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>(result);
         }
 
+        public async Task<Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>> GetDeviceRegistrationsAsync(string[] accountIds)
+        {
+            if(accountIds == null)
+                throw new ArgumentNullException(nameof(accountIds));
+            
+            var result = await _repository.GetDeviceRegistrationsByAccountIdsAsync(accountIds);
+
+            if(result == null)
+                return new Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>(Enumerable.Empty<DeviceRegistration>());
+
+            return new Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>(result);
+        }
     }
 }

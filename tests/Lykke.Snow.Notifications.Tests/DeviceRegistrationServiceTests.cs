@@ -49,6 +49,25 @@ namespace Lykke.Snow.Notifications.Tests
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
+
+        class MultipleAccountIdsDeviceRegistrationCollectionTestData : IEnumerable<object[]>
+        {
+            public IEnumerator<object[]> GetEnumerator()
+            {
+                yield return new object[] 
+                { 
+                    new string[] { "account-id-1", "account-id-2", "account-id-3" },
+                    new List<DeviceRegistration> 
+                    {
+                        new DeviceRegistration("account-id-1", "device-token-1", "device-id-1", DateTime.UtcNow), 
+                        new DeviceRegistration("account-id-2", "device-token-2", "device-id-2", DateTime.UtcNow), 
+                        new DeviceRegistration("account-id-3", "device-token-3", "device-id-3", DateTime.UtcNow)
+                    }
+                };
+            }
+
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        }
         
 
         #region RegisterDevice
@@ -283,7 +302,6 @@ namespace Lykke.Snow.Notifications.Tests
        }
        #endregion
 
-        
        #region GetDeviceRegistrationsByAccountId
 
        [Fact]
@@ -294,7 +312,6 @@ namespace Lykke.Snow.Notifications.Tests
            await Assert.ThrowsAsync<ArgumentNullException>(
                () => sut.GetDeviceRegistrationsAsync(""));
        }
-
        
        [Theory]
        [ClassData(typeof(DeviceRegistrationCollectionTestData))]
@@ -328,6 +345,57 @@ namespace Lykke.Snow.Notifications.Tests
             var sut = CreateSut(mockRepository.Object);
             
             var actual = await sut.GetDeviceRegistrationsAsync("any-account-id");
+            
+            Assert.True(actual.IsSuccess);
+            Assert.False(actual.IsFailed);
+            Assert.Empty(actual.Value);
+       }
+
+       #endregion
+
+       #region GetDeviceregistrationsByMultipleAccountIds
+
+       [Fact]
+       public async Task GetDeviceRegistrationsByAccountIds_ShouldThrowException_IfNullArrayIsNotProvided()
+       {
+           var sut = CreateSut();
+           
+           await Assert.ThrowsAsync<ArgumentNullException>(
+               () => sut.GetDeviceRegistrationsAsync((string[])null));
+       }
+
+       [Theory]
+       [ClassData(typeof(MultipleAccountIdsDeviceRegistrationCollectionTestData))]
+       public async Task GetDeviceRegistrationsByAccountIds_HappyPath_ShouldntReturnError(string[] accountIds, IReadOnlyList<DeviceRegistration> deviceRegistrations)
+       {
+           var mockRepository = new Mock<IDeviceRegistrationRepository>();
+
+           // Setup the mock so that it will return the list of DeviceRegistrations without any error
+           mockRepository.Setup(mock => mock.GetDeviceRegistrationsByAccountIdsAsync(accountIds))
+               .ReturnsAsync(deviceRegistrations);
+           
+           var sut = CreateSut(mockRepository.Object);
+           
+           var result = await sut.GetDeviceRegistrationsAsync(accountIds);
+           
+           Assert.True(result.IsSuccess);
+           Assert.False(result.IsFailed);
+           Assert.Null(result.Error);
+           Assert.Equal(deviceRegistrations, result.Value);
+       }
+
+       [Fact]
+       public async Task GetDeviceRegistrationsByMultipleAccountIds_ShouldReturnEmptyCollection_IfRepositoryReturnsNull()
+       {
+           var mockRepository = new Mock<IDeviceRegistrationRepository>();
+
+           // Setup the mock so that it will return the list of DeviceRegistrations without any error
+           mockRepository.Setup(mock => mock.GetDeviceRegistrationsByAccountIdsAsync(It.IsAny<string[]>()))
+               .Returns(Task.FromResult<IReadOnlyList<DeviceRegistration>>(null));
+            
+            var sut = CreateSut(mockRepository.Object);
+            
+            var actual = await sut.GetDeviceRegistrationsAsync(new string[] { "account-id-1", "account-id-2", "account-id-3" });
             
             Assert.True(actual.IsSuccess);
             Assert.False(actual.IsFailed);
