@@ -93,12 +93,12 @@
       "de": ""
     },
     "DepositSucceeded": {
-      "en": "{0}{1} has been deposited to the account {2}.",
-      "es": "{0}{1} se ha depositado en la cuenta.",
-      "de": "{0}{1} wurde auf das Konto eingezahlt."
+      "en": "{0} {1} has been deposited to the account {2}.",
+      "es": "{0} {1} se ha depositado en la cuenta.",
+      "de": "{0} {1} wurde auf das Konto eingezahlt."
     },
     "DepositFailed": {
-      "en": "The deposit of {0}{1} to the account {2} has failed.",
+      "en": "The deposit of {0} {1} to the account {2} has failed.",
       "es": "",
       "de": ""
     },
@@ -138,7 +138,7 @@
       "de": ""
     },
     "WithdrawalFailed": {
-      "en": "The withdrawal of {0}{1} to the account {2} has failed.",
+      "en": "The withdrawal of {0} {1} to the account {2} has failed.",
       "es": "",
       "de": ""
     }
