@@ -33,5 +33,13 @@ namespace Lykke.Snow.Notifications.Domain.Services
         /// <param name="accountId"></param>
         /// <returns>An IEnumerable<> to the iterate the collection of device registrations. Returns empty collection if there's no any.</returns>
         Task<Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>> GetDeviceRegistrationsAsync(string accountId);
+
+        /// <summary>
+        /// Get all device registrations by given set of account ids.
+        /// Intented to be used when multiple clients are targeted.
+        /// </summary>
+        /// <param name="accountIds"></param>
+        /// <returns>An IEnumerable<> to the iterate the collection of device registrations. Returns empty collection if there's no any.</returns>
+        Task<Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>> GetDeviceRegistrationsAsync(string[] accountIds);
     }
 }

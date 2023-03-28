@@ -44,6 +44,16 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
             return entitites;
         }
 
+        public async Task<IReadOnlyList<DeviceRegistration>> GetDeviceRegistrationsByAccountIdsAsync(string[] accountIds)
+        {
+            await using var context = _contextFactory.CreateDataContext();
+
+            var entitites = await context.DeviceRegistrations.Where(x => accountIds.Any(id => id == x.AccountId))
+                .Select(devRegEntity => _mapper.Map<DeviceRegistration>(devRegEntity)).ToListAsync();
+            
+            return entitites;
+        }
+
         public async Task AddOrUpdateAsync(DeviceRegistration deviceRegistration)
         {
             await using var context = _contextFactory.CreateDataContext();
