@@ -66,6 +66,9 @@ namespace Lykke.Snow.FirebaseIntegration.Services
 
         public async Task<bool> IsDeviceTokenValid(string deviceToken)
         {
+            if(string.IsNullOrEmpty(deviceToken))
+                return false;
+
             try 
             {
                 var result = await FirebaseMessaging.DefaultInstance.SendAsync(
@@ -86,6 +89,5 @@ namespace Lykke.Snow.FirebaseIntegration.Services
 
             return true;
         }
-
     }
 }

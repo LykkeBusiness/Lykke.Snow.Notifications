@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Lykke.Snow.Common.Model;
 using Lykke.Snow.Contracts.Responses;
+using Lykke.Snow.Notifications.Client;
 using Lykke.Snow.Notifications.Client.Model;
 using Lykke.Snow.Notifications.Client.Model.Requests;
 using Lykke.Snow.Notifications.Domain.Enums;
@@ -17,7 +18,7 @@ namespace Lykke.Snow.Notifications.Controllers
     [ApiController]
     [Authorize]
     [Route("api/[controller]")]
-    public class DeviceRegistrationController : ControllerBase
+    public class DeviceRegistrationController : ControllerBase, INotificationsApi
     {
         private readonly IDeviceRegistrationService _deviceRegistrationService;
         private readonly IMapper _mapper;
@@ -28,7 +29,7 @@ namespace Lykke.Snow.Notifications.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost("register")]
+        [HttpPost]
         [ProducesResponseType(typeof(ErrorCodeResponse<DeviceRegistrationErrorCodeContract>), (int) HttpStatusCode.OK)]
         public async Task<ErrorCodeResponse<DeviceRegistrationErrorCodeContract>> RegisterDevice(RegisterDeviceRequest request)
         {
@@ -39,7 +40,7 @@ namespace Lykke.Snow.Notifications.Controllers
             return MapToResponse(result, Response);
         }
 
-        [HttpPost("unregister")]
+        [HttpPost]
         [ProducesResponseType(typeof(ErrorCodeResponse<DeviceRegistrationErrorCodeContract>), (int) HttpStatusCode.OK)]
         public async Task<ErrorCodeResponse<DeviceRegistrationErrorCodeContract>> UnregisterDevice(UnregisterDeviceRequest request)
         {
