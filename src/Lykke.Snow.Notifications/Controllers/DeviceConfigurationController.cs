@@ -13,6 +13,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Lykke.Snow.Notifications.Controllers
 {
+    /// <summary>
+    /// Provides API for device configuration
+    /// </summary>
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
@@ -27,6 +30,11 @@ namespace Lykke.Snow.Notifications.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Retrieves a device configuration by its ID.
+        /// </summary>
+        /// <param name="deviceId">Device id</param>
+        /// <returns></returns>
         [HttpGet("{deviceId}")]
         [ProducesResponseType(typeof(DeviceConfigurationResponse), (int)HttpStatusCode.OK)]
         public async Task<DeviceConfigurationResponse> Get([FromRoute] string deviceId)
@@ -44,6 +52,11 @@ namespace Lykke.Snow.Notifications.Controllers
             }
         }
 
+        /// <summary>
+        /// Deletes a device configuration by its ID.
+        /// </summary>
+        /// <param name="deviceId">Device id</param>
+        /// <returns></returns>
         [HttpDelete("{deviceId}")]
         [ProducesResponseType(typeof(ErrorCodeResponse<DeviceConfigurationErrorCodeContract>), (int)HttpStatusCode.OK)]
         public async Task<ErrorCodeResponse<DeviceConfigurationErrorCodeContract>> Delete([FromRoute] string deviceId)
@@ -60,6 +73,11 @@ namespace Lykke.Snow.Notifications.Controllers
             return DeviceConfigurationErrorCodeContract.None;
         }
 
+        /// <summary>
+        /// Adds or updates a device configuration.
+        /// </summary>
+        /// <param name="deviceConfiguration"></param>
+        /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(typeof(ErrorCodeResponse<DeviceConfigurationErrorCodeContract>), (int)HttpStatusCode.OK)]
         public async Task<ErrorCodeResponse<DeviceConfigurationErrorCodeContract>> AddOrUpdate(
