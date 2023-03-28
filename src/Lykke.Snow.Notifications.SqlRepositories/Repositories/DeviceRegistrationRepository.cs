@@ -69,7 +69,7 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
             await TryUpdateAsync(context, deviceRegistration, existingEntity);
         }
 
-        public async Task DeleteAsync(int oid)
+        public async Task RemoveAsync(int oid)
         {
             await using var context = _contextFactory.CreateDataContext();
             var entity = new DeviceRegistrationEntity() { Oid = oid };
