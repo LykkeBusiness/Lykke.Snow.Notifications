@@ -41,6 +41,8 @@ namespace Lykke.Snow.Notifications.Startup
 
                     if (!string.IsNullOrWhiteSpace(settings.CurrentValue.NotificationService.NotificationServiceClient?.ApiKey))
                         options.AddApiKeyAwareness();
+                    
+                    options.EnableXmlDocumentation();
                 })
                 .AddSwaggerGenNewtonsoftSupport();
 
