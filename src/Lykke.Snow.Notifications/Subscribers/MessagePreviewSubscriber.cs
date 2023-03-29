@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
@@ -78,7 +79,8 @@ namespace Lykke.Snow.Notifications.Subscribers
                
           var notificationMessage = _notificationService.BuildNotificationMessage(NotificationType.InboxMessage, 
                title: e.Subject,
-               body: e.Content);
+               body: e.Content,
+               keyValuePairs: new Dictionary<string, string>());
 
            foreach(var deviceRegistration in deviceRegistrationsResult.Value)
            {

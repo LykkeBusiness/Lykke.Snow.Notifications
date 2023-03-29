@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Model;
@@ -24,7 +25,7 @@ namespace Lykke.Snow.Notifications.Domain.Services
         /// <param name="args"></param>
         /// <param name="locale"></param>
         /// <returns></returns>
-        Task<NotificationMessage> BuildLocalizedNotificationMessage(NotificationType notificationType, string[] args, string locale);
+        Task<NotificationMessage> BuildLocalizedNotificationMessage(NotificationType notificationType, string[] args, string locale, Dictionary<string, string> keyValuePairs);
 
         /// <summary>
         /// Builds notification type with given title and body
@@ -33,7 +34,7 @@ namespace Lykke.Snow.Notifications.Domain.Services
         /// <param name="args"></param>
         /// <param name="locale"></param>
         /// <returns></returns>
-        NotificationMessage BuildNotificationMessage(NotificationType notificationType, string title, string body);
+        NotificationMessage BuildNotificationMessage(NotificationType notificationType, string title, string body, Dictionary<string, string> keyValuePairs);
 
         /// <summary>
         /// Checks if the notification type is enabled for the given device

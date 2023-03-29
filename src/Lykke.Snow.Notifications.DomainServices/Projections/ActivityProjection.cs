@@ -92,7 +92,8 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
                     var notificationMessage = await _notificationService.BuildLocalizedNotificationMessage(
                         notificationType, 
                         args: notificationArguments, 
-                        locale: Enum.GetName(deviceConfiguration.Locale));
+                        locale: Enum.GetName(deviceConfiguration.Locale),
+                        keyValuePairs: new Dictionary<string, string>());
 
                     await _notificationService.SendNotification(notificationMessage, deviceToken: deviceRegistration.DeviceToken);
 

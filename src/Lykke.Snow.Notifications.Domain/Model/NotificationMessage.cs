@@ -44,6 +44,7 @@ namespace Lykke.Snow.Notifications.Domain.Model
             Title = title;
             Body = body;
             KeyValueCollection = keyValueCollection;
+            NotificationType = type;
         }
     }
 }

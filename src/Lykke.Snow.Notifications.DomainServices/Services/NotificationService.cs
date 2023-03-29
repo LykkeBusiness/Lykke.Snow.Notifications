@@ -7,7 +7,6 @@ using FirebaseAdmin.Messaging;
 using Lykke.Snow.FirebaseIntegration.Exceptions;
 using Lykke.Snow.Notifications.Domain.Enums;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Lykke.Snow.Notifications.DomainServices.Services
 {
@@ -70,8 +69,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             };
         }
 
-        // TODO: cover with unit tests
-        public async Task<NotificationMessage> BuildLocalizedNotificationMessage(NotificationType notificationType, string[] args, string locale)
+        public async Task<NotificationMessage> BuildLocalizedNotificationMessage(NotificationType notificationType, string[] args, string locale, Dictionary<string, string> keyValuePairs)
         {
             var (title, body) = await _localizationService.GetLocalizedTextAsync(
                 notificationType: Enum.GetName(notificationType), 
@@ -82,7 +80,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                 title, 
                 body, 
                 notificationType, 
-                new Dictionary<string, string>());
+                keyValuePairs);
             
             return notificationMessage;
         }
@@ -92,14 +90,13 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             return deviceConfiguration.IsNotificationEnabled(type);
         }
 
-        // TODO: cover with unit tests
-        public NotificationMessage BuildNotificationMessage(NotificationType notificationType, string title, string body)
+        public NotificationMessage BuildNotificationMessage(NotificationType notificationType, string title, string body, Dictionary<string, string> keyValuePairs)
         {
             var notificationMessage = new NotificationMessage(
                 title, 
                 body, 
                 notificationType, 
-                new Dictionary<string, string>());
+                keyValuePairs);
             
             return notificationMessage;
         }
