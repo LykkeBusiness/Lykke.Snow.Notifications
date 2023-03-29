@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Lykke.Snow.Notifications.Domain.Exceptions;
 
@@ -5,17 +6,19 @@ namespace Lykke.Snow.Notifications.DomainServices.Model
 {
     public class LocalizationData
     {
-        public IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> Titles { get; set; }
-        public IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> Bodies { get; set; }
+        public IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> Titles { get; }
+        public IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> Bodies { get; }
         
-        public void ThrowIfDataIsInvalid()
+        public LocalizationData(IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> titles, IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> bodies)
         {
-            if(Titles == null)
+            if(titles == null)
                 throw new LocalizationFileParsingException();
 
-            if(Bodies == null)
+            if(bodies == null)
                 throw new LocalizationFileParsingException();
+            
+            Titles = titles;
+            Bodies = bodies;
         }
     }
-
 }

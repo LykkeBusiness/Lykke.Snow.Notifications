@@ -98,8 +98,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
         {
             if(localizationData == null)
                 throw new LocalizationFileParsingException();
-            
-            localizationData.ThrowIfDataIsInvalid();
         }
     }
 }
