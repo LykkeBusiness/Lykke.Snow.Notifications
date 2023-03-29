@@ -75,8 +75,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             {
                 await _repository.RemoveAsync(oid: result.Oid);
 
-                await _deviceConfigurationRepository.RemoveAsync(deviceId: result.DeviceId);
-
                 return new Result<DeviceRegistrationErrorCode>();
             }
             catch(EntityNotFoundException)
