@@ -24,7 +24,7 @@ namespace Lykke.Snow.Notifications.Domain.Services
         /// <param name="args"></param>
         /// <param name="locale"></param>
         /// <returns></returns>
-        NotificationMessage BuildLocalizedNotificationMessage(NotificationType notificationType, string[] args, string locale);
+        Task<NotificationMessage> BuildLocalizedNotificationMessage(NotificationType notificationType, string[] args, string locale);
 
         /// <summary>
         /// Builds notification type with given title and body

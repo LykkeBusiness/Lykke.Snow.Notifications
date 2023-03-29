@@ -91,7 +91,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
                     if(!_notificationService.IsDeviceTargeted(deviceConfiguration, notificationType))
                         continue;
                 
-                    var notificationMessage = _notificationService.BuildLocalizedNotificationMessage(
+                    var notificationMessage = await _notificationService.BuildLocalizedNotificationMessage(
                         notificationType, 
                         args: notificationArguments, 
                         locale: Enum.GetName(deviceConfiguration.Locale));

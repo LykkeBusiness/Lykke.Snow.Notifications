@@ -71,9 +71,9 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
         }
 
         // TODO: cover with unit tests
-        public NotificationMessage BuildLocalizedNotificationMessage(NotificationType notificationType, string[] args, string locale)
+        public async Task<NotificationMessage> BuildLocalizedNotificationMessage(NotificationType notificationType, string[] args, string locale)
         {
-            var (title, body) = _localizationService.GetLocalizedText(
+            var (title, body) = await _localizationService.GetLocalizedTextAsync(
                 notificationType: Enum.GetName(notificationType), 
                 language: locale, 
                 parameters: args);

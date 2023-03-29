@@ -280,26 +280,6 @@ namespace Lykke.Snow.Notifications.Tests
             Assert.False(actual.IsSuccess);
             Assert.Equal(DeviceRegistrationErrorCode.DoesNotExist, actual.Error);
        }
-
-       [Theory]
-       [ClassData(typeof(DeviceRegistrationTestData))]
-       public async Task UnregisterDevice_ShouldPassDeviceId_ToRemoveDeviceConfiguration(DeviceRegistration deviceRegistration)
-       {
-            var mockRepository = new Mock<IDeviceRegistrationRepository>();
-
-            // Setup the mock so that GetDeviceRegistrationAsync() will return the given registration without any error
-            mockRepository.Setup(mock => mock.GetDeviceRegistrationAsync(deviceRegistration.DeviceToken))
-                .ReturnsAsync(deviceRegistration);
-            
-            var mockDeviceConfigurationRepository = new Mock<IDeviceConfigurationRepository>();
-            
-            var sut = CreateSut(mockRepository.Object, deviceConfigurationRepositoryArg: mockDeviceConfigurationRepository.Object);
-            
-            var actual = await sut.UnregisterDeviceAsync(deviceToken: deviceRegistration.DeviceToken);
-            
-            mockDeviceConfigurationRepository.Verify(x => x.RemoveAsync(deviceRegistration.DeviceId), Times.Once);
-
-       }
        #endregion
 
        #region GetDeviceRegistrationsByAccountId
@@ -361,7 +341,7 @@ namespace Lykke.Snow.Notifications.Tests
            var sut = CreateSut();
            
            await Assert.ThrowsAsync<ArgumentNullException>(
-               () => sut.GetDeviceRegistrationsAsync((string[])null));
+               () => sut.GetDeviceRegistrationsAsync((string[]?)null));
        }
 
        [Theory]

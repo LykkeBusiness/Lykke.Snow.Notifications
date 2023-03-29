@@ -50,10 +50,10 @@ namespace Lykke.Snow.Notifications.Tests
         }
 
         
-        private ActivityProjection CreateSut(INotificationService notificationServiceArg = null,
-            IDeviceRegistrationService deviceRegistrationServiceArg = null,
-            ILocalizationService localizationServiceArg = null,
-            IDeviceConfigurationRepository deviceConfigurationRepositoryArg = null)
+        private ActivityProjection CreateSut(INotificationService? notificationServiceArg = null,
+            IDeviceRegistrationService? deviceRegistrationServiceArg = null,
+            ILocalizationService? localizationServiceArg = null,
+            IDeviceConfigurationRepository? deviceConfigurationRepositoryArg = null)
         {
             var mockLogger = new Mock<ILogger<ActivityProjection>>();
 
