@@ -2,7 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Lykke.Snow.Notifications.Domain.Exceptions;
-using Lykke.Snow.Notifications.DomainServices.Model;
+using Lykke.Snow.Notifications.Domain.Model;
+using Lykke.Snow.Notifications.Domain.Services;
 using Lykke.Snow.Notifications.DomainServices.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -92,6 +93,24 @@ namespace Lykke.Snow.Notifications.Tests
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
+        [Fact]
+        public void GetLocalizedText_ShouldCallLoad_IfLocalizationDataIsNull()
+        {
+            var mockDataProvider = new Mock<ILocalizationDataProvider>();
+
+            var sut = CreateSut(mockDataProvider.Object);
+            
+            try
+            {
+               sut.GetLocalizedText("any-type", "any-lang", new string[]{});
+               sut.GetLocalizedText("any-type", "any-lang", new string[]{});
+            }
+            catch(Exception)
+            {
+            }
+            
+            mockDataProvider.Verify(x => x.Load(), Times.Once);
+        }
         
         [Theory]
         [ClassData(typeof(LocalizationHappyPathTestData))]
@@ -132,11 +151,21 @@ namespace Lykke.Snow.Notifications.Tests
             var ex = Assert.Throws<LocalizationFormatException>(() => sut.GetLocalizedText(notificationType, language, args));
         }
         
-        private LocalizationService CreateSut(LocalizationData localizationDataArg)
+        private LocalizationService CreateSut(LocalizationData data)
         {
             var mockLogger = new Mock<ILogger<LocalizationService>>();
 
-            return new LocalizationService(localizationDataArg, mockLogger.Object);
+            var mockProvider = new Mock<ILocalizationDataProvider>();
+            mockProvider.Setup(x => x.Load()).Returns(data);
+
+            return new LocalizationService(mockLogger.Object, mockProvider.Object);
+        }
+
+        private LocalizationService CreateSut(ILocalizationDataProvider dataProvider)
+        {
+            var mockLogger = new Mock<ILogger<LocalizationService>>();
+
+            return new LocalizationService(mockLogger.Object, dataProvider);
         }
     }
 }

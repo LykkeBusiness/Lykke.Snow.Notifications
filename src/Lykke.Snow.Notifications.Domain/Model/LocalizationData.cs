@@ -1,8 +1,7 @@
-using System;
 using System.Collections.Generic;
 using Lykke.Snow.Notifications.Domain.Exceptions;
 
-namespace Lykke.Snow.Notifications.DomainServices.Model
+namespace Lykke.Snow.Notifications.Domain.Model
 {
     public class LocalizationData
     {
