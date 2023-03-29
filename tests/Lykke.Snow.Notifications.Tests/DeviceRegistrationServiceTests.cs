@@ -227,8 +227,8 @@ namespace Lykke.Snow.Notifications.Tests
             mockRepository.Setup(mock => mock.GetDeviceRegistrationAsync(deviceRegistration.DeviceToken))
                 .ReturnsAsync(deviceRegistration);
             
-            // Setup the mock so that DeleteAsync() gets executed without exception
-            mockRepository.Setup(mock => mock.DeleteAsync(deviceRegistration.Oid))
+            // Setup the mock so that RemoveAsync() gets executed without exception
+            mockRepository.Setup(mock => mock.RemoveAsync(deviceRegistration.Oid))
                 .Returns(Task.CompletedTask);
             
             var sut = CreateSut(mockRepository.Object);
@@ -242,7 +242,7 @@ namespace Lykke.Snow.Notifications.Tests
         
         [Theory]
         [ClassData(typeof(DeviceRegistrationTestData))]
-        public async Task UnregisterDevice_ShouldPassDeviceToken_ToDeleteAsync(DeviceRegistration deviceRegistration)
+        public async Task UnregisterDevice_ShouldPassDeviceToken_ToRemoveAsync(DeviceRegistration deviceRegistration)
         {
             var mockRepository = new Mock<IDeviceRegistrationRepository>();
 
@@ -255,7 +255,7 @@ namespace Lykke.Snow.Notifications.Tests
             await sut.UnregisterDeviceAsync(deviceToken: deviceRegistration.DeviceToken);
 
             mockRepository.Verify(mock => 
-                mock.DeleteAsync(It.Is<int>(x => x == deviceRegistration.Oid)), Times.Once);
+                mock.RemoveAsync(It.Is<int>(x => x == deviceRegistration.Oid)), Times.Once);
         }
         
        [Theory]
@@ -269,7 +269,7 @@ namespace Lykke.Snow.Notifications.Tests
                 .ReturnsAsync(deviceRegistration);
             
             // Setup the mock so that it will throw EntityNotFoundException
-            mockRepository.Setup(mock => mock.DeleteAsync(deviceRegistration.Oid))
+            mockRepository.Setup(mock => mock.RemoveAsync(deviceRegistration.Oid))
                 .Throws<EntityNotFoundException>();
             
             var sut = CreateSut(mockRepository.Object);

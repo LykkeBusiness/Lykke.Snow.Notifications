@@ -73,9 +73,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
             try
             {
-                await _repository.DeleteAsync(oid: result.Oid);
-
-                await _deviceConfigurationRepository.RemoveAsync(deviceId: result.DeviceId);
+                await _repository.RemoveAsync(oid: result.Oid);
 
                 return new Result<DeviceRegistrationErrorCode>();
             }
