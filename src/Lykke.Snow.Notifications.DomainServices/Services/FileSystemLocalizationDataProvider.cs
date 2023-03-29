@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Services;
@@ -19,11 +20,11 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             _logger = logger;
         }
 
-        public LocalizationData Load()
+        public async Task<LocalizationData> Load()
         {
             ThrowIfPathIsNotValid(_localizationFilePath);
 
-            var jsonText = File.ReadAllText(_localizationFilePath);
+            var jsonText = await File.ReadAllTextAsync(_localizationFilePath);
             
             try
             {

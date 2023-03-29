@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Services;
@@ -18,15 +19,14 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
         public LocalizationService(ILogger<LocalizationService> logger, 
             ILocalizationDataProvider localizationDataProvider)
         {
-
             _logger = logger;
             _localizationDataProvider = localizationDataProvider;
         }
 
-        public (string, string) GetLocalizedText(string notificationType, string language, IReadOnlyList<string> parameters)
+        public async Task<(string, string)> GetLocalizedTextAsync(string notificationType, string language, IReadOnlyList<string> parameters)
         {
             if(_localizationData == null)
-                _localizationData = _localizationDataProvider.Load();
+                _localizationData = await _localizationDataProvider.Load();
 
             try 
             {

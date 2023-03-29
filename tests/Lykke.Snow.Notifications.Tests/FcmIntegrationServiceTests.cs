@@ -44,12 +44,7 @@ namespace Lykke.Snow.Notifications.Tests
         
         private FcmIntegrationService CreateSut(string? credentialsFilePath)
         {
-            if(credentialsFilePath == null)
-            {
-                return new FcmIntegrationService(credentialsFilePath: credentialsFilePath);
-            }
-
-            return new FcmIntegrationService(credentialsFilePath: string.Empty);
+            return new FcmIntegrationService(credentialsFilePath: credentialsFilePath);
         }
     }
 }

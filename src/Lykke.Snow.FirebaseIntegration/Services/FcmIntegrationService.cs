@@ -13,7 +13,7 @@ namespace Lykke.Snow.FirebaseIntegration.Services
     {
         private readonly string _credentialsFilePath;
 
-        public FcmIntegrationService(string credentialsFilePath)
+        public FcmIntegrationService(string? credentialsFilePath)
         {
             _credentialsFilePath = credentialsFilePath ?? throw new ArgumentNullException(nameof(credentialsFilePath));
 
