@@ -16,7 +16,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
 {
     public class ActivityProjection
     {
-        private static IReadOnlyDictionary<ActivityTypeContract, NotificationType> _notificationTypeMapping = new Dictionary<ActivityTypeContract, NotificationType>()
+        private IReadOnlyDictionary<ActivityTypeContract, NotificationType> _notificationTypeMapping = new Dictionary<ActivityTypeContract, NotificationType>()
         {
             { ActivityTypeContract.AccountTradingDisabled, NotificationType.AccountLocked },
             { ActivityTypeContract.AccountTradingEnabled, NotificationType.AccountUnlocked },
@@ -35,7 +35,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
             { ActivityTypeContract.PositionPartialClosing, NotificationType.PositionClosed }
         };
 
-        private static IReadOnlyDictionary<ActivityTypeContract, Func<ActivityEvent, string[]>> descriptionEnrichments = 
+        private IReadOnlyDictionary<ActivityTypeContract, Func<ActivityEvent, string[]>> descriptionEnrichments = 
             new Dictionary<ActivityTypeContract, Func<ActivityEvent, string[]>>
         {
             {ActivityTypeContract.AccountWithdrawalSucceeded, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }},
@@ -76,11 +76,9 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
                 return;
             }
             
-            var notificationArguments = e.Activity.DescriptionAttributes;
-            
             // Not all activities have enough number of description attributes
             // to fill in localization template. Here we enrich them.
-            EnrichActivityDescriptions(descriptionEnrichments, e);
+            var notificationArguments = EnrichActivityDescriptions(descriptionEnrichments, e);
 
             foreach(var deviceRegistration in deviceRegistrationsResult.Value)
             {
@@ -126,8 +124,8 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
         
         public static string[] EnrichActivityDescriptions(IReadOnlyDictionary<ActivityTypeContract, Func<ActivityEvent, string[]>> enrichments, ActivityEvent e)
         {
-            if(descriptionEnrichments.ContainsKey(e.Activity.Event))
-               return descriptionEnrichments[e.Activity.Event](e);
+            if(enrichments.ContainsKey(e.Activity.Event))
+               return enrichments[e.Activity.Event](e);
             
             return e.Activity.DescriptionAttributes;
         }
