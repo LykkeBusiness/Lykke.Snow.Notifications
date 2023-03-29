@@ -70,6 +70,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             };
         }
 
+        // TODO: cover with unit tests
         public NotificationMessage BuildLocalizedNotificationMessage(NotificationType notificationType, string[] args, string locale)
         {
             var (title, body) = _localizationService.GetLocalizedText(
@@ -91,6 +92,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             return deviceConfiguration.IsNotificationEnabled(type);
         }
 
+        // TODO: cover with unit tests
         public NotificationMessage BuildNotificationMessage(NotificationType notificationType, string title, string body)
         {
             var notificationMessage = new NotificationMessage(
