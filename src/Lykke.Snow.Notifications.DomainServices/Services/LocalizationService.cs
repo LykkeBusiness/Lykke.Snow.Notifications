@@ -1,62 +1,33 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Lykke.Snow.Notifications.Domain.Exceptions;
+using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Services;
-using Lykke.Snow.Notifications.DomainServices.Model;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace Lykke.Snow.Notifications.DomainServices.Services
 {
     public class LocalizationService : ILocalizationService
     {
-        private readonly LocalizationData _localizationData;
+        private readonly ILocalizationDataProvider _localizationDataProvider;
         private ILogger<LocalizationService> _logger;
+        
+        private LocalizationData? _localizationData;
 
-        public LocalizationService(string localizationFilePath, 
-            ILogger<LocalizationService> logger)
+        public LocalizationService(ILogger<LocalizationService> logger, 
+            ILocalizationDataProvider localizationDataProvider)
         {
-            if (string.IsNullOrEmpty(localizationFilePath))
-                throw new ArgumentNullException(nameof(localizationFilePath));
-            
-            _localizationData = Initialize(localizationFilePath);
             _logger = logger;
+            _localizationDataProvider = localizationDataProvider;
         }
 
-        // Constructor for unit tests
-        public LocalizationService(LocalizationData localizationData, 
-            ILogger<LocalizationService> logger)
+        public async Task<(string, string)> GetLocalizedTextAsync(string notificationType, string language, IReadOnlyList<string> parameters)
         {
-            _localizationData = localizationData;
-            _logger = logger;
-        }
+            if(_localizationData == null)
+                _localizationData = await _localizationDataProvider.Load();
 
-        private LocalizationData Initialize(string localizationFilePath)
-        {
-            ThrowIfPathIsNotValid(localizationFilePath);
-
-            var jsonText = File.ReadAllText(localizationFilePath);
-            
-            try
-            {
-                var result = JsonConvert.DeserializeObject<LocalizationData>(jsonText);
-                
-                ThrowIfDataIsNotValid(result);
-                
-                return result;
-            }
-            catch(JsonReaderException)
-            {
-                var ex = new LocalizationFileParsingException();
-                _logger.LogError(ex, ex.Message);
-                throw ex;
-            }
-        }
-
-        public (string, string) GetLocalizedText(string notificationType, string language, IReadOnlyList<string> parameters)
-        {
             try 
             {
                 language = language.ToLower();
@@ -86,20 +57,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                 _logger.LogError(ex, ex.Message);
                 throw ex;
             }
-        }
-        
-        private static void ThrowIfPathIsNotValid(string localizationFilePath)
-        {
-            if (!File.Exists(localizationFilePath))
-                throw new LocalizationFileNotFoundException(localizationFilePath);
-        }
-        
-        private void ThrowIfDataIsNotValid(LocalizationData localizationData)
-        {
-            if(localizationData == null)
-                throw new LocalizationFileParsingException();
-            
-            localizationData.ThrowIfDataIsInvalid();
         }
     }
 }

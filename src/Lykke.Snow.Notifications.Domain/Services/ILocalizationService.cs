@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Lykke.Snow.Notifications.Domain.Services
 {
@@ -14,6 +15,6 @@ namespace Lykke.Snow.Notifications.Domain.Services
         /// <param name="language"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        (string, string) GetLocalizedText(string notificationType, string language, IReadOnlyList<string> parameters);
+        Task<(string, string)> GetLocalizedTextAsync(string notificationType, string language, IReadOnlyList<string> parameters);
     }
 }

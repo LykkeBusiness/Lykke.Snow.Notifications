@@ -35,6 +35,10 @@ namespace Lykke.Snow.Notifications.Modules
 
             builder.RegisterType<LocalizationService>()
                 .As<ILocalizationService>()
+                .SingleInstance();
+
+            builder.RegisterType<FileSystemLocalizationDataProvider>()
+                .As<ILocalizationDataProvider>()
                 .WithParameter("localizationFilePath", "localization.json")
                 .SingleInstance();
         }
