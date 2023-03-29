@@ -58,7 +58,7 @@ namespace Lykke.Snow.Notifications.Subscribers
                     .Start();
         }
 
-        private async Task ProcessMessageAsync(MessagePreviewEvent e)
+        public async Task ProcessMessageAsync(MessagePreviewEvent e)
         {
             _logger.LogInformation("A new MessagePreviewEvent has arrived {Event}", e.ToJson());
             
