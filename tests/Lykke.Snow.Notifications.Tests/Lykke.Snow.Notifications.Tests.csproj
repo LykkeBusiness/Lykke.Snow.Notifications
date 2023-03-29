@@ -5,7 +5,6 @@
     <Version>1.0.0</Version>
     <Nullable>enable</Nullable>
     <WarningsNotAsErrors>CS8604</WarningsNotAsErrors>
-    <NoWarn>CS8604</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
