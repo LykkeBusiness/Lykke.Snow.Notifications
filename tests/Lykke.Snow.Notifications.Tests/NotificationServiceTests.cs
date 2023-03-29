@@ -26,6 +26,28 @@ namespace Lykke.Snow.Notifications.Tests
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
 
+        class TargetingTestData : IEnumerable<object[]>
+        {
+            DeviceConfiguration deviceConfiguration = new DeviceConfiguration("any-device-id", "any-account-id", "en", 
+                    new List<DeviceConfiguration.Notification> {
+                        new DeviceConfiguration.Notification("DepositSucceeded", true),
+                        new DeviceConfiguration.Notification("WithdrawalSucceeded", true),
+                        new DeviceConfiguration.Notification("AccountLocked", true),
+                        new DeviceConfiguration.Notification("AccountUnlocked", false),
+                }.AsReadOnly());
+            
+            public IEnumerator<object[]> GetEnumerator()
+            {
+                yield return new object[] { deviceConfiguration, NotificationType.DepositSucceeded, true };
+                yield return new object[] { deviceConfiguration, NotificationType.WithdrawalSucceeded, true };
+                yield return new object[] { deviceConfiguration, NotificationType.AccountLocked, true };
+                yield return new object[] { deviceConfiguration, NotificationType.AccountUnlocked, false };
+                yield return new object[] { deviceConfiguration, NotificationType.DepositFailed, false };
+            }
+
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        }
+
         [Fact]
         public void InstantiateNotificationMessage_WithEmptyTitleAndBody_ShouldResultInException()
         {
@@ -79,6 +101,21 @@ namespace Lykke.Snow.Notifications.Tests
             Assert.Equal(exceptionToBeThrown.Message, exception.Message);
             Assert.Equal(exceptionToBeThrown.Data, exception.Data);
         }
+        
+        [Theory]
+        [ClassData(typeof(TargetingTestData))]
+        public void IsDeviceTargeted_ShouldReturnIfDeviceTargeted_ByDeviceConfiguration(
+            DeviceConfiguration deviceConfiguration, 
+            NotificationType notificationType, 
+            bool expected)
+        {
+            var sut = CreateSut();
+            
+            var result = sut.IsDeviceTargeted(deviceConfiguration, notificationType);
+            
+            Assert.Equal(expected, result);
+        }
+
         
         private NotificationService CreateSut(IFcmIntegrationService fcmServiceArg = null, ILocalizationService localizationServiceArg = null)
         {
