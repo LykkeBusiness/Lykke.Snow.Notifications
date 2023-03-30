@@ -163,45 +163,7 @@ namespace Lykke.Snow.Notifications.Tests
             Assert.Equal(expected: notificationMessage.KeyValueCollection, actual: fcmMessage.Data);
         }
         #endregion
-        
-        #region BuildLocalizedNotificationMessage
 
-        [Theory]
-        [InlineData(NotificationType.AccountLocked, "en")]
-        [InlineData(NotificationType.AccountLocked, "es")]
-        [InlineData(NotificationType.AccountLocked, "de")]
-        public async Task BuildLocalizedNotificationMessage_ShouldGenerate_NotificationWithLocalizedText(NotificationType type, string language)
-        {
-            var fake = new LocalizationServiceFake();
-            
-            var sut = CreateSut(localizationServiceArg: fake);
-
-            var result = await sut.BuildLocalizedNotificationMessage(type, new string[] {}, language, 
-                new Dictionary<string, string>());
-            
-            Assert.Equal($"title-{language}-{Enum.GetName(type)}", result.Title);
-            Assert.Equal($"body-{language}-{Enum.GetName(type)}", result.Body);
-            Assert.Equal(type, result.NotificationType);
-        }
-
-        [Theory]
-        [ClassData(typeof(KeyValuePairTestData))]
-        public async Task BuildLocalizedNotificationMessage_ShouldGenerateNotification_WithGivenKeyValuePairs(Dictionary<string, string> keyValuePairs)
-        {
-            var fake = new LocalizationServiceFake();
-            
-            var sut = CreateSut(localizationServiceArg: fake);
-
-            var result = await sut.BuildLocalizedNotificationMessage(
-                NotificationType.AccountLocked, 
-                new string[] {}, "en", 
-                keyValuePairs);
-            
-            Assert.Equal(keyValuePairs, result.KeyValueCollection);
-        }
-
-        #endregion
-        
         #region IsDeviceTargeted
         [Theory]
         [ClassData(typeof(TargetingTestData))]
@@ -233,6 +195,18 @@ namespace Lykke.Snow.Notifications.Tests
             Assert.Equal(body, result.Body);
             Assert.Equal(keyValuePairs, result.KeyValueCollection);
         }
+        
+        [Fact]
+        public void BuildNotificationMessage_ShouldThrowArgumentNullException_WhenTitleOrBodyIsNotProvided()
+        {
+            var sut = CreateSut();
+            
+            Assert.Throws<ArgumentNullException>(() => sut.BuildNotificationMessage(NotificationType.AccountLocked, null, null, new Dictionary<string, string>()));
+            Assert.Throws<ArgumentNullException>(() => sut.BuildNotificationMessage(NotificationType.AccountLocked, "", null, new Dictionary<string, string>()));
+            Assert.Throws<ArgumentNullException>(() => sut.BuildNotificationMessage(NotificationType.AccountLocked, null, "", new Dictionary<string, string>()));
+            Assert.Throws<ArgumentNullException>(() => sut.BuildNotificationMessage(NotificationType.AccountLocked, "", "", new Dictionary<string, string>()));
+        }
+
 
         #endregion
         

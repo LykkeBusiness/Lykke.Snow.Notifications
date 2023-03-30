@@ -69,22 +69,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             };
         }
 
-        public async Task<NotificationMessage> BuildLocalizedNotificationMessage(NotificationType notificationType, string[] args, string? locale, Dictionary<string, string> keyValuePairs)
-        {
-            var (title, body) = await _localizationService.GetLocalizedTextAsync(
-                notificationType: Enum.GetName(notificationType), 
-                language: locale, 
-                parameters: args);
-
-            var notificationMessage = new NotificationMessage(
-                title, 
-                body, 
-                notificationType, 
-                keyValuePairs);
-            
-            return notificationMessage;
-        }
-
         public bool IsDeviceTargeted(DeviceConfiguration deviceConfiguration, NotificationType type)
         {
             return deviceConfiguration.IsNotificationEnabled(type);
@@ -92,6 +76,12 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
         public NotificationMessage BuildNotificationMessage(NotificationType notificationType, string title, string body, Dictionary<string, string> keyValuePairs)
         {
+            if(string.IsNullOrEmpty(title))
+                throw new ArgumentNullException(nameof(title));
+            
+            if(string.IsNullOrEmpty(body))
+                throw new ArgumentNullException(nameof(body));
+
             var notificationMessage = new NotificationMessage(
                 title, 
                 body, 
