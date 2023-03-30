@@ -24,6 +24,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             { ActivityTypeContract.AccountDepositFailed, NotificationType.DepositFailed },
             { ActivityTypeContract.AccountWithdrawalSucceeded, NotificationType.WithdrawalSucceeded },
             { ActivityTypeContract.AccountWithdrawalFailed, NotificationType.WithdrawalFailed },
+            { ActivityTypeContract.AccountWithdrawalEnabled, NotificationType.CashUnlocked },
             { ActivityTypeContract.AccountWithdrawalDisabled, NotificationType.CashLocked },
             { ActivityTypeContract.Liquidation, NotificationType.Liquidation },
             { ActivityTypeContract.MarginCall1, NotificationType.MarginCall1 },
