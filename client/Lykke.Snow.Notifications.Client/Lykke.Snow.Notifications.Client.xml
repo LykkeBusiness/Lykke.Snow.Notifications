@@ -105,6 +105,15 @@
             </summary>
             <value></value>
         </member>
+        <member name="M:Lykke.Snow.Notifications.Client.Model.Requests.RegisterDeviceRequest.#ctor(System.String,System.String,System.String,System.String)">
+            <summary>
+            Constructor for RegisterDeviceRequest
+            </summary>
+            <param name="accountId"></param>
+            <param name="deviceToken"></param>
+            <param name="deviceId"></param>
+            <param name="locale"></param>
+        </member>
         <member name="T:Lykke.Snow.Notifications.Client.Model.Requests.UnregisterDeviceRequest">
             <summary>
             Device unregistration request
@@ -115,6 +124,12 @@
             Device token to be unregistered.
             </summary>
             <value></value>
+        </member>
+        <member name="M:Lykke.Snow.Notifications.Client.Model.Requests.UnregisterDeviceRequest.#ctor(System.String)">
+            <summary>
+            Constructor for UnregisterDeviceRequest
+            </summary>
+            <param name="deviceToken"></param>
         </member>
         <member name="T:Lykke.Snow.Notifications.Client.Models.DeviceConfigurationContract">
             <summary>

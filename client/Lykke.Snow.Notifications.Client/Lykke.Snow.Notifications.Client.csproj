@@ -13,7 +13,6 @@
     <PackageTags>LykkeBusiness</PackageTags>
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>CS8618</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
