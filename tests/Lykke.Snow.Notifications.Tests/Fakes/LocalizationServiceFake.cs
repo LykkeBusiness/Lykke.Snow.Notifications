@@ -7,7 +7,7 @@ namespace Lykke.Snow.Notifications.Tests.Fakes
 {
     public class LocalizationServiceFake : ILocalizationService
     {
-        public async Task<(string, string)> GetLocalizedTextAsync(string notificationType, string language, IReadOnlyList<string> parameters)
+        public async Task<(string, string)> GetLocalizedTextAsync(string? notificationType, string? language, IReadOnlyList<string> parameters)
         {
             var title = $"title-{language}-{notificationType}";
             var body = $"body-{language}-{notificationType}";

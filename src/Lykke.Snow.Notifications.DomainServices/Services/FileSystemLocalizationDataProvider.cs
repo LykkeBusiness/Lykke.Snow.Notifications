@@ -30,7 +30,8 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             {
                 var result = JsonConvert.DeserializeObject<LocalizationData>(jsonText);
                 
-                ThrowIfDataIsNotValid(result);
+                if(result == null)
+                    throw new LocalizationFileParsingException();
                 
                 return result;
             }
@@ -40,12 +41,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                 _logger.LogError(ex, ex.Message);
                 throw ex;
             }
-        }
-
-        private void ThrowIfDataIsNotValid(LocalizationData localizationData)
-        {
-            if(localizationData == null)
-                throw new LocalizationFileParsingException();
         }
 
         private static void ThrowIfPathIsNotValid(string localizationFilePath)

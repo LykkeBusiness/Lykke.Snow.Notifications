@@ -69,7 +69,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             };
         }
 
-        public async Task<NotificationMessage> BuildLocalizedNotificationMessage(NotificationType notificationType, string[] args, string locale, Dictionary<string, string> keyValuePairs)
+        public async Task<NotificationMessage> BuildLocalizedNotificationMessage(NotificationType notificationType, string[] args, string? locale, Dictionary<string, string> keyValuePairs)
         {
             var (title, body) = await _localizationService.GetLocalizedTextAsync(
                 notificationType: Enum.GetName(notificationType), 

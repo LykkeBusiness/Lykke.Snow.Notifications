@@ -15,6 +15,6 @@ namespace Lykke.Snow.Notifications.Domain.Services
         /// <param name="language"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        Task<(string, string)> GetLocalizedTextAsync(string notificationType, string language, IReadOnlyList<string> parameters);
+        Task<(string, string)> GetLocalizedTextAsync(string? notificationType, string? language, IReadOnlyList<string> parameters);
     }
 }

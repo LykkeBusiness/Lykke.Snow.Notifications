@@ -23,10 +23,16 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             _localizationDataProvider = localizationDataProvider;
         }
 
-        public async Task<(string, string)> GetLocalizedTextAsync(string notificationType, string language, IReadOnlyList<string> parameters)
+        public async Task<(string, string)> GetLocalizedTextAsync(string? notificationType, string? language, IReadOnlyList<string> parameters)
         {
             if(_localizationData == null)
                 _localizationData = await _localizationDataProvider.Load();
+            
+            if(notificationType == null)
+                throw new ArgumentNullException(nameof(notificationType));
+            
+            if(language == null)
+                throw new ArgumentNullException(nameof(language));
 
             try 
             {
