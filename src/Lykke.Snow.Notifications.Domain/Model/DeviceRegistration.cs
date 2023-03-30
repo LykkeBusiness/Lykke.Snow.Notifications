@@ -32,5 +32,13 @@ namespace Lykke.Snow.Notifications.Domain.Model
             RegisteredOn = registeredOn;
             DeviceId = deviceId;
         }
+
+        public override string ToString()
+        {
+            return $"AccountId: {AccountId}, " +
+                   $"DeviceToken: {DeviceToken}, " +
+                   $"DeviceId: {DeviceId}, " +
+                   $"RegisteredOn: {RegisteredOn}";
+        }
     }
 }

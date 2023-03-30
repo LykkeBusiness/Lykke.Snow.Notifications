@@ -26,5 +26,18 @@ namespace Lykke.Snow.Notifications.Tests
             from locale in Locale
             from notifications in Notifications
             select new DeviceConfiguration(deviceId.Get, accountId.Get, locale.ToString(), notifications);
+
+        internal static Gen<DateTime> RegisteredOn =>
+            from dt in Arb.Default.DateTime().Generator
+            where dt < DateTime.UtcNow
+            select dt;
+                
+
+        internal static Gen<DeviceRegistration> DeviceRegistration =>
+            from deviceId in Arb.Default.NonWhiteSpaceString().Generator
+            from accountId in Arb.Default.NonWhiteSpaceString().Generator
+            from deviceToken in Arb.Default.NonWhiteSpaceString().Generator
+            from registeredOn in RegisteredOn
+            select new DeviceRegistration(accountId.Get, deviceToken.Get, deviceId.Get, registeredOn);
     }
 }

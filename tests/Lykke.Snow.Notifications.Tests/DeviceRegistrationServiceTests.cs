@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FsCheck;
+using FsCheck.Xunit;
 using Lykke.Snow.FirebaseIntegration.Interfaces;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Exceptions;
@@ -71,24 +73,25 @@ namespace Lykke.Snow.Notifications.Tests
         
 
         #region RegisterDevice
-        [Theory]
-        [ClassData(typeof(DeviceRegistrationTestData))]
-        public async Task RegisterDevice_HappyPath_ShouldNotReturnError(DeviceRegistration deviceRegistration)
+        
+        [Property]
+        public Property RegisterDevice_HappyPath_ShouldNotReturnError()
         {
-            var mockRepository = new Mock<IDeviceRegistrationRepository>();
-            mockRepository.Setup(mock => mock.AddOrUpdateAsync(deviceRegistration))
-                .Returns(Task.CompletedTask);
-            
-            var mockFcmIntegrationService = new Mock<IFcmIntegrationService>();
-            mockFcmIntegrationService.Setup(mock => mock.IsDeviceTokenValid(deviceRegistration.DeviceToken)).ReturnsAsync(true);
-            
-            var sut = CreateSut(mockRepository.Object, mockFcmIntegrationService.Object);
-            
-            var result = await sut.RegisterDeviceAsync(deviceRegistration, "en");
-            
-            Assert.True(result.IsSuccess);
-            Assert.False(result.IsFailed);
-            Assert.Null(result.Error);
+            return Prop.ForAll(Gens.DeviceRegistration.ToArbitrary(), dr =>
+            {
+                var mockRepository = new Mock<IDeviceRegistrationRepository>();
+                mockRepository.Setup(mock => mock.AddOrUpdateAsync(dr))
+                    .Returns(Task.CompletedTask);
+
+                var mockFcmIntegrationService = new Mock<IFcmIntegrationService>();
+                mockFcmIntegrationService.Setup(mock => mock.IsDeviceTokenValid(dr.DeviceToken)).ReturnsAsync(true);
+
+                var sut = CreateSut(mockRepository.Object, mockFcmIntegrationService.Object);
+
+                var result = sut.RegisterDeviceAsync(dr, "en").Result;
+
+                return result.IsSuccess && !result.IsFailed && result.Error == null;
+            });
         }
 
         [Theory]
