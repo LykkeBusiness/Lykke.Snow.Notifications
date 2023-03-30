@@ -76,7 +76,7 @@ namespace Lykke.Snow.Notifications.Modules
             
             var rabbitMqSettings = new ConnectionFactory
             {
-                Uri = new Uri(_settings.ConnectionString, UriKind.Absolute)
+                Uri = new Uri(_settings.ConnectionString ?? throw new ArgumentNullException(_settings.ConnectionString), UriKind.Absolute)
             };
             
             var loggerFactory = ctx.Resolve<ILoggerFactory>();

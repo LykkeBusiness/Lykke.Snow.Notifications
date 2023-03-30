@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,7 +20,7 @@ namespace Lykke.Snow.Notifications.Subscribers
 {
     public class MessagePreviewSubscriber : IStartStop
     {
-        private RabbitMqPullingSubscriber<MessagePreviewEvent> _subscriber;
+        private RabbitMqPullingSubscriber<MessagePreviewEvent>? _subscriber;
         private readonly ILoggerFactory _loggerFactory;
         private readonly RabbitMqSubscriptionSettings _settings;
         private readonly ILogger<MessagePreviewSubscriber> _logger;
@@ -62,7 +63,7 @@ namespace Lykke.Snow.Notifications.Subscribers
         {
             _logger.LogInformation("A new MessagePreviewEvent has arrived {Event}", e.ToJson());
             
-            if(e.Recipients == null)
+            if(e == null || e.Recipients == null)
                 return;
             
            var accountIds = e.Recipients.ToArray();
@@ -78,8 +79,8 @@ namespace Lykke.Snow.Notifications.Subscribers
            }
                
           var notificationMessage = _notificationService.BuildNotificationMessage(NotificationType.InboxMessage, 
-               title: e.Subject,
-               body: e.Content,
+               title: e.Subject ?? throw new ArgumentNullException(nameof(e.Subject)),
+               body: e.Content ?? throw new ArgumentNullException(nameof(e.Content)),
                keyValuePairs: new Dictionary<string, string>());
 
            foreach(var deviceRegistration in deviceRegistrationsResult.Value)

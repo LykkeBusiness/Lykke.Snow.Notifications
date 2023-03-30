@@ -18,6 +18,15 @@ namespace Lykke.Snow.Notifications.Startup
             if(settings.CurrentValue.NotificationService == null)
                 throw new ArgumentException($"{nameof(AppSettings.NotificationService)} settings is not configured!");
 
+            if(settings.CurrentValue.NotificationService.Db == null)
+                throw new ArgumentNullException(nameof(settings.CurrentValue.NotificationService.Db));
+
+            if(settings.CurrentValue.NotificationService.Db.ConnectionString == null)
+                throw new ArgumentNullException(nameof(settings.CurrentValue.NotificationService.Db.ConnectionString));
+
+            if(settings.CurrentValue.NotificationService.Cqrs == null)
+                throw new ArgumentNullException(nameof(settings.CurrentValue.NotificationService.Cqrs));
+
             var hostBuilder = builder.Host
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureContainer<ContainerBuilder>((ctx, cBuilder) =>

@@ -18,13 +18,13 @@ namespace Lykke.Snow.Notifications.Subscribers.Messages
     public class MessagePreviewEvent
     {
         [Key(0)]
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         [Key(1)]
-        public string SenderId { get; set; }
+        public string? SenderId { get; set; }
 
         [Key(2)]
-        public string Subject { get; set; }
+        public string? Subject { get; set; }
 
         [Key(3)]
         public bool IsImportant { get; set; }
@@ -36,7 +36,7 @@ namespace Lykke.Snow.Notifications.Subscribers.Messages
         public bool RequiresPopup { get; set; }
 
         [Key(6)]
-        public IEnumerable<string> Recipients { get; set; }
+        public IEnumerable<string>? Recipients { get; set; }
 
         [Key(7)]
         public bool SendToAllInvestors { get; set; }
@@ -45,13 +45,13 @@ namespace Lykke.Snow.Notifications.Subscribers.Messages
         public bool SendToInvestorsWithActiveOrders { get; set; }
 
         [Key(9)]
-        public IEnumerable<string> ActiveOrderAssetIds { get; set; }
+        public IEnumerable<string>? ActiveOrderAssetIds { get; set; }
 
         [Key(10)]
         public bool SendToInvestorsWithOpenPositions { get; set; }
 
         [Key(11)]
-        public IEnumerable<string> OpenPositionAssetIds { get; set; }
+        public IEnumerable<string>? OpenPositionAssetIds { get; set; }
 
         [Key(12)]
         public bool IsAndClauseApplied { get; set; }
@@ -61,7 +61,7 @@ namespace Lykke.Snow.Notifications.Subscribers.Messages
         /// This field is used by Meteor for message deduplication.
         /// </summary>
         [Key(13)]
-        public string OperationId { get; set; }
+        public string? OperationId { get; set; }
 
         [Key(14)]
         public bool IsRead { get; set; }
@@ -70,7 +70,7 @@ namespace Lykke.Snow.Notifications.Subscribers.Messages
         public MessageEventType Event { get; set; }
 
         [Key(16)]
-        public string[] LocalizationAttributes { get; set; }
+        public string[]? LocalizationAttributes { get; set; }
 
         [Key(17)]
         public DateTime? ExpirationTimestamp { get; set; }
@@ -79,9 +79,9 @@ namespace Lykke.Snow.Notifications.Subscribers.Messages
         public bool RequiresAcceptance { get; set; }
 
         [Key(19)]
-        public string SenderName { get; set; }
+        public string? SenderName { get; set; }
 
         [Key(20)]
-        public string Content { get; set; }
+        public string? Content { get; set; }
     }
 }
