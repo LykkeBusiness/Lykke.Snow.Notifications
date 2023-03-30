@@ -115,7 +115,7 @@ namespace Lykke.Snow.Notifications.Tests
             var deviceConfig = new DeviceConfiguration("deviceId", "accountId");
 
             // Assert
-            Assert.Equal(Locale.EN, deviceConfig.Locale);
+            Assert.Equal(Locale.En, deviceConfig.Locale);
         }
 
         [Fact]
@@ -255,7 +255,7 @@ namespace Lykke.Snow.Notifications.Tests
             // Arrange
             var deviceId = "test-device-id";
             var accountId = "test-account-id";
-            var defaultLocale = Locale.EN;
+            var defaultLocale = Locale.En;
 
             // Act
             var config = DeviceConfiguration.Default(deviceId, accountId);

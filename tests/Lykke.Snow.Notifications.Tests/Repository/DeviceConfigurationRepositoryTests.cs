@@ -69,11 +69,11 @@ namespace Lykke.Snow.Notifications.Tests.Repository
             // Arrange
             const string deviceId = "test-device-4";
             var repo = new DeviceConfigurationRepository(new MssqlContextFactoryFake(), _mapper);
-            await SeedDatabaseAsync(deviceId, "test-account-4", Locale.DE.ToString());
+            await SeedDatabaseAsync(deviceId, "test-account-4", Locale.De.ToString());
 
             var updatedDeviceConfiguration = new DeviceConfiguration(deviceId,
                 "test-account-updated-4",
-                locale: Locale.ES.ToString(),
+                locale: Locale.Es.ToString(),
                 notifications: new List<DeviceConfiguration.Notification>
                 {
                     new DeviceConfiguration.Notification("DepositSucceeded")

@@ -165,15 +165,15 @@ namespace Lykke.Snow.Notifications.Tests
                 deviceConfigurationRepositoryArg: mockDeviceConfigurationRepository.Object);
             
             var deviceId = "any-device-id";
-            var locale = "EN";
+            var locale = Locale.En;
 
-            var actual = await sut.RegisterDeviceAsync(deviceRegistration, locale);
+            var actual = await sut.RegisterDeviceAsync(deviceRegistration, locale.ToString());
             
             mockDeviceConfigurationRepository.Verify(x => x.AddOrUpdateAsync(It.Is<DeviceConfiguration>(
                 dc => 
                 dc.AccountId == deviceRegistration.AccountId &&
                 dc.DeviceId == deviceId &&
-                dc.Locale == Enum.Parse<Locale>(locale)
+                dc.Locale == locale
             )), Times.Once);
         }
         #endregion

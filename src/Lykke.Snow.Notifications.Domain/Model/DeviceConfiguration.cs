@@ -8,7 +8,7 @@ namespace Lykke.Snow.Notifications.Domain.Model
     /// <summary>
     /// Device configuration
     /// </summary>
-    public class DeviceConfiguration
+    public sealed class DeviceConfiguration
     {
         public class Notification
         {
