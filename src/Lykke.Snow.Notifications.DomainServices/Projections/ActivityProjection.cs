@@ -50,6 +50,8 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
 
         private readonly IDeviceConfigurationRepository _deviceConfigurationRepository;
 
+        private readonly ILocalizationService _localizationService;
+
         public ActivityProjection(ILogger<ActivityProjection> logger,
             INotificationService notificationService,
             IDeviceRegistrationService deviceRegistrationService,
@@ -60,6 +62,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
             _notificationService = notificationService;
             _deviceRegistrationService = deviceRegistrationService;
             _deviceConfigurationRepository = deviceConfigurationRepository;
+            _localizationService = localizationService;
         }
 
         [UsedImplicitly]
@@ -88,12 +91,18 @@ namespace Lykke.Snow.Notifications.DomainServices.Projections
                         
                     if(!_notificationService.IsDeviceTargeted(deviceConfiguration, notificationType))
                         continue;
+                        
+                    var (title, body) = await _localizationService.GetLocalizedTextAsync(
+                        Enum.GetName(notificationType), 
+                        Enum.GetName(deviceConfiguration.Locale), 
+                        notificationArguments);
                 
-                    var notificationMessage = await _notificationService.BuildLocalizedNotificationMessage(
-                        notificationType, 
-                        args: notificationArguments, 
-                        locale: Enum.GetName(deviceConfiguration.Locale),
-                        keyValuePairs: new Dictionary<string, string>());
+                    var notificationMessage = _notificationService.BuildNotificationMessage(
+                        notificationType,
+                        title,
+                        body,
+                        new Dictionary<string, string>()
+                    );
 
                     await _notificationService.SendNotification(notificationMessage, deviceToken: deviceRegistration.DeviceToken);
 

@@ -19,15 +19,6 @@ namespace Lykke.Snow.Notifications.Domain.Services
         Task SendNotification(NotificationMessage message, string deviceToken);
         
         /// <summary>
-        /// Builds notification message based on given notification type and language
-        /// </summary>
-        /// <param name="notificationType"></param>
-        /// <param name="args"></param>
-        /// <param name="locale"></param>
-        /// <returns></returns>
-        Task<NotificationMessage> BuildLocalizedNotificationMessage(NotificationType notificationType, string[] args, string? locale, Dictionary<string, string> keyValuePairs);
-
-        /// <summary>
         /// Builds notification type with given title and body
         /// </summary>
         /// <param name="notificationType"></param>

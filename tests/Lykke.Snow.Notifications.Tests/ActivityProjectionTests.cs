@@ -130,8 +130,10 @@ namespace Lykke.Snow.Notifications.Tests
             var deviceRegistrationServiceMock = new Mock<IDeviceRegistrationService>();
             var deviceConfigurationRepositoryMock = new Mock<IDeviceConfigurationRepository>();
             var notificationServiceMock = new Mock<INotificationService>();
+            var localizationServiceMock = new Mock<ILocalizationService>();
             
-            var sut = CreateSut(deviceRegistrationServiceArg: deviceRegistrationServiceMock.Object);
+            var sut = CreateSut(deviceRegistrationServiceArg: deviceRegistrationServiceMock.Object, 
+                localizationServiceArg: localizationServiceMock.Object);
             
             IReadOnlyDictionary<ActivityTypeContract, NotificationType> mapping = new Dictionary<ActivityTypeContract, NotificationType>()
             {
@@ -158,8 +160,9 @@ namespace Lykke.Snow.Notifications.Tests
             deviceRegistrationServiceMock.Verify(x => x.GetDeviceRegistrationsAsync(It.IsAny<string>()), Times.Never);
             deviceConfigurationRepositoryMock.Verify(x => x.GetAsync(It.IsAny<string>()), Times.Never);
             notificationServiceMock.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Never);
-            notificationServiceMock.Verify(x => x.BuildLocalizedNotificationMessage(It.IsAny<NotificationType>(), It.IsAny<string[]>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Never);
+            notificationServiceMock.Verify(x => x.BuildNotificationMessage(It.IsAny<NotificationType>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Never);
             notificationServiceMock.Verify(x => x.SendNotification(It.IsAny<NotificationMessage>(), It.IsAny<string>()), Times.Never);
+            localizationServiceMock.Verify(x => x.GetLocalizedTextAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IReadOnlyList<string>>()), Times.Never);
         }
 
         [Fact]
@@ -170,8 +173,10 @@ namespace Lykke.Snow.Notifications.Tests
             
             var deviceConfigurationRepositoryMock = new Mock<IDeviceConfigurationRepository>();
             var notificationServiceMock = new Mock<INotificationService>();
+            var localizationServiceMock = new Mock<ILocalizationService>();
             
-            var sut = CreateSut(deviceRegistrationServiceArg: deviceRegistrationServiceMock.Object);
+            var sut = CreateSut(deviceRegistrationServiceArg: deviceRegistrationServiceMock.Object, 
+                localizationServiceArg: localizationServiceMock.Object);
             
             IReadOnlyDictionary<ActivityTypeContract, NotificationType> mapping = new Dictionary<ActivityTypeContract, NotificationType>()
             {
@@ -197,8 +202,9 @@ namespace Lykke.Snow.Notifications.Tests
             
             deviceConfigurationRepositoryMock.Verify(x => x.GetAsync(It.IsAny<string>()), Times.Never);
             notificationServiceMock.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Never);
-            notificationServiceMock.Verify(x => x.BuildLocalizedNotificationMessage(It.IsAny<NotificationType>(), It.IsAny<string[]>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Never);
+            notificationServiceMock.Verify(x => x.BuildNotificationMessage(It.IsAny<NotificationType>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Never);
             notificationServiceMock.Verify(x => x.SendNotification(It.IsAny<NotificationMessage>(), It.IsAny<string>()), Times.Never);
+            localizationServiceMock.Verify(x => x.GetLocalizedTextAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IReadOnlyList<string>>()), Times.Never);
         }
 
         #endregion

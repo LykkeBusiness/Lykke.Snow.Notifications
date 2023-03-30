@@ -100,7 +100,7 @@ namespace Lykke.Snow.Notifications.Tests
             IEnumerable<string> enabledDevices,
             NotificationMessage notificationMessage)
         {
-            var e = new MessagePreviewEvent() { Recipients = new string[] { "A01" } };
+            var e = new MessagePreviewEvent() { Recipients = new string[] { "A01" }, Subject = "some-sobject", Content = "some-content" };
             
             var mockDeviceRegistrationService = new Mock<IDeviceRegistrationService>();
 
