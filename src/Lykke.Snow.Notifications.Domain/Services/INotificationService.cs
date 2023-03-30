@@ -27,8 +27,8 @@ namespace Lykke.Snow.Notifications.Domain.Services
         /// <param name="keyValuePairs"></param>
         /// <returns></returns>
         NotificationMessage BuildNotificationMessage(NotificationType notificationType,
-            string title,
-            string body,
+            string? title,
+            string? body,
             Dictionary<string, string> keyValuePairs);
 
         /// <summary>

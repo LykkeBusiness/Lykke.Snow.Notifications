@@ -74,7 +74,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             return deviceConfiguration.IsNotificationEnabled(type);
         }
 
-        public NotificationMessage BuildNotificationMessage(NotificationType notificationType, string title, string body, Dictionary<string, string> keyValuePairs)
+        public NotificationMessage BuildNotificationMessage(NotificationType notificationType, string? title, string? body, Dictionary<string, string> keyValuePairs)
         {
             if(string.IsNullOrEmpty(title))
                 throw new ArgumentNullException(nameof(title));
