@@ -17,22 +17,25 @@ namespace Lykke.Snow.Notifications.Domain.Services
         /// <param name="deviceToken"></param>
         /// <returns></returns>
         Task SendNotification(NotificationMessage message, string deviceToken);
-        
+
         /// <summary>
         /// Builds notification type with given title and body
         /// </summary>
         /// <param name="notificationType"></param>
-        /// <param name="args"></param>
-        /// <param name="locale"></param>
+        /// <param name="title"></param>
+        /// <param name="body"></param>
+        /// <param name="keyValuePairs"></param>
         /// <returns></returns>
-        NotificationMessage BuildNotificationMessage(NotificationType notificationType, string title, string body, Dictionary<string, string> keyValuePairs);
+        NotificationMessage BuildNotificationMessage(NotificationType notificationType,
+            string title,
+            string body,
+            Dictionary<string, string> keyValuePairs);
 
         /// <summary>
         /// Checks if the notification type is enabled for the given device
         /// </summary>
-        /// <param name="notificationType"></param>
-        /// <param name="args"></param>
-        /// <param name="locale"></param>
+        /// <param name="deviceConfiguration"></param>
+        /// <param name="type"></param>
         /// <returns></returns>
         bool IsDeviceTargeted(DeviceConfiguration deviceConfiguration, NotificationType type);
     }

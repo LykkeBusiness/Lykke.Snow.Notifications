@@ -16,7 +16,7 @@ namespace Lykke.Snow.Notifications.Tests.Fakes
         public Task<DeviceConfiguration> GetAsync(string deviceId)
         {
             NumOfGetAsyncCalls++;
-            return Task.FromResult(new DeviceConfiguration(deviceId, "any-account-id", "en"));
+            return Task.FromResult(new DeviceConfiguration(deviceId, "any-account-id"));
         }
 
         public Task RemoveAsync(string deviceId)

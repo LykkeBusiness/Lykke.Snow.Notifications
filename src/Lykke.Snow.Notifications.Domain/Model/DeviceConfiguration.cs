@@ -118,6 +118,7 @@ namespace Lykke.Snow.Notifications.Domain.Model
         /// </summary>
         /// <param name="deviceId">Device id</param>
         /// <param name="accountId">Account id</param>
+        /// <param name="locale">Locale</param>
         /// <returns></returns>
         public static DeviceConfiguration Default(string deviceId, string accountId, string locale = "en")
         {

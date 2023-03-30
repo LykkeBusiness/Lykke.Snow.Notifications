@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 
 namespace Lykke.Snow.Notifications.Domain.Exceptions

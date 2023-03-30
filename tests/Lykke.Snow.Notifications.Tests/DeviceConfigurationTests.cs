@@ -276,7 +276,7 @@ namespace Lykke.Snow.Notifications.Tests
         [Property]
         public Property IsNotificationEnabled_WorksEqually_ForStringAndEnum()
         {
-            return Prop.ForAll(Gens.DeviceConfiguration.ToArbitrary(), (DeviceConfiguration dc) =>
+            return Prop.ForAll(Gens.DeviceConfiguration.ToArbitrary(), dc =>
             {
                 foreach (NotificationType type in Enum.GetValues(typeof(NotificationType)))
                 {
@@ -295,7 +295,7 @@ namespace Lykke.Snow.Notifications.Tests
         [Property]
         public Property NotitificationTypesAreUnique()
         {
-            return Prop.ForAll(Gens.DeviceConfiguration.ToArbitrary(), (DeviceConfiguration dc) =>
+            return Prop.ForAll(Gens.DeviceConfiguration.ToArbitrary(), dc =>
             {
                 var types = dc.Notifications.Select(n => n.Type).ToList();
                 return types.Count == types.Distinct().Count();
