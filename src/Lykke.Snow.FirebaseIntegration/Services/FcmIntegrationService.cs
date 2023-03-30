@@ -77,8 +77,6 @@ namespace Lykke.Snow.FirebaseIntegration.Services
                     { 
                         Token = deviceToken, 
                     }, dryRun: true);
-
-                return true;
             }
             catch(FirebaseMessagingException e)
             {
