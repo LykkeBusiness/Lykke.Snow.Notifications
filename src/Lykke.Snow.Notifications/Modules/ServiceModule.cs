@@ -45,6 +45,10 @@ namespace Lykke.Snow.Notifications.Modules
             builder.RegisterType<ActivityHandler>()
                 .As<IActivityHandler>()
                 .SingleInstance();
+
+            builder.RegisterType<MessagePreviewEventHandler>()
+                .As<IMessagePreviewEventHandler>()
+                .SingleInstance();
         }
     }
 }
