@@ -40,7 +40,7 @@ namespace Lykke.Snow.Notifications.Subscribers
                     _loggerFactory.CreateLogger<RabbitMqPullingSubscriber<MessagePreviewEvent>>(),
                     _settings)
                     .SetMessageDeserializer(new MessagePackMessageDeserializer<MessagePreviewEvent>())
-                    .SetMessageReadStrategy(new MessageReadQueueStrategy())
+                    .SetMessageReadStrategy(new MessageReadWithTemporaryQueueStrategy())
                     .Subscribe(ProcessMessageAsync)
                     .Start();
         }
