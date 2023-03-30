@@ -37,6 +37,23 @@ namespace Lykke.Snow.Notifications.Tests
             // Arrange, Act, Assert
             Assert.Throws<ArgumentException>(() => new DeviceConfiguration.Notification("not supported type"));
         }
+        
+        [Property]
+        public Property Notification_Constructor_Accepts_AllEnumTypes()
+        {
+            return Prop.ForAll(Arb.From<NotificationType>(), type =>
+            {
+                // make letters in a string lowercase or uppercase randomly
+                var randomCaseTypeString = type.ToString()
+                    .Select(c => new System.Random().Next(2) == 0 ? char.ToUpper(c) : char.ToLower(c))
+                    .Aggregate("", (s, c) => s + c);
+
+                var exception =
+                    Record.Exception(() => new DeviceConfiguration.Notification(randomCaseTypeString));
+
+                return exception == null;
+            });
+        }
 
         [Theory]
         [InlineData(null)]
@@ -58,18 +75,17 @@ namespace Lykke.Snow.Notifications.Tests
             // Arrange, Act, Assert
             Assert.Throws<ArgumentException>(() => new DeviceConfiguration("deviceId", "accountId", locale));
         }
-        
-        [Theory]
-        [InlineData(Locale.EN)]
-        [InlineData(Locale.ES)]
-        [InlineData(Locale.DE)]
-        public void Constructor_Accepts_SupportedLocales(Locale locale)
-        {
-            // Arrange & Act
-            var exception = Record.Exception(() => new DeviceConfiguration("deviceId", "accountId", locale.ToString()));
 
-            // Assert
-            Assert.Null(exception);
+        [Property]
+        public Property Constructor_Accepts_SupportedLocales()
+        {
+            return Prop.ForAll(Gens.Locale.ToArbitrary(), locale =>
+            {
+                var exception =
+                    Record.Exception(() => new DeviceConfiguration("deviceId", "accountId", locale.ToString()));
+
+                return exception == null;
+            });
         }
         
         [Fact]
