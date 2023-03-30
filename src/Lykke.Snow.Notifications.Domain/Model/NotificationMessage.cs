@@ -13,19 +13,19 @@ namespace Lykke.Snow.Notifications.Domain.Model
         /// Title for the notification
         /// </summary>
         /// <value></value>
-        public string Title { get; private set; }
+        public string Title { get; }
         
         /// <summary>
         /// The notification payload
         /// </summary>
         /// <value></value>
-        public string Body { get; private set; }
+        public string Body { get; }
 
         /// <summary>
         /// Notification Type (e.g. DepositSucceeded)
         /// </summary>
         /// <value></value>
-        public NotificationType NotificationType { get; private set; }
+        public NotificationType NotificationType { get; }
         
         /// <summary>
         /// Key-value dictionary for additional data to be sent along with the notification.

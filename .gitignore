@@ -366,3 +366,5 @@ appsettings.prod.json
 appsettings.json
 
 
+# Auto generated xml
+Lykke.Snow.Notifications.Client.xml
