@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lykke.MarginTrading.Activities.Contracts.Models;
+using Lykke.Snow.Common.Model;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Repositories;
 using Lykke.Snow.Notifications.Domain.Services;
 using Lykke.Snow.Notifications.DomainServices.Projections;
 using Lykke.Snow.Notifications.DomainServices.Services;
+using Lykke.Snow.Notifications.Tests.Fakes;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
@@ -32,6 +34,34 @@ namespace Lykke.Snow.Notifications.Tests
             yield return new object[] { ActivityTypeContract.AccountDepositFailed, mapping, NotificationType.DepositFailed, true };
             yield return new object[] { ActivityTypeContract.MarginCall1, mapping, NotificationType.NotSpecified, false };
             yield return new object[] { ActivityTypeContract.PositionClosing, mapping, NotificationType.NotSpecified, false };
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
+    class DeviceAndNotificationTestDataSingleAccountId : IEnumerable<object[]>
+    {
+        public IEnumerator<object[]> GetEnumerator()
+        {
+            yield return new object[] 
+            { 
+                "account-id-1",
+                new List<DeviceRegistration> 
+                {
+                    new DeviceRegistration("account-id-1", "device-token-1", "device1", DateTime.UtcNow),
+                    new DeviceRegistration("account-id-1", "device-token-2", "device2", DateTime.UtcNow),
+                    new DeviceRegistration("account-id-1", "device-token-3", "device3", DateTime.UtcNow),
+                    new DeviceRegistration("account-id-1", "device-token-4", "device4", DateTime.UtcNow),
+                    new DeviceRegistration("account-id-1", "device-token-5", "device5", DateTime.UtcNow),
+                },
+                new List<string>
+                {
+                    "device3",
+                    "device5",
+                    "device1"
+                },
+                new NotificationMessage("title", "body", NotificationType.CashLocked, new Dictionary<string, string>())
+            };
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -208,6 +238,58 @@ namespace Lykke.Snow.Notifications.Tests
             localizationServiceMock.Verify(x => x.GetLocalizedTextAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IReadOnlyList<string>>()), Times.Never);
         }
 
+        [Theory]
+        [ClassData(typeof(DeviceAndNotificationTestDataSingleAccountId))]
+        public async void Handle_Verify_ExpectedMethodCalls(
+            string accountId,
+            IEnumerable<DeviceRegistration> deviceRegistrations,
+            IEnumerable<string> enabledDevices,
+            NotificationMessage notificationMessage
+        )
+        {
+            var e = new ActivityEvent
+            {
+                Id = "some-id",
+                Timestamp = DateTime.UtcNow,
+                Activity = new ActivityContract("id", accountId, "instrument", "event-source-id", DateTime.UtcNow, ActivityCategoryContract.CashMovement,
+                    ActivityTypeContract.OrderExpiry, new string[] { "attr-1", "attr-2"}, new string[] { "relatedid-1", "relatedid-2" })
+            };
+
+            var mockDeviceRegistrationService = new Mock<IDeviceRegistrationService>();
+
+            //Setup the Mock (DeviceRegistrationService) so that it will return the given 'deviceRegistrations'.
+            mockDeviceRegistrationService.Setup(x => x.GetDeviceRegistrationsAsync(It.IsAny<string>())).ReturnsAsync(
+                new Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>(deviceRegistrations));
+
+            var mockNotificationService = new Mock<INotificationService>();
+            
+            // Setup the mock (NotificationService) so that BuildNotificationMessage will return the given 'notificationMessage'
+            mockNotificationService.Setup(x => x.BuildNotificationMessage(It.IsAny<NotificationType>(),
+                It.IsAny<string>(), 
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>())).Returns(notificationMessage);
+                
+            // Setup the mock (NotificationService) so that IsDeviceTargeted will return true when called with any device id that's specified in 'enabledDevices'
+            mockNotificationService.Setup(x => x.IsDeviceTargeted(It.Is<DeviceConfiguration>(dc => enabledDevices.Contains(dc.DeviceId)), It.IsAny<NotificationType>())).Returns(true);
+            mockNotificationService.Setup(x => x.IsDeviceTargeted(It.Is<DeviceConfiguration>(dc => !enabledDevices.Contains(dc.DeviceId)), It.IsAny<NotificationType>())).Returns(false);
+            
+            var deviceConfigurationRepositoryStub = new DeviceConfigurationRepositoryStub();
+            var localizationServiceStub = new LocalizationServiceStub();
+            
+            var sut = CreateSut(notificationServiceArg: mockNotificationService.Object,
+                deviceRegistrationServiceArg: mockDeviceRegistrationService.Object,
+                deviceConfigurationRepositoryArg: deviceConfigurationRepositoryStub,
+                localizationServiceArg: localizationServiceStub);
+            
+            await sut.Handle(e);
+            
+            Assert.Equal(deviceConfigurationRepositoryStub.NumOfGetAsyncCalls, deviceRegistrations.Count());
+            Assert.Equal(localizationServiceStub.NumOfGetLocalizedTextAsyncCalls, enabledDevices.Count());
+            mockDeviceRegistrationService.Verify(x => x.GetDeviceRegistrationsAsync(It.Is<string>(id => id == accountId)), Times.Once);
+            mockNotificationService.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Exactly(deviceRegistrations.Count()));
+            mockNotificationService.Verify(x => x.BuildNotificationMessage(It.IsAny<NotificationType>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Exactly(enabledDevices.Count()));
+            mockNotificationService.Verify(x => x.SendNotification(notificationMessage, It.IsAny<string>()), Times.Exactly(enabledDevices.Count()));
+        }
         #endregion
 
         private ActivityHandler CreateSut(INotificationService? notificationServiceArg = null,

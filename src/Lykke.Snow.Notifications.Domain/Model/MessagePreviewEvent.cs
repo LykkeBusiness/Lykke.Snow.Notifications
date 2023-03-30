@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using MessagePack;
 
-namespace Lykke.Snow.Notifications.Subscribers.Messages
+namespace Lykke.Snow.Notifications.Domain.Model
 {
     public enum MessageEventType
     {
