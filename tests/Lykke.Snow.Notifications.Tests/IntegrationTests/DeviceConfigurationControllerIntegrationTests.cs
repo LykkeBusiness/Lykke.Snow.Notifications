@@ -1,15 +1,12 @@
 using System;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Lykke.Snow.Contracts.Responses;
-using Lykke.Snow.Notifications.Client.Model.Requests;
 using Lykke.Snow.Notifications.Client.Models;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Tests.Extensions;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace Lykke.Snow.Notifications.Tests

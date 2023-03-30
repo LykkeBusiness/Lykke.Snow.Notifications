@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Lykke.Snow.Contracts.Responses;
 using Newtonsoft.Json;
@@ -45,6 +46,23 @@ namespace Lykke.Snow.Notifications.Tests.Extensions
 
             var result = await response.Content.ReadAsAsync<T>();
             assert(result);
+        }
+
+        public static void AssertHttpStatusCode(this HttpResponseMessage response, HttpStatusCode statusCode)
+        {
+            Assert.Equal(statusCode, response.StatusCode);
+        }
+        
+        public static Task<HttpResponseMessage> DeleteWithPayloadAsync<T>(this HttpClient client, string uri, T obj)
+        {
+            var request = new HttpRequestMessage
+            {
+                Content = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json"),
+                Method = HttpMethod.Delete,
+                RequestUri = new Uri(uri)
+            };
+
+            return client.SendAsync(request);
         }
     }
 }
