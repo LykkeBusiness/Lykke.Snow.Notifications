@@ -5,54 +5,15 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Lykke.Snow.Contracts.Responses;
+using Lykke.Snow.Notifications.Client.Model.Requests;
 using Lykke.Snow.Notifications.Client.Models;
 using Lykke.Snow.Notifications.Domain.Enums;
+using Lykke.Snow.Notifications.Tests.Extensions;
 using Newtonsoft.Json;
 using Xunit;
 
 namespace Lykke.Snow.Notifications.Tests
 {
-    internal static class DeviceConfigurationTestExtensions
-    {
-        internal static async Task<T> ReadAsAsync<T>(this HttpContent content) where T : class
-        {
-            var json = await content.ReadAsStringAsync();
-            if (string.IsNullOrEmpty(json))
-                throw new InvalidOperationException("Content is empty");
-
-            var result = JsonConvert.DeserializeObject<T>(json);
-            if (result == null)
-                throw new InvalidOperationException("Content is not a valid JSON");
-
-            return result;
-        }
-
-        public static async Task AssertSuccessAsync(this HttpResponseMessage response)
-        {
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-            var result = await response.Content.ReadAsAsync<ErrorCodeResponse<DeviceConfigurationErrorCodeContract>>();
-            Assert.Equal(DeviceConfigurationErrorCodeContract.None, result.ErrorCode);
-        }
-
-        public static async Task AssertErrorAsync(this HttpResponseMessage response,
-            DeviceConfigurationErrorCodeContract errorCode)
-        {
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-            var result = await response.Content.ReadAsAsync<ErrorCodeResponse<DeviceConfigurationErrorCodeContract>>();
-            Assert.Equal(errorCode, result.ErrorCode);
-        }
-
-        public static async Task AssertAsync<T>(this HttpResponseMessage response, Action<T> assert) where T : class
-        {
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-            var result = await response.Content.ReadAsAsync<T>();
-            assert(result);
-        }
-    }
-
     public class DeviceConfigurationControllerIntegrationTests : IClassFixture<WebAppFactoryNoDependencies>
     {
         private readonly HttpClient _client;
@@ -76,7 +37,7 @@ namespace Lykke.Snow.Notifications.Tests
 
             // Add a new device configuration
             var addOrUpdateResponse = await _client.PostAsJsonAsync("/api/DeviceConfiguration", deviceConfiguration);
-            await addOrUpdateResponse.AssertSuccessAsync();
+            await addOrUpdateResponse.AssertSuccessAsync(DeviceConfigurationErrorCodeContract.None);
 
             // Get the added device configuration
             var getResponse = await _client.GetAsync($"/api/DeviceConfiguration/{deviceConfiguration.DeviceId}");
@@ -104,11 +65,11 @@ namespace Lykke.Snow.Notifications.Tests
 
             // Add a new device configuration
             var addOrUpdateResponse = await _client.PostAsJsonAsync("/api/DeviceConfiguration", deviceConfiguration);
-            await addOrUpdateResponse.AssertSuccessAsync();
+            await addOrUpdateResponse.AssertSuccessAsync(DeviceConfigurationErrorCodeContract.None);
 
             // Delete the added device configuration
             var deleteResponse = await _client.DeleteAsync($"/api/DeviceConfiguration/{deviceConfiguration.DeviceId}");
-            await deleteResponse.AssertSuccessAsync();
+            await deleteResponse.AssertSuccessAsync(DeviceConfigurationErrorCodeContract.None);
 
             // Check if the device configuration is deleted
             var getResponse = await _client.GetAsync($"/api/DeviceConfiguration/{deviceConfiguration.DeviceId}");
@@ -156,12 +117,12 @@ namespace Lykke.Snow.Notifications.Tests
 
             // Add a new device configuration
             var addOrUpdateResponse = await _client.PostAsJsonAsync("/api/DeviceConfiguration", deviceConfiguration);
-            await addOrUpdateResponse.AssertSuccessAsync();
+            await addOrUpdateResponse.AssertSuccessAsync(DeviceConfigurationErrorCodeContract.None);
 
             // Try to add the same device configuration again
             var addOrUpdateAgainResponse =
                 await _client.PostAsJsonAsync("/api/DeviceConfiguration", deviceConfiguration);
-            await addOrUpdateAgainResponse.AssertSuccessAsync();
+            await addOrUpdateAgainResponse.AssertSuccessAsync(DeviceConfigurationErrorCodeContract.None);
         }
 
         [Fact]

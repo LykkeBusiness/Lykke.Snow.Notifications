@@ -1,6 +1,7 @@
 using System.Net.Http;
 using Lykke.Common.MsSql;
 using Lykke.Cqrs;
+using Lykke.Snow.FirebaseIntegration.Interfaces;
 using Lykke.Snow.Notifications.Domain.Repositories;
 using Lykke.Snow.Notifications.SqlRepositories;
 using Lykke.Snow.Notifications.SqlRepositories.Repositories;
@@ -36,6 +37,7 @@ namespace Lykke.Snow.Notifications.Tests
                 // register repositories manually since the DataLayer module registration was not called
                 services.AddSingleton<IDeviceRegistrationRepository, DeviceRegistrationRepository>();
                 services.AddSingleton<IDeviceConfigurationRepository, DeviceConfigurationRepository>();
+                services.AddSingleton<IFcmIntegrationService, FcmIntegrationServiceFake>();
             });
         }
         
