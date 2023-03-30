@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using FsCheck;
+using FsCheck.Xunit;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Model;
 using Xunit;
@@ -221,26 +224,13 @@ namespace Lykke.Snow.Notifications.Tests
             Assert.False(result);
         }
         
-        [Fact]
-        public void EnabledNotifications_ReturnsOnlyEnabledNotifications()
+        [Property]
+        public Property EnabledNotifications_ReturnsOnlyEnabledNotifications()
         {
-            // Arrange
-            var deviceConfig = new DeviceConfiguration("deviceId", "accountId", "en",
-                new List<DeviceConfiguration.Notification>
-                {
-                    new DeviceConfiguration.Notification("DepositSucceeded", false),
-                    new DeviceConfiguration.Notification("InboxMessage"),
-                    new DeviceConfiguration.Notification("PositionClosed"),
-                    new DeviceConfiguration.Notification("AccountLocked", false),
-                });
-
-            // Act
-            var result = deviceConfig.EnabledNotificationTypes;
-
-            // Assert
-            Assert.Equal(2, result.Count);
-            Assert.Contains(result, n => n == NotificationType.InboxMessage);
-            Assert.Contains(result, n => n == NotificationType.PositionClosed);
+            return Prop.ForAll(Gens.DeviceConfiguration.ToArbitrary(), dc =>
+            {
+                return dc.EnabledNotificationTypes.All(en => dc.Notifications.Any(n => n.Type == en && n.Enabled));
+            });
         }
         
         [Fact]
@@ -265,6 +255,35 @@ namespace Lykke.Snow.Notifications.Tests
             {
                 Assert.True(config.IsNotificationEnabled(type));
             }
+        }
+
+        [Property]
+        public Property IsNotificationEnabled_WorksEqually_ForStringAndEnum()
+        {
+            return Prop.ForAll(Gens.DeviceConfiguration.ToArbitrary(), (DeviceConfiguration dc) =>
+            {
+                foreach (NotificationType type in Enum.GetValues(typeof(NotificationType)))
+                {
+                    var result1 = dc.IsNotificationEnabled(type);
+                    var result2 = dc.IsNotificationEnabled(type.ToString());
+                    if (result1 != result2)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            });
+        }
+        
+        [Property]
+        public Property NotitificationTypesAreUnique()
+        {
+            return Prop.ForAll(Gens.DeviceConfiguration.ToArbitrary(), (DeviceConfiguration dc) =>
+            {
+                var types = dc.Notifications.Select(n => n.Type).ToList();
+                return types.Count == types.Distinct().Count();
+            });
         }
     }
 }

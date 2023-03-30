@@ -5,8 +5,6 @@ using Lykke.Snow.Notifications.Domain.Enums;
 
 namespace Lykke.Snow.Notifications.Domain.Model
 {
-    // todo: insert configuration upong adding new token registration if it doesn't exist
-
     /// <summary>
     /// Device configuration
     /// </summary>
@@ -26,10 +24,14 @@ namespace Lykke.Snow.Notifications.Domain.Model
                 Enabled = enabled;
             }
 
+            public override string ToString()
+            {
+                return $"{Type} - {Enabled}";
+            }
+
             public NotificationType Type { get; }
             public bool Enabled { get; }
         }
-
         public string DeviceId { get; }
         public string AccountId { get; }
         public Locale Locale { get; }
@@ -82,18 +84,33 @@ namespace Lykke.Snow.Notifications.Domain.Model
             if (string.IsNullOrWhiteSpace(deviceId))
                 throw new ArgumentNullException(nameof(deviceId), "Device id cannot be null or empty");
 
-            // todo: if we gonna have specific deviceId format then we'll probably need separate value object for it
-
             if (string.IsNullOrWhiteSpace(accountId))
                 throw new ArgumentNullException(nameof(accountId), "Account id cannot be null or empty");
 
             if (!Enum.TryParse<Locale>(locale, true, out var localeParsed))
                 throw new ArgumentException($"Locale type [{locale}] is not supported");
 
+            var duplicatedNotifications = notifications?
+                .GroupBy(n => n.Type)
+                .Where(g => g.Count() > 1)
+                .ToList();
+            if (duplicatedNotifications != null && duplicatedNotifications.Any())
+                throw new ArgumentException(
+                    $"Duplicated notifications: {string.Join(", ", duplicatedNotifications.Select(g => g.Key))}");
+            
             DeviceId = deviceId;
             AccountId = accountId;
             Locale = localeParsed;
             Notifications = notifications ?? new List<Notification>();
+        }
+
+        public override string ToString()
+        {
+            return $"{nameof(DeviceId)}: {DeviceId}, " +
+                   $"{nameof(AccountId)}: {AccountId}, " +
+                   $"{nameof(Locale)}: {Locale}, " +
+                   $"{nameof(Notifications)}: " +
+                   $"{string.Join(", ", Notifications)}";
         }
 
         /// <summary>
@@ -107,8 +124,11 @@ namespace Lykke.Snow.Notifications.Domain.Model
             var allNotificationTypes = Enum.GetValues(typeof(NotificationType))
                 .Cast<NotificationType>()
                 .Select(t => new Notification(t.ToString()));
-            
-            return new DeviceConfiguration(deviceId, accountId, locale: locale, notifications: allNotificationTypes.ToList());
+
+            return new DeviceConfiguration(deviceId, 
+                accountId, 
+                locale: locale,
+                notifications: allNotificationTypes.ToList());
         }
     }
 }
