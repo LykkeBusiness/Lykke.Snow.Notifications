@@ -45,6 +45,7 @@ namespace Lykke.Snow.Notifications.Startup
                         cBuilder.RegisterModule(new DalModule(settings.CurrentValue.NotificationService.Db.ConnectionString));
                         cBuilder.RegisterModule(new CqrsModule(settings.CurrentValue.NotificationService.Cqrs));
                         cBuilder.RegisterModule(new RabbitMqModule(settings.CurrentValue.NotificationService));
+                        cBuilder.RegisterModule(new FirebaseModule(settings.CurrentValue.NotificationService));
                     }
                 })
                 .UseSerilog((_, cfg) => cfg.ReadFrom.Configuration(configuration));
