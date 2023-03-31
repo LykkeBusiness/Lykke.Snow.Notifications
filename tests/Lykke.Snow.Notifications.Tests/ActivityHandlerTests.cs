@@ -26,12 +26,12 @@ namespace Lykke.Snow.Notifications.Tests
             {
                 { ActivityTypeContract.AccountDepositSucceeded, NotificationType.DepositSucceeded },
                 { ActivityTypeContract.AccountTradingDisabled, NotificationType.AccountLocked },
-                { ActivityTypeContract.AccountDepositFailed, NotificationType.DepositFailed },
+                { ActivityTypeContract.Liquidation, NotificationType.Liquidation },
             };
 
             yield return new object[] { ActivityTypeContract.AccountDepositSucceeded, mapping, NotificationType.DepositSucceeded, true };
             yield return new object[] { ActivityTypeContract.AccountTradingDisabled, mapping, NotificationType.AccountLocked, true };
-            yield return new object[] { ActivityTypeContract.AccountDepositFailed, mapping, NotificationType.DepositFailed, true };
+            yield return new object[] { ActivityTypeContract.Liquidation, mapping, NotificationType.Liquidation, true };
             yield return new object[] { ActivityTypeContract.MarginCall1, mapping, NotificationType.NotSpecified, false };
             yield return new object[] { ActivityTypeContract.PositionClosing, mapping, NotificationType.NotSpecified, false };
         }

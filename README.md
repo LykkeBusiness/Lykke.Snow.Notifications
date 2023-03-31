@@ -34,7 +34,7 @@ All variables and value constraints are default. For instance, to set host URL t
 ```
 ### 2. Firebase Configuration
 
-In order to communicate with Firebase servers, a private key for service account is needed. This file should be located in output directory. Please follow the steps [here](https://firebase.google.com/docs/admin/setup) to see get this credentials file.
+In order to communicate with Firebase servers, a private key for service account is needed. This file should be located in output directory. Please follow the steps [here](https://firebase.google.com/docs/admin/setup) to get this credentials file.
 
 After getting this file and moving it to the output directory, the `CredentialsFilePath` configuration should be set to point the path in output directory.
 
