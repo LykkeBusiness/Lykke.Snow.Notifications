@@ -10,7 +10,6 @@ using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Repositories;
 using Lykke.Snow.Notifications.DomainServices.Services;
-using Microsoft.Extensions.Internal;
 using Moq;
 using Xunit;
 
@@ -18,8 +17,6 @@ namespace Lykke.Snow.Notifications.Tests
 {
     public class DeviceRegistrationServiceTests
     {
-        private readonly ISystemClock _systemClock = new SystemClock();
-
         class DeviceRegistrationTestData : IEnumerable<object[]>
         {
             public IEnumerator<object[]> GetEnumerator()
@@ -58,7 +55,7 @@ namespace Lykke.Snow.Notifications.Tests
             {
                 yield return new object[] 
                 { 
-                    new string[] { "account-id-1", "account-id-2", "account-id-3" },
+                    new[] { "account-id-1", "account-id-2", "account-id-3" },
                     new List<DeviceRegistration> 
                     {
                         new DeviceRegistration("account-id-1", "device-token-1", "device-id-1", DateTime.UtcNow), 
@@ -170,7 +167,7 @@ namespace Lykke.Snow.Notifications.Tests
             var deviceId = "any-device-id";
             var locale = Locale.En;
 
-            var actual = await sut.RegisterDeviceAsync(deviceRegistration, locale.ToString());
+            await sut.RegisterDeviceAsync(deviceRegistration, locale.ToString());
             
             mockDeviceConfigurationRepository.Verify(x => x.AddOrUpdateAsync(It.Is<DeviceConfiguration>(
                 dc => 
@@ -378,7 +375,7 @@ namespace Lykke.Snow.Notifications.Tests
             
             var sut = CreateSut(mockRepository.Object);
             
-            var actual = await sut.GetDeviceRegistrationsAsync(new string[] { "account-id-1", "account-id-2", "account-id-3" });
+            var actual = await sut.GetDeviceRegistrationsAsync(new[] { "account-id-1", "account-id-2", "account-id-3" });
             
             Assert.True(actual.IsSuccess);
             Assert.False(actual.IsFailed);
@@ -390,13 +387,11 @@ namespace Lykke.Snow.Notifications.Tests
         
         private DeviceRegistrationService CreateSut(IDeviceRegistrationRepository repositoryArg = null, 
             IFcmIntegrationService fcmIntegrationServiceArg = null, 
-            ISystemClock systemClockArg = null,
             IDeviceConfigurationRepository deviceConfigurationRepositoryArg = null)
         {
             var deviceRegistrationRepository = new Mock<IDeviceRegistrationRepository>().Object;
             var deviceConfigurationRepository = new Mock<IDeviceConfigurationRepository>().Object;
 
-            ISystemClock systemClock = _systemClock;
             IFcmIntegrationService fcmIntegrationService = new Mock<IFcmIntegrationService>().Object;
             
             if(repositoryArg != null)
@@ -407,16 +402,12 @@ namespace Lykke.Snow.Notifications.Tests
             {
                 deviceConfigurationRepository = deviceConfigurationRepositoryArg;
             }
-            if(systemClockArg != null)
-            {
-                systemClock = systemClockArg;
-            }
             if(fcmIntegrationServiceArg != null)
             {
                 fcmIntegrationService = fcmIntegrationServiceArg;
             }
             
-            return new DeviceRegistrationService(deviceRegistrationRepository, systemClock, fcmIntegrationService, deviceConfigurationRepository);
+            return new DeviceRegistrationService(deviceRegistrationRepository, fcmIntegrationService, deviceConfigurationRepository);
         }
     }
 }

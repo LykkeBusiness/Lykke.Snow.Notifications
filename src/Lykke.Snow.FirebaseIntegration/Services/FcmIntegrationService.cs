@@ -69,13 +69,10 @@ namespace Lykke.Snow.FirebaseIntegration.Services
             if(string.IsNullOrEmpty(deviceToken))
                 return false;
 
-            try 
+            try
             {
-                var result = await FirebaseMessaging.DefaultInstance.SendAsync(
-                    new Message() 
-                    { 
-                        Token = deviceToken, 
-                    }, dryRun: true);
+                await FirebaseMessaging.DefaultInstance.SendAsync(
+                    new Message { Token = deviceToken, }, dryRun: true);
             }
             catch(FirebaseMessagingException e)
             {

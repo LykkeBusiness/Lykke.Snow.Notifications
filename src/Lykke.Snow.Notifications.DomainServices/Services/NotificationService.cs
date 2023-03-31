@@ -13,13 +13,10 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
     public class NotificationService : INotificationService
     {
         private readonly IFcmIntegrationService _fcmIntegrationService;
-        private readonly ILocalizationService _localizationService;
 
-        public NotificationService(IFcmIntegrationService fcmIntegrationService, ILocalizationService localizationService)
+        public NotificationService(IFcmIntegrationService fcmIntegrationService)
         {
-            _fcmIntegrationService =
-                fcmIntegrationService ?? throw new ArgumentNullException(nameof(fcmIntegrationService));
-            _localizationService = localizationService;
+            _fcmIntegrationService = fcmIntegrationService ?? throw new ArgumentNullException(nameof(fcmIntegrationService));
         }
 
         public async Task SendNotification(NotificationMessage message, string deviceToken)

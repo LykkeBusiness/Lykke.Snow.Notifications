@@ -9,7 +9,7 @@ using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Tests.Extensions;
 using Xunit;
 
-namespace Lykke.Snow.Notifications.Tests
+namespace Lykke.Snow.Notifications.Tests.IntegrationTests
 {
     public class DeviceConfigurationControllerIntegrationTests : IClassFixture<WebAppFactoryNoDependencies>
     {

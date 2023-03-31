@@ -3,7 +3,7 @@ using FirebaseAdmin.Messaging;
 using Lykke.Snow.Common.Model;
 using Lykke.Snow.FirebaseIntegration.Interfaces;
 
-namespace Lykke.Snow.Notifications.Tests
+namespace Lykke.Snow.Notifications.Tests.Fakes
 {
     public class FcmIntegrationServiceFake : IFcmIntegrationService
     {

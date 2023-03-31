@@ -9,7 +9,6 @@ using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Repositories;
 using Lykke.Snow.Notifications.Domain.Services;
-using Microsoft.Extensions.Internal;
 
 namespace Lykke.Snow.Notifications.DomainServices.Services
 {
@@ -18,15 +17,12 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
         private readonly IDeviceRegistrationRepository _repository;
         private readonly IDeviceConfigurationRepository _deviceConfigurationRepository;
         private readonly IFcmIntegrationService _fcmIntegrationService;
-        private readonly ISystemClock _systemClock;
 
         public DeviceRegistrationService(IDeviceRegistrationRepository repository,
-            ISystemClock systemClock,
             IFcmIntegrationService fcmIntegrationService,
             IDeviceConfigurationRepository deviceConfigurationRepository)
         {
             _repository = repository;
-            _systemClock = systemClock;
             _fcmIntegrationService = fcmIntegrationService;
             _deviceConfigurationRepository = deviceConfigurationRepository;
         }
@@ -56,7 +52,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
         public async Task<Result<DeviceRegistrationErrorCode>> UnregisterDeviceAsync(string deviceToken)
         {
-            DeviceRegistration? result = null;
+            DeviceRegistration? result;
             try
             {
                 result = await _repository.GetDeviceRegistrationAsync(deviceToken: deviceToken);
@@ -90,7 +86,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             
             var result = await _repository.GetDeviceRegistrationsByAccountIdAsync(accountId);
             
-            if(result == null)
+            if (result == null)
                 return new Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>(Enumerable.Empty<DeviceRegistration>());
 
             return new Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>(result);
@@ -102,8 +98,8 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                 throw new ArgumentNullException(nameof(accountIds));
             
             var result = await _repository.GetDeviceRegistrationsByAccountIdsAsync(accountIds);
-
-            if(result == null)
+            
+            if (result == null)
                 return new Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>(Enumerable.Empty<DeviceRegistration>());
 
             return new Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>(result);

@@ -8,9 +8,10 @@ using Lykke.Snow.Notifications.Client.Model.Requests;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Services;
 using Lykke.Snow.Notifications.Tests.Extensions;
+using Lykke.Snow.Notifications.Tests.Fakes;
 using Xunit;
 
-namespace Lykke.Snow.Notifications.Tests
+namespace Lykke.Snow.Notifications.Tests.IntegrationTests
 {
     public class DeviceRegistrationControllerIntegrationTests : IClassFixture<WebAppFactoryNoDependencies>
     {

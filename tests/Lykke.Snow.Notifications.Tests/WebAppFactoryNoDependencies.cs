@@ -5,6 +5,7 @@ using Lykke.Snow.FirebaseIntegration.Interfaces;
 using Lykke.Snow.Notifications.Domain.Repositories;
 using Lykke.Snow.Notifications.SqlRepositories;
 using Lykke.Snow.Notifications.SqlRepositories.Repositories;
+using Lykke.Snow.Notifications.Tests.Fakes;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;

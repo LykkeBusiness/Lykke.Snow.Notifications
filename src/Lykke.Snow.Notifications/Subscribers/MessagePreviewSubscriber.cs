@@ -15,17 +15,14 @@ namespace Lykke.Snow.Notifications.Subscribers
         private RabbitMqPullingSubscriber<MessagePreviewEvent>? _subscriber;
         private readonly ILoggerFactory _loggerFactory;
         private readonly RabbitMqSubscriptionSettings _settings;
-        private readonly ILogger<MessagePreviewSubscriber> _logger;
         private readonly IMessagePreviewEventHandler _messagePreviewEventHandler;
 
         public MessagePreviewSubscriber(ILoggerFactory loggerFactory,
             SubscriptionSettings settings,
-            ILogger<MessagePreviewSubscriber> logger,
             IMessagePreviewEventHandler messagePreviewEventHandler)
         {
             _loggerFactory = loggerFactory;
             _settings = settings;
-            _logger = logger;
             _messagePreviewEventHandler = messagePreviewEventHandler;
         }
 

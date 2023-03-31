@@ -21,7 +21,7 @@ namespace Lykke.Snow.Notifications.Tests
                     Id = "some-id",
                     Timestamp = DateTime.UtcNow,
                     Activity = new ActivityContract("id", "account-id", "instrument", "event-source-id", DateTime.UtcNow, ActivityCategoryContract.CashMovement,
-                        ActivityTypeContract.OrderExpiry, new string[] { "attr-1", "attr-2"}, new string[] { "relatedid-1", "relatedid-2" })
+                        ActivityTypeContract.OrderExpiry, new[] { "attr-1", "attr-2"}, new[] { "relatedid-1", "relatedid-2" })
                 }
             };
         }

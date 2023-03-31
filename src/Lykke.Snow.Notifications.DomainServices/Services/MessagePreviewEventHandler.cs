@@ -37,45 +37,45 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             if(e == null || e.Recipients == null)
                 return;
             
-           var accountIds = e.Recipients.ToArray();
+            var accountIds = e.Recipients.ToArray();
             
-           var deviceRegistrationsResult = await _deviceRegistrationService.GetDeviceRegistrationsAsync(accountIds: accountIds);
+            var deviceRegistrationsResult = await _deviceRegistrationService.GetDeviceRegistrationsAsync(accountIds: accountIds);
            
-           if(deviceRegistrationsResult.IsFailed)
-           {
-               _logger.LogWarning("Could not get device tokens for the list of Account ids {AccountIds}. ErrorCode: {ErrorCode}", 
+            if(deviceRegistrationsResult.IsFailed)
+            {
+                _logger.LogWarning("Could not get device tokens for the list of Account ids {AccountIds}. ErrorCode: {ErrorCode}", 
                     string.Join(", ", accountIds), deviceRegistrationsResult.Error);
 
-               return;
-           }
+                return;
+            }
                
-          var notificationMessage = _notificationService.BuildNotificationMessage(NotificationType.InboxMessage, 
-               title: e.Subject,
-               body: e.Content,
-               keyValuePairs: new Dictionary<string, string>());
+            var notificationMessage = _notificationService.BuildNotificationMessage(NotificationType.InboxMessage, 
+                title: e.Subject,
+                body: e.Content,
+                keyValuePairs: new Dictionary<string, string>());
 
-           foreach(var deviceRegistration in deviceRegistrationsResult.Value)
-           {
-               try 
-               {
-                   var deviceConfiguration = await _deviceConfigurationRepository.GetAsync(deviceId: deviceRegistration.DeviceId);
+            foreach(var deviceRegistration in deviceRegistrationsResult.Value)
+            {
+                try 
+                {
+                    var deviceConfiguration = await _deviceConfigurationRepository.GetAsync(deviceId: deviceRegistration.DeviceId);
                        
-                   if(!_notificationService.IsDeviceTargeted(deviceConfiguration, NotificationType.InboxMessage))
-                       continue;
+                    if(!_notificationService.IsDeviceTargeted(deviceConfiguration, NotificationType.InboxMessage))
+                        continue;
 
-                   await _notificationService.SendNotification(notificationMessage, deviceToken: deviceRegistration.DeviceToken);
+                    await _notificationService.SendNotification(notificationMessage, deviceToken: deviceRegistration.DeviceToken);
 
-                   _logger.LogInformation("Push notification has successfully been sent to the device {DeviceToken}: {PushNotificationPayload}",
-                       deviceRegistration.DeviceToken, notificationMessage.ToJson());
-               }
-               catch(CannotSendNotificationException ex)
-               {
-                   if(ex.ErrorCode == MessagingErrorCode.Unregistered)
-                   {
-                       _logger.LogWarning("The notification could not be delivered to the device {DeviceToken} because it is no longer active.", deviceRegistration.DeviceToken);
-                   }
-               }
-           }
+                    _logger.LogInformation("Push notification has successfully been sent to the device {DeviceToken}: {PushNotificationPayload}",
+                        deviceRegistration.DeviceToken, notificationMessage.ToJson());
+                }
+                catch(CannotSendNotificationException ex)
+                {
+                    if(ex.ErrorCode == MessagingErrorCode.Unregistered)
+                    {
+                        _logger.LogWarning("The notification could not be delivered to the device {DeviceToken} because it is no longer active.", deviceRegistration.DeviceToken);
+                    }
+                }
+            }
         }
     }
 }

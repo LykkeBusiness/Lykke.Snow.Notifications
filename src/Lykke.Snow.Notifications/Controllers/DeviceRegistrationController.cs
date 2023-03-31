@@ -10,7 +10,6 @@ using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lykke.Snow.Notifications.Controllers
@@ -37,21 +36,19 @@ namespace Lykke.Snow.Notifications.Controllers
             var result = await _deviceRegistrationService.RegisterDeviceAsync(deviceRegistration, 
                 locale: request.Locale);
             
-            return MapToResponse(result, Response);
+            return MapToResponse(result);
         }
 
         [HttpDelete]
         [ProducesResponseType(typeof(ErrorCodeResponse<DeviceRegistrationErrorCodeContract>), (int) HttpStatusCode.OK)]
         public async Task<ErrorCodeResponse<DeviceRegistrationErrorCodeContract>> UnregisterDevice(UnregisterDeviceRequest request)
         {
-            var response = new ErrorCodeResponse<DeviceRegistrationErrorCodeContract>();
-            
             var result = await _deviceRegistrationService.UnregisterDeviceAsync(deviceToken: request.DeviceToken);
             
-            return MapToResponse(result, Response);
+            return MapToResponse(result);
         }
 
-        private ErrorCodeResponse<DeviceRegistrationErrorCodeContract> MapToResponse(Result<DeviceRegistrationErrorCode> result, HttpResponse response)
+        private ErrorCodeResponse<DeviceRegistrationErrorCodeContract> MapToResponse(Result<DeviceRegistrationErrorCode> result)
         {
             return new ErrorCodeResponse<DeviceRegistrationErrorCodeContract> 
             { 

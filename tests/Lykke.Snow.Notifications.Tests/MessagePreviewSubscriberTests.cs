@@ -19,7 +19,7 @@ namespace Lykke.Snow.Notifications.Tests
             {
                 new MessagePreviewEvent
                 {
-                    Recipients = new string[] { "A01", "A02", "A03" },
+                    Recipients = new[] { "A01", "A02", "A03" },
                     Subject = "some-subject",
                     Content = "some-content"
                 }
@@ -46,7 +46,6 @@ namespace Lykke.Snow.Notifications.Tests
         
         private MessagePreviewSubscriber CreateSut(IMessagePreviewEventHandler? messagePreviewEventHandlerArg = null)
         {
-            var mockLogger = new Mock<ILogger<MessagePreviewSubscriber>>();
             var mockLoggerFactory = new Mock<ILoggerFactory>();
             var subscriptionSettings = new SubscriptionSettings();
             
@@ -57,7 +56,7 @@ namespace Lykke.Snow.Notifications.Tests
                 messagePrevieEventHandler = messagePreviewEventHandlerArg;
             }
 
-            return new MessagePreviewSubscriber(mockLoggerFactory.Object, subscriptionSettings, mockLogger.Object, messagePrevieEventHandler);
+            return new MessagePreviewSubscriber(mockLoggerFactory.Object, subscriptionSettings, messagePrevieEventHandler);
         }
     }
 }

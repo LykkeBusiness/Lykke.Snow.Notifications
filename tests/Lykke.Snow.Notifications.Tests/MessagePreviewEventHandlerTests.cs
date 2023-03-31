@@ -97,13 +97,7 @@ namespace Lykke.Snow.Notifications.Tests
             var mockDeviceRegistrationService = new Mock<IDeviceRegistrationService>();
             var mockNotificationService = new Mock<INotificationService>();
             var mockDeviceConfigurationRepository = new Mock<IDeviceConfigurationRepository>();
-            mockDeviceRegistrationService.Setup(x => x.GetDeviceRegistrationsAsync(It.IsAny<string>())).ReturnsAsync(new Common.Model.Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DoesNotExist));
-
-            var sut = CreateSut(notificationServiceArg: mockNotificationService.Object,
-                deviceRegistrationServiceArg: mockDeviceRegistrationService.Object,
-                deviceConfigurationRepositoryArg: mockDeviceConfigurationRepository.Object);
-            
-            var e = new MessagePreviewEvent() { Recipients = new string[] { "A01" }};
+            mockDeviceRegistrationService.Setup(x => x.GetDeviceRegistrationsAsync(It.IsAny<string>())).ReturnsAsync(new Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DoesNotExist));
 
             mockNotificationService.Verify(x => x.BuildNotificationMessage(It.IsAny<NotificationType>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Never);
             mockDeviceConfigurationRepository.Verify(x => x.GetAsync(It.IsAny<string>()), Times.Never);
@@ -119,7 +113,7 @@ namespace Lykke.Snow.Notifications.Tests
             IEnumerable<string> enabledDevices,
             NotificationMessage notificationMessage)
         {
-            var e = new MessagePreviewEvent() { Recipients = new string[] { "A01" }, Subject = "some-sobject", Content = "some-content" };
+            var e = new MessagePreviewEvent() { Recipients = new[] { "A01" }, Subject = "some-sobject", Content = "some-content" };
             
             var mockDeviceRegistrationService = new Mock<IDeviceRegistrationService>();
 

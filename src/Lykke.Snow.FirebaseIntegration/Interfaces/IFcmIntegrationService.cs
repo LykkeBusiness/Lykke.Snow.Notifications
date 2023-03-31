@@ -15,11 +15,11 @@ namespace Lykke.Snow.FirebaseIntegration.Interfaces
         /// <param name="message"></param>
         /// <returns></returns>
         Task<Result<string, MessagingErrorCode>> SendNotification(Message message);
-        
+
         /// <summary>
         /// Validate FCM Device token
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="deviceToken"></param>
         /// <returns></returns>
         Task<bool> IsDeviceTokenValid(string deviceToken);
     }

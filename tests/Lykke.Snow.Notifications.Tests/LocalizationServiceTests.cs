@@ -16,7 +16,7 @@ namespace Lykke.Snow.Notifications.Tests
 
     public class LocalizationServiceTests
     {
-        const string localizationJsonText = @"
+        const string LocalizationJsonText = @"
             {
                 ""Titles"": {
                     ""AccountLocked"": {
@@ -49,12 +49,12 @@ namespace Lykke.Snow.Notifications.Tests
         {
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText)!, "AccountLocked", "en", new string[]{}, "Account locked", "Account has been locked." };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText)!, "AccountLocked", "es", new string[]{}, "Coenta bloqueada", "La cuenta ha sido bloqueada" };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText)!, "AccountLocked", "de", new string[]{}, "Konto gesperrt", "Konto wurde gesperrt" };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText)!, "DepositSucceeded", "en", new string[]{ "100", "EUR", "A001" }, "Deposit Succeeded", "100EUR has been deposited to the account A001." };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText)!, "DepositSucceeded", "es", new string[]{ "100", "EUR", "A001" }, "Depósito exitoso", "100EUR se ha depositado en la cuenta A001." };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText)!, "DepositSucceeded", "de", new string[]{ "100", "EUR", "A001" }, "Einzahlung erfolgreich", "100EUR wurde auf das Konto A001 eingezahlt." };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "AccountLocked", "en", new string[]{}, "Account locked", "Account has been locked." };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "AccountLocked", "es", new string[]{}, "Coenta bloqueada", "La cuenta ha sido bloqueada" };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "AccountLocked", "de", new string[]{}, "Konto gesperrt", "Konto wurde gesperrt" };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "DepositSucceeded", "en", new[]{ "100", "EUR", "A001" }, "Deposit Succeeded", "100EUR has been deposited to the account A001." };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "DepositSucceeded", "es", new[]{ "100", "EUR", "A001" }, "Depósito exitoso", "100EUR se ha depositado en la cuenta A001." };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "DepositSucceeded", "de", new[]{ "100", "EUR", "A001" }, "Einzahlung erfolgreich", "100EUR wurde auf das Konto A001 eingezahlt." };
             }
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -64,9 +64,9 @@ namespace Lykke.Snow.Notifications.Tests
         {
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText)!, "en", "notification-type-that-does-not-exist" };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText)!, "es", "notification-type-that-does-not-exist" };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText)!, "de", "notification-type-that-does-not-exist" };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "en", "notification-type-that-does-not-exist" };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "es", "notification-type-that-does-not-exist" };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "de", "notification-type-that-does-not-exist" };
             }
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -76,8 +76,8 @@ namespace Lykke.Snow.Notifications.Tests
         {
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText)!, "language-that-does-not-exist", "AccountLocked" };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText)!, "language-that-does-not-exist", "DepositSucceeded" };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "language-that-does-not-exist", "AccountLocked" };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "language-that-does-not-exist", "DepositSucceeded" };
             }
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -87,9 +87,9 @@ namespace Lykke.Snow.Notifications.Tests
         {
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText)!, "en", "DepositSucceeded", new string [] { "we pass two args", "while we should've three" } };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText)!, "es", "DepositSucceeded", new string [] { "we pass two args", "while we should've three" } };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(localizationJsonText)!, "de", "DepositSucceeded", new string [] { "we pass two args", "while we should've three" } };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "en", "DepositSucceeded", new[] { "we pass two args", "while we should've three" } };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "es", "DepositSucceeded", new[] { "we pass two args", "while we should've three" } };
+                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "de", "DepositSucceeded", new[] { "we pass two args", "while we should've three" } };
             }
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -148,8 +148,9 @@ namespace Lykke.Snow.Notifications.Tests
         public void GetLocalizedText_ShouldThrowLocalizationFormatException_WhenNumberOfArgumentsDontMatch(LocalizationData data, string language, string notificationType, string[] args)
         {
             var sut = CreateSut(data);
-            
-            var ex = Assert.ThrowsAsync<LocalizationFormatException>(() => sut.GetLocalizedTextAsync(notificationType, language, args));
+
+            Assert.ThrowsAsync<LocalizationFormatException>(() =>
+                sut.GetLocalizedTextAsync(notificationType, language, args));
         }
         
         private LocalizationService CreateSut(LocalizationData data)

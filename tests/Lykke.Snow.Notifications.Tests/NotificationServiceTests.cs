@@ -7,7 +7,6 @@ using Lykke.Snow.FirebaseIntegration.Exceptions;
 using Lykke.Snow.FirebaseIntegration.Interfaces;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Model;
-using Lykke.Snow.Notifications.Domain.Services;
 using Lykke.Snow.Notifications.DomainServices.Services;
 using Moq;
 using Xunit;
@@ -28,39 +27,23 @@ namespace Lykke.Snow.Notifications.Tests
 
         class TargetingTestData : IEnumerable<object[]>
         {
-            DeviceConfiguration deviceConfiguration = new DeviceConfiguration("any-device-id", "any-account-id", "en", 
-                    new List<DeviceConfiguration.Notification> {
-                        new DeviceConfiguration.Notification("DepositSucceeded", true),
-                        new DeviceConfiguration.Notification("WithdrawalSucceeded", true),
-                        new DeviceConfiguration.Notification("AccountLocked", true),
-                        new DeviceConfiguration.Notification("AccountUnlocked", false),
+            private readonly DeviceConfiguration _deviceConfiguration = new DeviceConfiguration("any-device-id",
+                "any-account-id", "en",
+                new List<DeviceConfiguration.Notification>
+                {
+                    new DeviceConfiguration.Notification("DepositSucceeded"),
+                    new DeviceConfiguration.Notification("WithdrawalSucceeded"),
+                    new DeviceConfiguration.Notification("AccountLocked"),
+                    new DeviceConfiguration.Notification("AccountUnlocked", false),
                 }.AsReadOnly());
             
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] { deviceConfiguration, NotificationType.DepositSucceeded, true };
-                yield return new object[] { deviceConfiguration, NotificationType.WithdrawalSucceeded, true };
-                yield return new object[] { deviceConfiguration, NotificationType.AccountLocked, true };
-                yield return new object[] { deviceConfiguration, NotificationType.AccountUnlocked, false };
-                yield return new object[] { deviceConfiguration, NotificationType.DepositFailed, false };
-            }
-
-            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        }
-
-        class KeyValuePairTestData : IEnumerable<object[]>
-        {
-            public IEnumerator<object[]> GetEnumerator()
-            {
-                yield return new object[] 
-                { 
-                    new Dictionary<string, string>()
-                    {
-                        { "key1", "value1" },
-                        { "key2", "value2" },
-                        { "key3", "value3" },
-                    }
-                };
+                yield return new object[] { _deviceConfiguration, NotificationType.DepositSucceeded, true };
+                yield return new object[] { _deviceConfiguration, NotificationType.WithdrawalSucceeded, true };
+                yield return new object[] { _deviceConfiguration, NotificationType.AccountLocked, true };
+                yield return new object[] { _deviceConfiguration, NotificationType.AccountUnlocked, false };
+                yield return new object[] { _deviceConfiguration, NotificationType.DepositFailed, false };
             }
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -84,9 +67,7 @@ namespace Lykke.Snow.Notifications.Tests
                 yield return new object[] 
                 { 
                     NotificationType.AccountUnlocked, "title2", "body2", 
-                    new Dictionary<string, string>() 
-                    {
-                    } 
+                    new Dictionary<string, string>()
                 };
 
                 yield return new object[] 
@@ -210,21 +191,16 @@ namespace Lykke.Snow.Notifications.Tests
 
         #endregion
         
-        private NotificationService CreateSut(IFcmIntegrationService fcmServiceArg = null, ILocalizationService localizationServiceArg = null)
+        private NotificationService CreateSut(IFcmIntegrationService fcmServiceArg = null)
         {
             var fcmService = new Mock<IFcmIntegrationService>().Object;
-            var localizationService = new Mock<ILocalizationService>().Object;
 
             if(fcmServiceArg != null)
             {
                 fcmService = fcmServiceArg;
             }
-            if(localizationServiceArg != null)
-            {
-                localizationService = localizationServiceArg; 
-            }
 
-            return new NotificationService(fcmService, localizationService);
+            return new NotificationService(fcmService);
         }
     }
 }

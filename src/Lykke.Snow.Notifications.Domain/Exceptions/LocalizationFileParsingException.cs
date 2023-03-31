@@ -4,8 +4,5 @@ namespace Lykke.Snow.Notifications.Domain.Exceptions
 {
     public class LocalizationFileParsingException : Exception
     {
-        public LocalizationFileParsingException()
-        {
-        }
     }
 }

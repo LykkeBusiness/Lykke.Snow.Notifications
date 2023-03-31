@@ -107,7 +107,7 @@ namespace Lykke.Snow.Notifications.Tests
                     DateTime.UtcNow, 
                     ActivityCategoryContract.Account,
                     ActivityTypeContract.OrderAcceptance, 
-                    descriptionAttributes: new string[] { "100", "EUR" }, 
+                    descriptionAttributes: new[] { "100", "EUR" }, 
                     new string[]{})
             };
             
@@ -140,7 +140,7 @@ namespace Lykke.Snow.Notifications.Tests
                     DateTime.UtcNow, 
                     ActivityCategoryContract.Account,
                     ActivityTypeContract.OrderExecution, 
-                    descriptionAttributes: new string[] { "100", "Buy", "Market", "Facebook Inc" }, 
+                    descriptionAttributes: new[] { "100", "Buy", "Market", "Facebook Inc" }, 
                     new string[]{})
             };
             
@@ -165,13 +165,6 @@ namespace Lykke.Snow.Notifications.Tests
             
             var sut = CreateSut(deviceRegistrationServiceArg: deviceRegistrationServiceMock.Object, 
                 localizationServiceArg: localizationServiceMock.Object);
-            
-            IReadOnlyDictionary<ActivityTypeContract, NotificationType> mapping = new Dictionary<ActivityTypeContract, NotificationType>()
-            {
-                { ActivityTypeContract.AccountDepositSucceeded, NotificationType.DepositSucceeded },
-                { ActivityTypeContract.AccountTradingDisabled, NotificationType.AccountLocked },
-                { ActivityTypeContract.AccountDepositFailed, NotificationType.DepositFailed },
-            };
 
             var activity = new ActivityEvent
             {
@@ -182,7 +175,7 @@ namespace Lykke.Snow.Notifications.Tests
                     DateTime.UtcNow, 
                     ActivityCategoryContract.Account,
                     ActivityTypeContract.SessionSwitchedToOnBehalfTrading, 
-                    descriptionAttributes: new string[] { "100", "Buy", "Market", "Facebook Inc" }, 
+                    descriptionAttributes: new[] { "100", "Buy", "Market", "Facebook Inc" }, 
                     new string[]{})
             };
             
@@ -200,7 +193,7 @@ namespace Lykke.Snow.Notifications.Tests
         public async Task HandleActivityEvent_ShouldExitMethod_IfGetDeviceRegistrationHasFailed()
         {
             var deviceRegistrationServiceMock = new Mock<IDeviceRegistrationService>();
-            deviceRegistrationServiceMock.Setup(x => x.GetDeviceRegistrationsAsync(It.IsAny<string>())).ReturnsAsync(new Common.Model.Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DoesNotExist));
+            deviceRegistrationServiceMock.Setup(x => x.GetDeviceRegistrationsAsync(It.IsAny<string>())).ReturnsAsync(new Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DoesNotExist));
             
             var deviceConfigurationRepositoryMock = new Mock<IDeviceConfigurationRepository>();
             var notificationServiceMock = new Mock<INotificationService>();
@@ -208,13 +201,6 @@ namespace Lykke.Snow.Notifications.Tests
             
             var sut = CreateSut(deviceRegistrationServiceArg: deviceRegistrationServiceMock.Object, 
                 localizationServiceArg: localizationServiceMock.Object);
-            
-            IReadOnlyDictionary<ActivityTypeContract, NotificationType> mapping = new Dictionary<ActivityTypeContract, NotificationType>()
-            {
-                { ActivityTypeContract.AccountDepositSucceeded, NotificationType.DepositSucceeded },
-                { ActivityTypeContract.AccountTradingDisabled, NotificationType.AccountLocked },
-                { ActivityTypeContract.AccountDepositFailed, NotificationType.DepositFailed },
-            };
 
             var activity = new ActivityEvent
             {
@@ -225,7 +211,7 @@ namespace Lykke.Snow.Notifications.Tests
                     DateTime.UtcNow, 
                     ActivityCategoryContract.Account,
                     ActivityTypeContract.SessionSwitchedToOnBehalfTrading, 
-                    descriptionAttributes: new string[] { "100", "Buy", "Market", "Facebook Inc" }, 
+                    descriptionAttributes: new[] { "100", "Buy", "Market", "Facebook Inc" }, 
                     new string[]{})
             };
             
@@ -252,7 +238,7 @@ namespace Lykke.Snow.Notifications.Tests
                 Id = "some-id",
                 Timestamp = DateTime.UtcNow,
                 Activity = new ActivityContract("id", accountId, "instrument", "event-source-id", DateTime.UtcNow, ActivityCategoryContract.CashMovement,
-                    ActivityTypeContract.OrderExpiry, new string[] { "attr-1", "attr-2"}, new string[] { "relatedid-1", "relatedid-2" })
+                    ActivityTypeContract.OrderExpiry, new[] { "attr-1", "attr-2"}, new[] { "relatedid-1", "relatedid-2" })
             };
 
             var mockDeviceRegistrationService = new Mock<IDeviceRegistrationService>();
