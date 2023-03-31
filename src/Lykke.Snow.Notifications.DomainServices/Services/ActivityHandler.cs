@@ -9,6 +9,7 @@ using Lykke.Snow.FirebaseIntegration.Exceptions;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Repositories;
 using Lykke.Snow.Notifications.Domain.Services;
+using Lykke.Snow.Notifications.DomainServices.Mapping;
 using Lykke.Snow.Notifications.DomainServices.Projections;
 using Microsoft.Extensions.Logging;
 
@@ -16,33 +17,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 {
     public class ActivityHandler : IActivityHandler
     {
-        private IReadOnlyDictionary<ActivityTypeContract, NotificationType> _notificationTypeMapping = new Dictionary<ActivityTypeContract, NotificationType>()
-        {
-            { ActivityTypeContract.AccountTradingDisabled, NotificationType.AccountLocked },
-            { ActivityTypeContract.AccountTradingEnabled, NotificationType.AccountUnlocked },
-            { ActivityTypeContract.AccountDepositSucceeded, NotificationType.DepositSucceeded },
-            { ActivityTypeContract.AccountDepositFailed, NotificationType.DepositFailed },
-            { ActivityTypeContract.AccountWithdrawalSucceeded, NotificationType.WithdrawalSucceeded },
-            { ActivityTypeContract.AccountWithdrawalFailed, NotificationType.WithdrawalFailed },
-            { ActivityTypeContract.AccountWithdrawalEnabled, NotificationType.CashUnlocked },
-            { ActivityTypeContract.AccountWithdrawalDisabled, NotificationType.CashLocked },
-            { ActivityTypeContract.Liquidation, NotificationType.Liquidation },
-            { ActivityTypeContract.MarginCall1, NotificationType.MarginCall1 },
-            { ActivityTypeContract.MarginCall2, NotificationType.MarginCall2 },
-            { ActivityTypeContract.OrderExecution, NotificationType.OrderExecuted },
-            { ActivityTypeContract.OrderAcceptanceAndExecution, NotificationType.OrderExecuted },
-            { ActivityTypeContract.OrderExpiry, NotificationType.OrderExpired },
-            { ActivityTypeContract.PositionClosing, NotificationType.PositionClosed },
-            { ActivityTypeContract.PositionPartialClosing, NotificationType.PositionClosed }
-        };
-
-        private IReadOnlyDictionary<ActivityTypeContract, Func<ActivityEvent, string[]>> _descriptionEnrichments = 
-            new Dictionary<ActivityTypeContract, Func<ActivityEvent, string[]>>
-        {
-            {ActivityTypeContract.AccountWithdrawalSucceeded, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }},
-            {ActivityTypeContract.AccountDepositSucceeded, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }}
-        };
-
         private readonly ILogger<ActivityProjection> _logger;
 
         private readonly INotificationService _notificationService;
@@ -67,7 +41,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
         }
         public async Task Handle(ActivityEvent e)
         {
-            if(!TryGetNotificationType(_notificationTypeMapping, activityType: e.Activity.Event, out var notificationType))
+            if(!TryGetNotificationType(ActivityTypeMapping.NotificationTypeMapping, activityType: e.Activity.Event, out var notificationType))
                 return;
 
             var deviceRegistrationsResult = await _deviceRegistrationService.GetDeviceRegistrationsAsync(accountId: e.Activity.AccountId);
@@ -80,7 +54,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             
             // Not all activities have enough number of description attributes
             // to fill in localization template. Here we enrich them.
-            var notificationArguments = EnrichActivityDescriptions(_descriptionEnrichments, e);
+            var notificationArguments = EnrichActivityDescriptions(ActivityTypeMapping.DescriptionEnrichments, e);
 
             foreach(var deviceRegistration in deviceRegistrationsResult.Value)
             {
