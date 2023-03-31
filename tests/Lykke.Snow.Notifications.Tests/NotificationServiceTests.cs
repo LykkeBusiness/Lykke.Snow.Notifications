@@ -9,7 +9,6 @@ using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Services;
 using Lykke.Snow.Notifications.DomainServices.Services;
-using Lykke.Snow.Notifications.Tests.Fakes;
 using Moq;
 using Xunit;
 

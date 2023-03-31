@@ -6,7 +6,6 @@ using Google.Apis.Auth.OAuth2;
 using Lykke.Snow.Common.Model;
 using Lykke.Snow.FirebaseIntegration.Exceptions;
 using Lykke.Snow.FirebaseIntegration.Interfaces;
-using Microsoft.Extensions.Logging;
 
 namespace Lykke.Snow.FirebaseIntegration.Services
 {
