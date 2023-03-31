@@ -39,9 +39,8 @@ In order to communicate with Firebase servers, a private key for service account
 After getting this file and moving it to the output directory, the `CredentialsFilePath` configuration should be set to point the path in output directory.
 
 ```json
-"Fcm":
-{
-	"CredentialFilePath": "path-to-the-file.json"
+"Fcm": 
+  "CredentialFilePath": "/app/firebase-credentials.json"
 }
 ```
 
