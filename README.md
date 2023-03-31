@@ -39,7 +39,7 @@ In order to communicate with Firebase servers, a private key for service account
 After getting this file and moving it to the output directory, the `CredentialsFilePath` configuration should be set to point the path in output directory.
 
 ```json
-"Fcm": 
+"Fcm": {
   "CredentialFilePath": "/app/firebase-credentials.json"
 }
 ```
@@ -72,7 +72,7 @@ The file has the following format.
 There has to be corresponding object both in `Titles` and `Bodies` object for each notification type.
 
 > ⚠️Please note that matching engine is case-sensitive! 
-> That means notification type names in this file exactly match with the notification type.
+> That means notification type names in this file must have exact match with the notification types resides in the following file.
 And the languages should be put in lowercase format. (i.e. `en`, `es`, `de`)
 
 All notification types can be found at [here](./src/Lykke.Snow.Notifications.Domain/Enums/NotificationType.cs). 

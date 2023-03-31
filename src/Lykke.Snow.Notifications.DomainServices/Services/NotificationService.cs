@@ -46,7 +46,23 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                     Title = messageArg.Title,
                     Body = messageArg.Body
                 },
-                Data = messageArg.KeyValueCollection
+                Data = messageArg.KeyValueCollection,
+                Android = new AndroidConfig
+                {
+                    Priority = Priority.High,
+                    Notification = new AndroidNotification
+                    {
+                        DefaultSound = true
+                    }
+                },
+                Apns = new ApnsConfig
+                {
+                    Aps = new Aps
+                    {
+                        ContentAvailable = true,
+                        Sound = "default"
+                    }
+                }
             };
         }
 
