@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -49,12 +48,39 @@ namespace Lykke.Snow.Notifications.Tests
         {
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "AccountLocked", "en", new string[]{}, "Account locked", "Account has been locked." };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "AccountLocked", "es", new string[]{}, "Coenta bloqueada", "La cuenta ha sido bloqueada" };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "AccountLocked", "de", new string[]{}, "Konto gesperrt", "Konto wurde gesperrt" };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "DepositSucceeded", "en", new[]{ "100", "EUR", "A001" }, "Deposit Succeeded", "100EUR has been deposited to the account A001." };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "DepositSucceeded", "es", new[]{ "100", "EUR", "A001" }, "Depósito exitoso", "100EUR se ha depositado en la cuenta A001." };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "DepositSucceeded", "de", new[]{ "100", "EUR", "A001" }, "Einzahlung erfolgreich", "100EUR wurde auf das Konto A001 eingezahlt." };
+                yield return new object[]
+                {
+                    JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "AccountLocked", "en",
+                    new string[] { }, "Account locked", "Account has been locked."
+                };
+                yield return new object[]
+                {
+                    JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "AccountLocked", "es",
+                    new string[] { }, "Coenta bloqueada", "La cuenta ha sido bloqueada"
+                };
+                yield return new object[]
+                {
+                    JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "AccountLocked", "de",
+                    new string[] { }, "Konto gesperrt", "Konto wurde gesperrt"
+                };
+                yield return new object[]
+                {
+                    JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "DepositSucceeded",
+                    "en", new[] { "100", "EUR", "A001" }, "Deposit Succeeded",
+                    "100EUR has been deposited to the account A001."
+                };
+                yield return new object[]
+                {
+                    JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "DepositSucceeded",
+                    "es", new[] { "100", "EUR", "A001" }, "Depósito exitoso",
+                    "100EUR se ha depositado en la cuenta A001."
+                };
+                yield return new object[]
+                {
+                    JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "DepositSucceeded",
+                    "de", new[] { "100", "EUR", "A001" }, "Einzahlung erfolgreich",
+                    "100EUR wurde auf das Konto A001 eingezahlt."
+                };
             }
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -64,9 +90,21 @@ namespace Lykke.Snow.Notifications.Tests
         {
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "en", "notification-type-that-does-not-exist" };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "es", "notification-type-that-does-not-exist" };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "de", "notification-type-that-does-not-exist" };
+                yield return new object[]
+                {
+                    JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "en",
+                    "notification-type-that-does-not-exist"
+                };
+                yield return new object[]
+                {
+                    JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "es",
+                    "notification-type-that-does-not-exist"
+                };
+                yield return new object[]
+                {
+                    JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "de",
+                    "notification-type-that-does-not-exist"
+                };
             }
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -76,8 +114,16 @@ namespace Lykke.Snow.Notifications.Tests
         {
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "language-that-does-not-exist", "AccountLocked" };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "language-that-does-not-exist", "DepositSucceeded" };
+                yield return new object[]
+                {
+                    JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!,
+                    "language-that-does-not-exist", "AccountLocked"
+                };
+                yield return new object[]
+                {
+                    JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!,
+                    "language-that-does-not-exist", "DepositSucceeded"
+                };
             }
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -87,9 +133,21 @@ namespace Lykke.Snow.Notifications.Tests
         {
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "en", "DepositSucceeded", new[] { "we pass two args", "while we should've three" } };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "es", "DepositSucceeded", new[] { "we pass two args", "while we should've three" } };
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "de", "DepositSucceeded", new[] { "we pass two args", "while we should've three" } };
+                yield return new object[]
+                {
+                    JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "en",
+                    "DepositSucceeded", new[] { "we pass two args", "while we should've three" }
+                };
+                yield return new object[]
+                {
+                    JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "es",
+                    "DepositSucceeded", new[] { "we pass two args", "while we should've three" }
+                };
+                yield return new object[]
+                {
+                    JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!, "de",
+                    "DepositSucceeded", new[] { "we pass two args", "while we should've three" }
+                };
             }
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -98,61 +156,81 @@ namespace Lykke.Snow.Notifications.Tests
         public async Task GetLocalizedText_ShouldCallLoad_IfLocalizationDataIsNull()
         {
             var mockDataProvider = new Mock<ILocalizationDataProvider>();
+            mockDataProvider.Setup(x => x.Load()).ReturnsAsync(new LocalizationData(
+                titles: new Dictionary<string, IReadOnlyDictionary<string, string>>
+                {
+                    { "any-type", new Dictionary<string, string> { { "any-lang", "any-title" } } }
+                },
+                bodies: new Dictionary<string, IReadOnlyDictionary<string, string>>
+                {
+                    { "any-type", new Dictionary<string, string> { { "any-lang", "any-body" } } }
+                }));
 
             var sut = CreateSut(mockDataProvider.Object);
             
-            try
-            {
-               await sut.GetLocalizedTextAsync("any-type", "any-lang", new string[]{});
-               await sut.GetLocalizedTextAsync("any-type", "any-lang", new string[]{});
-            }
-            catch(Exception)
-            {
-            }
-            
+            await sut.GetLocalizedTextAsync("any-type", "any-lang", new string[]{});
+            await sut.GetLocalizedTextAsync("any-type", "any-lang", new string[]{});
+
             mockDataProvider.Verify(x => x.Load(), Times.Once);
         }
-        
+
         [Theory]
         [ClassData(typeof(LocalizationHappyPathTestData))]
-        public async Task GetLocalizedText_HappyPath_ShouldReturnTranslatedMessage(LocalizationData data, string type, string lang, string[] args, string expectedTitle, string expectedBody)
+        public async Task GetLocalizedText_HappyPath_ShouldReturnTranslatedMessage(LocalizationData data,
+            string type,
+            string lang,
+            string[] args,
+            string expectedTitle,
+            string expectedBody)
         {
             var sut = CreateSut(data);
-            
+
             var result = await sut.GetLocalizedTextAsync(type, lang, args);
-            
+
             Assert.Equal(expectedTitle, result.Item1);
             Assert.Equal(expectedBody, result.Item2);
         }
-        
+
         [Theory]
         [ClassData(typeof(InvalidNotificationTypeTestData))]
-        public void GetLocalizedText_ShouldThrowTranslationNotFoundException_WhenNotificationTypeIsNotPresent(LocalizationData data, string lang, string invalidNotificationType)
+        public void GetLocalizedText_ShouldThrowTranslationNotFoundException_WhenNotificationTypeIsNotPresent(
+            LocalizationData data,
+            string lang,
+            string invalidNotificationType)
         {
             var sut = CreateSut(data);
-            
-            Assert.ThrowsAsync<TranslationNotFoundException>(() => sut.GetLocalizedTextAsync(invalidNotificationType, lang, new string[] {}));
+
+            Assert.ThrowsAsync<TranslationNotFoundException>(() =>
+                sut.GetLocalizedTextAsync(invalidNotificationType, lang, new string[] { }));
         }
 
         [Theory]
         [ClassData(typeof(InvalidLanguageTestData))]
-        public void GetLocalizedText_ShouldThrowTranslationNotFoundException_WhenLanguageIsNotPresent(LocalizationData data, string invalidLanguage, string notificationType)
+        public void GetLocalizedText_ShouldThrowTranslationNotFoundException_WhenLanguageIsNotPresent(
+            LocalizationData data,
+            string invalidLanguage,
+            string notificationType)
         {
             var sut = CreateSut(data);
-            
-            Assert.ThrowsAsync<TranslationNotFoundException>(() => sut.GetLocalizedTextAsync(notificationType, invalidLanguage, new string[] {}));
+
+            Assert.ThrowsAsync<TranslationNotFoundException>(() =>
+                sut.GetLocalizedTextAsync(notificationType, invalidLanguage, new string[] { }));
         }
 
         [Theory]
         [ClassData(typeof(InvalidTranslationArgumentsTestData))]
-        public void GetLocalizedText_ShouldThrowLocalizationFormatException_WhenNumberOfArgumentsDontMatch(LocalizationData data, string language, string notificationType, string[] args)
+        public void GetLocalizedText_ShouldThrowLocalizationFormatException_WhenNumberOfArgumentsDontMatch(
+            LocalizationData data,
+            string language,
+            string notificationType,
+            string[] args)
         {
             var sut = CreateSut(data);
 
             Assert.ThrowsAsync<LocalizationFormatException>(() =>
                 sut.GetLocalizedTextAsync(notificationType, language, args));
         }
-        
+
         private LocalizationService CreateSut(LocalizationData data)
         {
             var mockLogger = new Mock<ILogger<LocalizationService>>();

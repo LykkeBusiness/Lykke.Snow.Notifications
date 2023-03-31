@@ -18,29 +18,38 @@ namespace Lykke.Snow.Notifications.Domain.Services
         /// <param name="deviceRegistration"></param>
         /// <param name="locale"></param>
         /// <returns></returns>
-        Task<Result<DeviceRegistrationErrorCode>> RegisterDeviceAsync(DeviceRegistration deviceRegistration, string locale);
-        
+        Task<Result<DeviceRegistrationErrorCode>> RegisterDeviceAsync(DeviceRegistration deviceRegistration,
+            string locale);
+
         /// <summary>
         /// Unregisters the device.
         /// </summary>
         /// <param name="deviceToken"></param>
         /// <returns></returns>
         Task<Result<DeviceRegistrationErrorCode>> UnregisterDeviceAsync(string deviceToken);
-        
+
         /// <summary>
         /// Get all device registrations associated by given accountId
-        /// Intented to be used to send notifications when a client is logged in multiple devices
+        /// Intended to be used to send notifications when a client is logged in multiple devices
         /// </summary>
         /// <param name="accountId"></param>
-        /// <returns>An IEnumerable<> to the iterate the collection of device registrations. Returns empty collection if there's no any.</returns>
-        Task<Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>> GetDeviceRegistrationsAsync(string accountId);
+        /// <returns>
+        /// An <see cref="IEnumerable{T}"/> to the iterate the collection of device registrations.
+        /// Returns empty collection if there's no any.
+        /// </returns>
+        Task<Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>> GetDeviceRegistrationsAsync(
+            string accountId);
 
         /// <summary>
         /// Get all device registrations by given set of account ids.
-        /// Intented to be used when multiple clients are targeted.
+        /// Intended to be used when multiple clients are targeted.
         /// </summary>
         /// <param name="accountIds"></param>
-        /// <returns>An IEnumerable<> to the iterate the collection of device registrations. Returns empty collection if there's no any.</returns>
-        Task<Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>> GetDeviceRegistrationsAsync(string[] accountIds);
+        /// <returns>
+        /// An <see cref="IEnumerable{T}"/> to the iterate the collection of device registrations.
+        /// Returns empty collection if there's no any.
+        /// </returns>
+        Task<Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>> GetDeviceRegistrationsAsync(
+            string[] accountIds);
     }
 }
