@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Lykke.Snow.Notifications.Domain.Enums;
+using Lykke.Snow.Notifications.Domain.Exceptions;
 
 namespace Lykke.Snow.Notifications.Domain.Model
 {
@@ -12,13 +13,20 @@ namespace Lykke.Snow.Notifications.Domain.Model
     {
         public class Notification
         {
+            /// <summary>
+            /// Creates a new notification
+            /// </summary>
+            /// <param name="type"></param>
+            /// <param name="enabled"></param>
+            /// <exception cref="ArgumentNullException">When type is null or empty</exception>
+            /// <exception cref="UnsupportedNotificationTypeException">When type is not supported</exception>
             public Notification(string type, bool enabled = true)
             {
                 if (string.IsNullOrWhiteSpace(type))
                     throw new ArgumentNullException(nameof(type), "Notification type cannot be null or empty");
 
                 if (!Enum.TryParse<NotificationType>(type, true, out var notificationType))
-                    throw new ArgumentException($"Notification type [{type}] is not supported");
+                    throw new UnsupportedNotificationTypeException(type);
 
                 Type = notificationType;
                 Enabled = enabled;
@@ -75,7 +83,8 @@ namespace Lykke.Snow.Notifications.Domain.Model
         /// <param name="locale">Supported locale</param>
         /// <param name="notifications">Notification list</param>
         /// <exception cref="ArgumentNullException">When device id is empty or account id is empty</exception>
-        /// <exception cref="ArgumentException">When locale is not supported</exception>
+        /// <exception cref="UnsupportedLocaleException">When locale is not supported</exception>
+        /// <exception cref="DuplicateNotificationException">When notification list contains duplicates</exception>
         public DeviceConfiguration(string deviceId,
             string accountId,
             string? locale = "en",
@@ -88,16 +97,16 @@ namespace Lykke.Snow.Notifications.Domain.Model
                 throw new ArgumentNullException(nameof(accountId), "Account id cannot be null or empty");
 
             if (!Enum.TryParse<Locale>(locale, true, out var localeParsed))
-                throw new ArgumentException($"Locale type [{locale}] is not supported");
+                throw new UnsupportedLocaleException(locale);
 
             var duplicatedNotifications = notifications?
                 .GroupBy(n => n.Type)
                 .Where(g => g.Count() > 1)
+                .Select(g => g.Key.ToString())
                 .ToList();
             if (duplicatedNotifications != null && duplicatedNotifications.Any())
-                throw new ArgumentException(
-                    $"Duplicated notifications: {string.Join(", ", duplicatedNotifications.Select(g => g.Key))}");
-            
+                throw new DuplicateNotificationException(duplicatedNotifications);
+
             DeviceId = deviceId;
             AccountId = accountId;
             Locale = localeParsed;

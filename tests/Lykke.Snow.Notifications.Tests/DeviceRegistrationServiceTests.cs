@@ -68,6 +68,19 @@ namespace Lykke.Snow.Notifications.Tests
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
         
+        class UnsupportedLocaleCollectionTestData : IEnumerable<object[]>
+        {
+            public IEnumerator<object[]> GetEnumerator()
+            {
+                yield return new object[] { "" };
+                yield return new object[] { " " };
+                yield return new object[] { null };
+                yield return new object[] { "unsupported-locale" };
+            }
+
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        }
+        
 
         #region RegisterDevice
         
@@ -132,6 +145,23 @@ namespace Lykke.Snow.Notifications.Tests
             Assert.True(actual.IsFailed);
             Assert.False(actual.IsSuccess);
             Assert.Equal(DeviceRegistrationErrorCode.AlreadyRegistered, actual.Error);
+        }
+
+        [Theory]
+        [ClassData(typeof(UnsupportedLocaleCollectionTestData))]
+        public async Task RegisterDevice_ShouldReturnUnsupportedLocale_UponUnsupportedLocaleException(
+            string unsupportedLocale)
+        {
+            var mockFcmIntegrationService = new Mock<IFcmIntegrationService>();
+            mockFcmIntegrationService.Setup(mock => mock.IsDeviceTokenValid(It.IsAny<string>())).ReturnsAsync(true);
+
+            var sut = CreateSut(Mock.Of<IDeviceRegistrationRepository>(), mockFcmIntegrationService.Object);
+            
+            var actual = await sut.RegisterDeviceAsync(
+                new DeviceRegistration("account-id", "device-token", "device-id", DateTime.UtcNow), unsupportedLocale);
+            
+            Assert.True(actual.IsFailed);
+            Assert.Equal(DeviceRegistrationErrorCode.UnsupportedLocale, actual.Error);
         }
 
         [Theory]

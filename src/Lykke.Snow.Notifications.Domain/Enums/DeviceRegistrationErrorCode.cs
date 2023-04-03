@@ -6,5 +6,6 @@ namespace Lykke.Snow.Notifications.Domain.Enums
         DoesNotExist,
         AlreadyRegistered,
         DeviceTokenNotValid,
+        UnsupportedLocale
     }
 }

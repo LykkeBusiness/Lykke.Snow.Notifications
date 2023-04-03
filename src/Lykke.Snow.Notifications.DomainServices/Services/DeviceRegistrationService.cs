@@ -27,24 +27,29 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             _deviceConfigurationRepository = deviceConfigurationRepository;
         }
 
-        public async Task<Result<DeviceRegistrationErrorCode>> RegisterDeviceAsync(DeviceRegistration deviceRegistration, 
+        public async Task<Result<DeviceRegistrationErrorCode>> RegisterDeviceAsync(
+            DeviceRegistration deviceRegistration,
             string locale)
         {
             var isValid = await _fcmIntegrationService.IsDeviceTokenValid(deviceToken: deviceRegistration.DeviceToken);
-            
-            if(!isValid)
+
+            if (!isValid)
                 return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DeviceTokenNotValid);
-            
+
             try
             {
                 await _repository.AddOrUpdateAsync(deviceRegistration);
-                
+
                 await _deviceConfigurationRepository.AddOrUpdateAsync(
                     DeviceConfiguration.Default(deviceRegistration.DeviceId, deviceRegistration.AccountId, locale));
 
                 return new Result<DeviceRegistrationErrorCode>();
             }
-            catch(EntityAlreadyExistsException)
+            catch (UnsupportedLocaleException)
+            {
+                return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.UnsupportedLocale);
+            }
+            catch (EntityAlreadyExistsException)
             {
                 return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.AlreadyRegistered);
             }

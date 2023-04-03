@@ -21,8 +21,13 @@ namespace Lykke.Snow.Notifications.Client.Model
         AlreadyRegistered,
 
         /// <summary>
-        /// The attemp in registering device token has failed because the token was not a valid FCM token. 
+        /// The attempt in registering device token has failed because the token was not a valid FCM token. 
         /// </summary>
         DeviceTokenNotValid,
+        
+        /// <summary>
+        /// The attempt in registering device token has failed because unsupported locale was provided.
+        /// </summary>
+        UnsupportedLocale,
     }
 }

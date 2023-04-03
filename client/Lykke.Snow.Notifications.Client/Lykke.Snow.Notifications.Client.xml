@@ -73,7 +73,12 @@
         </member>
         <member name="F:Lykke.Snow.Notifications.Client.Model.DeviceRegistrationErrorCodeContract.DeviceTokenNotValid">
             <summary>
-            The attemp in registering device token has failed because the token was not a valid FCM token. 
+            The attempt in registering device token has failed because the token was not a valid FCM token. 
+            </summary>
+        </member>
+        <member name="F:Lykke.Snow.Notifications.Client.Model.DeviceRegistrationErrorCodeContract.UnsupportedLocale">
+            <summary>
+            The attempt in registering device token has failed because unsupported locale was provided.
             </summary>
         </member>
         <member name="T:Lykke.Snow.Notifications.Client.Model.Requests.RegisterDeviceRequest">
@@ -173,7 +178,22 @@
         </member>
         <member name="F:Lykke.Snow.Notifications.Client.Models.DeviceConfigurationErrorCodeContract.InvalidInput">
             <summary>
-            The input violates business rules
+            Device id or account id or notification type are empty
+            </summary>
+        </member>
+        <member name="F:Lykke.Snow.Notifications.Client.Models.DeviceConfigurationErrorCodeContract.UnsupportedLocale">
+            <summary>
+            Locale is not supported
+            </summary>
+        </member>
+        <member name="F:Lykke.Snow.Notifications.Client.Models.DeviceConfigurationErrorCodeContract.UnsupportedNotificationType">
+            <summary>
+            Notification type is not supported
+            </summary>
+        </member>
+        <member name="F:Lykke.Snow.Notifications.Client.Models.DeviceConfigurationErrorCodeContract.DuplicateNotificationType">
+            <summary>
+            The list of notification types contains duplicates
             </summary>
         </member>
         <member name="F:Lykke.Snow.Notifications.Client.Models.DeviceConfigurationErrorCodeContract.Conflict">

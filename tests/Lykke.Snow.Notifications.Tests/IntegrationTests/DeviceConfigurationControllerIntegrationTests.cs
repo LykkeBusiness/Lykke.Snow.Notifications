@@ -74,11 +74,12 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
         }
 
         [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        [InlineData(" ")]
-        [InlineData("InvalidNotificationType")]
-        public async Task AddOrUpdate_ReturnsInvalidInput_ForInvalidNotificationType(string notificationType)
+        [InlineData(null, DeviceConfigurationErrorCodeContract.InvalidInput)]
+        [InlineData("", DeviceConfigurationErrorCodeContract.InvalidInput)]
+        [InlineData(" ", DeviceConfigurationErrorCodeContract.InvalidInput)]
+        [InlineData("InvalidNotificationType", DeviceConfigurationErrorCodeContract.UnsupportedNotificationType)]
+        public async Task AddOrUpdate_ReturnsError_ForInvalidNotificationType(string notificationType,
+            DeviceConfigurationErrorCodeContract errorCode)
         {
             var invalidDeviceConfiguration = new DeviceConfigurationContract
             {
@@ -89,11 +90,11 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
             };
 
             var response = await _client.PostAsJsonAsync("/api/DeviceConfiguration", invalidDeviceConfiguration);
-            await response.AssertErrorAsync(DeviceConfigurationErrorCodeContract.InvalidInput);
+            await response.AssertErrorAsync(errorCode);
         }
 
         [Fact]
-        public async Task AddOrUpdate_ReturnsInvalidInput_ForInvalidLocale()
+        public async Task AddOrUpdate_ReturnsError_ForInvalidLocale()
         {
             var invalidDeviceConfiguration = new DeviceConfigurationContract
             {
@@ -104,7 +105,7 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
             };
 
             var response = await _client.PostAsJsonAsync("/api/DeviceConfiguration", invalidDeviceConfiguration);
-            await response.AssertErrorAsync(DeviceConfigurationErrorCodeContract.InvalidInput);
+            await response.AssertErrorAsync(DeviceConfigurationErrorCodeContract.UnsupportedLocale);
         }
 
         [Fact]

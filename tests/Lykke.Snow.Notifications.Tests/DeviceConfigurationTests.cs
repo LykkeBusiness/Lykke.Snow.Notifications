@@ -4,6 +4,7 @@ using System.Linq;
 using FsCheck;
 using FsCheck.Xunit;
 using Lykke.Snow.Notifications.Domain.Enums;
+using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
 using Xunit;
 
@@ -32,10 +33,11 @@ namespace Lykke.Snow.Notifications.Tests
         }
         
         [Fact]
-        public void Notification_Constructor_ThrowsArgumentNullException_WhenTypeIdIsNotSupported()
+        public void Notification_Constructor_ThrowsException_WhenTypeIsNotSupported()
         {
             // Arrange, Act, Assert
-            Assert.Throws<ArgumentException>(() => new DeviceConfiguration.Notification("not supported type"));
+            Assert.Throws<UnsupportedNotificationTypeException>(() =>
+                new DeviceConfiguration.Notification("not supported type"));
         }
         
         [Property]
@@ -70,10 +72,28 @@ namespace Lykke.Snow.Notifications.Tests
         [InlineData("")]
         [InlineData(" ")]
         [InlineData("not supported locale")]
-        public void Constructor_ThrowsArgumentNullException_WhenLocaleIsEmptyOrNotSupported(string locale)
+        public void Constructor_ThrowsException_WhenLocaleIsEmptyOrNotSupported(string locale)
         {
             // Arrange, Act, Assert
-            Assert.Throws<ArgumentException>(() => new DeviceConfiguration("deviceId", "accountId", locale));
+            Assert.Throws<UnsupportedLocaleException>(() => new DeviceConfiguration("deviceId", "accountId", locale));
+        }
+        
+        [Property]
+        public Property Constructor_ThrowsException_WhenNotificationTypesDuplicated()
+        {
+            return Prop.ForAll(Gens.Notification.ToArbitrary(), notification =>
+            {
+                var duplicatedNotificationsList = new List<DeviceConfiguration.Notification>
+                {
+                    notification,
+                    notification
+                };
+                
+                var exception = Record.Exception(() => 
+                    new DeviceConfiguration("deviceId", "accountId", notifications: duplicatedNotificationsList));
+
+                return exception is DuplicateNotificationException;
+            });
         }
 
         [Property]

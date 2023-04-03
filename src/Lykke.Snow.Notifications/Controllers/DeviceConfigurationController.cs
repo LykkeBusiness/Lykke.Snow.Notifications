@@ -90,13 +90,37 @@ namespace Lykke.Snow.Notifications.Controllers
 
                 return DeviceConfigurationErrorCodeContract.None;
             }
-            catch (ArgumentException)
+            catch (AutoMapperMappingException e) when (e.InnerException is ArgumentNullException)
             {
                 return DeviceConfigurationErrorCodeContract.InvalidInput;
             }
-            catch (AutoMapperMappingException e) when (e.InnerException is ArgumentException)
+            catch (ArgumentNullException)
             {
                 return DeviceConfigurationErrorCodeContract.InvalidInput;
+            }
+            catch (AutoMapperMappingException e) when (e.InnerException is UnsupportedLocaleException)
+            {
+                return DeviceConfigurationErrorCodeContract.UnsupportedLocale;
+            }
+            catch (UnsupportedLocaleException)
+            {
+                return DeviceConfigurationErrorCodeContract.UnsupportedLocale;
+            }
+            catch (AutoMapperMappingException e) when (e.InnerException is DuplicateNotificationException)
+            {
+                return DeviceConfigurationErrorCodeContract.DuplicateNotificationType;
+            }
+            catch (DuplicateNotificationException)
+            {
+                return DeviceConfigurationErrorCodeContract.DuplicateNotificationType;
+            }
+            catch (AutoMapperMappingException e) when (e.InnerException is UnsupportedNotificationTypeException)
+            {
+                return DeviceConfigurationErrorCodeContract.UnsupportedNotificationType;
+            }
+            catch (UnsupportedNotificationTypeException)
+            {
+                return DeviceConfigurationErrorCodeContract.UnsupportedNotificationType;
             }
             catch (EntityNotFoundException)
             {

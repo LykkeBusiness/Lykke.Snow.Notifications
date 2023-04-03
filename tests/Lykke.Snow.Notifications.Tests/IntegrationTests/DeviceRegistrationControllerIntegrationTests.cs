@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Lykke.Snow.Notifications.Client.Model.Requests;
+using Lykke.Snow.Notifications.Client.Models;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Services;
 using Lykke.Snow.Notifications.Tests.Extensions;
@@ -52,7 +53,7 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
         }
 
         [Fact]
-        public async Task RegisterDevice_InvalidLocale_ShouldReturnBadRequest()
+        public async Task RegisterDevice_InvalidLocale_ShouldReturnErrorCode()
         {
             FcmIntegrationServiceFake.SetIsDeviceTokenValid(true);
 
@@ -60,7 +61,7 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
             
             var response = await _client.PostAsJsonAsync("/api/DeviceRegistration", registerDeviceRequest);
 
-            response.AssertHttpStatusCode(HttpStatusCode.BadRequest);
+            await response.AssertErrorAsync(DeviceConfigurationErrorCodeContract.UnsupportedLocale);
         }
 
         [Fact]

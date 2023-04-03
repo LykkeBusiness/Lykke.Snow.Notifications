@@ -16,9 +16,24 @@ namespace Lykke.Snow.Notifications.Client.Models
         DoesNotExist,
         
         /// <summary>
-        /// The input violates business rules
+        /// Device id or account id or notification type are empty
         /// </summary>
         InvalidInput,
+        
+        /// <summary>
+        /// Locale is not supported
+        /// </summary>
+        UnsupportedLocale,
+        
+        /// <summary>
+        /// Notification type is not supported
+        /// </summary>
+        UnsupportedNotificationType,
+        
+        /// <summary>
+        /// The list of notification types contains duplicates
+        /// </summary>
+        DuplicateNotificationType,
         
         /// <summary>
         /// There is a conflict when trying to add new configuration whereas it
