@@ -34,16 +34,16 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
         {
             _logger.LogInformation("A new MessagePreviewEvent has arrived {Event}", e.ToJson());
             
-            if(e == null || e.Recipients == null)
+            if(e == null || e.Recipients == null || string.IsNullOrEmpty(e.Subject) || string.IsNullOrEmpty(e.Content))
                 return;
-            
+
             var accountIds = e.Recipients.ToArray();
-            
+
             var deviceRegistrationsResult = await _deviceRegistrationService.GetDeviceRegistrationsAsync(accountIds: accountIds);
-           
-            if(deviceRegistrationsResult.IsFailed)
+
+            if (deviceRegistrationsResult.IsFailed)
             {
-                _logger.LogWarning("Could not get device tokens for the list of Account ids {AccountIds}. ErrorCode: {ErrorCode}", 
+                _logger.LogWarning("Could not get device tokens for the list of Account ids {AccountIds}. ErrorCode: {ErrorCode}",
                     string.Join(", ", accountIds), deviceRegistrationsResult.Error);
 
                 return;
