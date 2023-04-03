@@ -43,7 +43,7 @@ namespace Lykke.Snow.Notifications.Tests
                 yield return new object[] { _deviceConfiguration, NotificationType.WithdrawalSucceeded, true };
                 yield return new object[] { _deviceConfiguration, NotificationType.AccountLocked, true };
                 yield return new object[] { _deviceConfiguration, NotificationType.AccountUnlocked, false };
-                yield return new object[] { _deviceConfiguration, NotificationType.DepositFailed, false };
+                yield return new object[] { _deviceConfiguration, NotificationType.Liquidation, false };
             }
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -90,7 +90,7 @@ namespace Lykke.Snow.Notifications.Tests
         {
             Assert.Throws<ArgumentNullException>(() => {
                 new NotificationMessage(title: string.Empty, body: string.Empty, NotificationType.AccountLocked, new Dictionary<string, string>());
-                new NotificationMessage(title: string.Empty, body: "some-body", NotificationType.DepositFailed, new Dictionary<string, string>());
+                new NotificationMessage(title: string.Empty, body: "some-body", NotificationType.Liquidation, new Dictionary<string, string>());
                 new NotificationMessage(title: "some-title", body: string.Empty, NotificationType.MarginCall1, new Dictionary<string, string>());
             });
         }

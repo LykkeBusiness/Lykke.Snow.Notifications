@@ -25,11 +25,6 @@
       "es": "Depósitos",
       "de": "Einzahlung"
     },
-    "DepositFailed": {
-      "en": "Deposit failed",
-      "es": "",
-      "de": ""
-    },
     "Liquidation": {
       "en": "Liquidation",
       "es": "Liquidación",
@@ -64,11 +59,6 @@
       "en": "Withdrawal",
       "es": "Retiradas de efectivo",
       "de": "Auszahlung"
-    },
-    "WithdrawalFailed": {
-      "en": "Withdrawal failed",
-      "es": "",
-      "de": ""
     }
   },
   "Bodies": {
@@ -96,11 +86,6 @@
       "en": "{0} {1} has been credited to the account {2}.",
       "es": "El depósito de {0} {1} se ha completado con éxito en la cuenta {2}. ",
       "de": "Die Einzahlung in Höhe von {0} {1} wurde dem Konto {2} gutgeschrieben."
-    },
-    "DepositFailed": {
-      "en": "The deposit of {0} {1} to the account {2} has failed.",
-      "es": "",
-      "de": ""
     },
     "Liquidation": {
       "en": "The sum of margin requirements of all positions in relation to total capital exceeded max allowed value. Liquidation of your open positions is started in order to release margin.",
@@ -136,11 +121,6 @@
       "en": "{0} {1} has been debited from the account {2}.",
       "es": "La retirada de {0} {1} se ha completado con éxito de la cuenta {2}.",
       "de": "Die Auszahlung in Höhe von {0} {1} wurde vom Konto {2} abgebucht."
-    },
-    "WithdrawalFailed": {
-      "en": "The withdrawal of {0} {1} to the account {2} has failed.",
-      "es": "",
-      "de": ""
     }
   }
 }

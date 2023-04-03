@@ -13,9 +13,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Mapping
             { ActivityTypeContract.AccountTradingDisabled, NotificationType.AccountLocked },
             { ActivityTypeContract.AccountTradingEnabled, NotificationType.AccountUnlocked },
             { ActivityTypeContract.AccountDepositSucceeded, NotificationType.DepositSucceeded },
-            { ActivityTypeContract.AccountDepositFailed, NotificationType.DepositFailed },
             { ActivityTypeContract.AccountWithdrawalSucceeded, NotificationType.WithdrawalSucceeded },
-            { ActivityTypeContract.AccountWithdrawalFailed, NotificationType.WithdrawalFailed },
             { ActivityTypeContract.AccountWithdrawalEnabled, NotificationType.CashUnlocked },
             { ActivityTypeContract.AccountWithdrawalDisabled, NotificationType.CashLocked },
             { ActivityTypeContract.Liquidation, NotificationType.Liquidation },
@@ -32,7 +30,11 @@ namespace Lykke.Snow.Notifications.DomainServices.Mapping
             new Dictionary<ActivityTypeContract, Func<ActivityEvent, string[]>>
         {
             {ActivityTypeContract.AccountWithdrawalSucceeded, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }},
-            {ActivityTypeContract.AccountDepositSucceeded, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }}
+            {ActivityTypeContract.AccountDepositSucceeded, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }},
+            {ActivityTypeContract.AccountWithdrawalEnabled, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }},
+            {ActivityTypeContract.AccountWithdrawalDisabled, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }},
+            {ActivityTypeContract.AccountTradingEnabled, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }},
+            {ActivityTypeContract.AccountTradingDisabled, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }}
         };
     }
 }

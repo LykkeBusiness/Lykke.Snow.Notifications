@@ -8,7 +8,6 @@ namespace Lykke.Snow.Notifications.Domain.Enums
         CashLocked,
         CashUnlocked,
         DepositSucceeded,
-        DepositFailed,
         InboxMessage,
         Liquidation,
         MarginCall1,
@@ -18,6 +17,5 @@ namespace Lykke.Snow.Notifications.Domain.Enums
         OnBehalfAction,
         PositionClosed,
         WithdrawalSucceeded,
-        WithdrawalFailed
     }
 }
