@@ -71,6 +71,32 @@ namespace Lykke.Snow.Notifications.Tests
         }
 
         [Fact]
+        public async Task Handle_ShouldExitMethod_SubjectOrContentIsnNull()
+        {
+            var mockDeviceRegistrationService = new Mock<IDeviceRegistrationService>();
+            var mockNotificationService = new Mock<INotificationService>();
+            var mockDeviceConfigurationRepository = new Mock<IDeviceConfigurationRepository>();
+
+            var sut = CreateSut(notificationServiceArg: mockNotificationService.Object,
+                deviceRegistrationServiceArg: mockDeviceRegistrationService.Object,
+                deviceConfigurationRepositoryArg: mockDeviceConfigurationRepository.Object);
+            
+            var e = new MessagePreviewEvent() 
+            {
+                Recipients = new List<string> { "account-id-1" }
+            };
+            
+            await sut.Handle(e);
+            
+            mockDeviceRegistrationService.Verify(x => x.GetDeviceRegistrationsAsync(It.IsAny<string[]>()), Times.Never);
+            mockNotificationService.Verify(x => x.BuildNotificationMessage(It.IsAny<NotificationType>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Never);
+            mockDeviceConfigurationRepository.Verify(x => x.GetAsync(It.IsAny<string>()), Times.Never);
+            mockNotificationService.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Never);
+            mockNotificationService.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Never);
+            mockNotificationService.Verify(x => x.SendNotification(It.IsAny<NotificationMessage>(), It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
         public async Task Handle_ShouldExitMethod_IfEventIsNull()
         {
             var mockDeviceRegistrationService = new Mock<IDeviceRegistrationService>();
