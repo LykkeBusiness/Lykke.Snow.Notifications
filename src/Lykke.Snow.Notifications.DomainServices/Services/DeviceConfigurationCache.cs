@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Repositories;
@@ -11,6 +12,9 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
         private readonly IDeviceConfigurationRepository _decoratee;
         private readonly IMemoryCache _cache;
         private readonly ILogger<DeviceConfigurationCache> _logger;
+        
+        private static readonly MemoryCacheEntryOptions CacheOptions = new MemoryCacheEntryOptions()
+            .SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
 
         public DeviceConfigurationCache(IDeviceConfigurationRepository decoratee,
             IMemoryCache cache,
@@ -30,7 +34,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
             deviceConfiguration = await _decoratee.GetAsync(deviceId);
 
-            _cache.Set(cacheKey, deviceConfiguration);
+            _cache.Set(cacheKey, deviceConfiguration, CacheOptions);
             _logger.LogDebug("Device configuration with key {Key} was added to cache", cacheKey);
 
             return deviceConfiguration;
@@ -42,7 +46,8 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
             var cacheKey = GetCacheKey(deviceConfiguration.DeviceId);
             _cache.Remove(cacheKey);
-            _logger.LogDebug("Device configuration with key {Key} was removed from cache due to add or update", cacheKey);
+            _logger.LogDebug("Device configuration with key {Key} was removed from cache due to add or update",
+                cacheKey);
         }
 
         public async Task RemoveAsync(string deviceId)
