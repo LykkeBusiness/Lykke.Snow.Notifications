@@ -9,6 +9,7 @@ using Lykke.Snow.Notifications.Client.Model.Requests;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Services;
+using Lykke.Snow.Notifications.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +18,7 @@ namespace Lykke.Snow.Notifications.Controllers
     [ApiController]
     [Authorize]
     [Route("api/[controller]")]
+    [ServiceFilter(typeof(InvalidInputValidationFilter<DeviceRegistrationErrorCodeContract>))]
     public class DeviceRegistrationController : ControllerBase, INotificationsApi
     {
         private readonly IDeviceRegistrationService _deviceRegistrationService;

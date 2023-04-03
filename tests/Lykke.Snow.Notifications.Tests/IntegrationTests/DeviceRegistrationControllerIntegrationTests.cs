@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Lykke.Snow.Notifications.Client.Model;
 using Lykke.Snow.Notifications.Client.Model.Requests;
 using Lykke.Snow.Notifications.Client.Models;
 using Lykke.Snow.Notifications.Domain.Enums;
@@ -64,40 +64,34 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
             await response.AssertErrorAsync(DeviceConfigurationErrorCodeContract.UnsupportedLocale);
         }
 
-        [Fact]
-        public async Task RegisterDevice_InvalidAccountId_ShouldReturnBadRequest()
+        [Theory]
+        [InlineData("")]
+        [InlineData(" ")]
+        [InlineData(null)]
+        public async Task RegisterDevice_InvalidAccountId_ShouldReturnInvalidInput(string accountId)
         {
             FcmIntegrationServiceFake.SetIsDeviceTokenValid(true);
 
-            var registerDeviceRequest = new RegisterDeviceRequest("", "device-token", "device-id", "lang-invalid");
+            var registerDeviceRequest = new RegisterDeviceRequest(accountId, "device-token", "device-id", "en");
             
             var response = await _client.PostAsJsonAsync("/api/DeviceRegistration", registerDeviceRequest);
 
-            response.AssertHttpStatusCode(HttpStatusCode.BadRequest);
-
-            registerDeviceRequest = new RegisterDeviceRequest(null, "device-token", "device-id", "en");
-
-            response = await _client.PostAsJsonAsync("/api/DeviceRegistration", registerDeviceRequest);
-
-            response.AssertHttpStatusCode(HttpStatusCode.BadRequest);
+            await response.AssertErrorAsync(DeviceRegistrationErrorCodeContract.InvalidInput);
         }
 
-        [Fact]
-        public async Task RegisterDevice_InvalidDeviceId_ShouldReturnBadRequest()
+        [Theory]
+        [InlineData("")]
+        [InlineData(" ")]
+        [InlineData(null)]
+        public async Task RegisterDevice_InvalidDeviceId_ShouldReturnInvalidInput(string deviceId)
         {
             FcmIntegrationServiceFake.SetIsDeviceTokenValid(true);
 
-            var registerDeviceRequest = new RegisterDeviceRequest("account-id", "device-token", "", "en");
+            var registerDeviceRequest = new RegisterDeviceRequest("account-id", "device-token", deviceId, "en");
             
             var response = await _client.PostAsJsonAsync("/api/DeviceRegistration", registerDeviceRequest);
 
-            response.AssertHttpStatusCode(HttpStatusCode.BadRequest);
-
-            registerDeviceRequest = new RegisterDeviceRequest(null, "device-token", null, "en");
-
-            response = await _client.PostAsJsonAsync("/api/DeviceRegistration", registerDeviceRequest);
-
-            response.AssertHttpStatusCode(HttpStatusCode.BadRequest);
+            await response.AssertErrorAsync(DeviceRegistrationErrorCodeContract.InvalidInput);
         }
 
         [Fact]
@@ -131,20 +125,17 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
         
         #region DELETE /api/DeviceRegistration
 
-        [Fact]
-        public async Task UnregisterDevice_WithNullOrEmptyDeviceToken_ShouldReturnBadRequest()
+        [Theory]
+        [InlineData("")]
+        [InlineData(" ")]
+        [InlineData(null)]
+        public async Task UnregisterDevice_WithNullOrEmptyDeviceToken_ShouldReturnBadRequest(string deviceToken)
         {
-            var unregisterDeviceRequest = new UnregisterDeviceRequest("");
+            var unregisterDeviceRequest = new UnregisterDeviceRequest(deviceToken);
             
             var response = await _client.DeleteWithPayloadAsync("/api/DeviceRegistration", unregisterDeviceRequest);
 
-            response.AssertHttpStatusCode(HttpStatusCode.BadRequest);
-
-            unregisterDeviceRequest = new UnregisterDeviceRequest(null);
-
-            response = await _client.DeleteWithPayloadAsync("/api/DeviceRegistration", unregisterDeviceRequest);
-
-            response.AssertHttpStatusCode(HttpStatusCode.BadRequest);
+            await response.AssertErrorAsync(DeviceRegistrationErrorCodeContract.InvalidInput);
         }
 
         [Fact]

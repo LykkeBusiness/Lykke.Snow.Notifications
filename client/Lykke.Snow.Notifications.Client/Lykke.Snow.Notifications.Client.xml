@@ -81,6 +81,11 @@
             The attempt in registering device token has failed because unsupported locale was provided.
             </summary>
         </member>
+        <member name="F:Lykke.Snow.Notifications.Client.Model.DeviceRegistrationErrorCodeContract.InvalidInput">
+            <summary>
+            One of the required fields is null or empty.
+            </summary>
+        </member>
         <member name="T:Lykke.Snow.Notifications.Client.Model.Requests.RegisterDeviceRequest">
             <summary>
             Device registration request

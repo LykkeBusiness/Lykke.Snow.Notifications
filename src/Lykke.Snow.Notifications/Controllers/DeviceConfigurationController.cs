@@ -1,13 +1,12 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using Lykke.Snow.Contracts.Responses;
 using Lykke.Snow.Notifications.Client;
 using Lykke.Snow.Notifications.Client.Models;
-using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Repositories;
+using Lykke.Snow.Notifications.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +18,7 @@ namespace Lykke.Snow.Notifications.Controllers
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
+    [ServiceFilter(typeof(InvalidInputValidationFilter<DeviceConfigurationErrorCodeContract>))]
     public class DeviceConfigurationController : ControllerBase, IConfigurationApi
     {
         private readonly IDeviceConfigurationRepository _repository;
@@ -37,19 +37,13 @@ namespace Lykke.Snow.Notifications.Controllers
         /// <returns></returns>
         [HttpGet("{deviceId}")]
         [ProducesResponseType(typeof(DeviceConfigurationResponse), (int)HttpStatusCode.OK)]
+        [ServiceFilter(typeof(DeviceConfigurationGetExceptionFilter))]
         public async Task<DeviceConfigurationResponse> Get([FromRoute] string deviceId)
         {
-            try
-            {
-                var deviceConfiguration = await _repository.GetAsync(deviceId);
-                var contract = _mapper.Map<DeviceConfigurationContract>(deviceConfiguration);
+            var deviceConfiguration = await _repository.GetAsync(deviceId);
+            var contract = _mapper.Map<DeviceConfigurationContract>(deviceConfiguration);
 
-                return new DeviceConfigurationResponse(contract);
-            }
-            catch (EntityNotFoundException)
-            {
-                return DeviceConfigurationErrorCodeContract.DoesNotExist;
-            }
+            return new DeviceConfigurationResponse(contract);
         }
 
         /// <summary>
@@ -59,16 +53,10 @@ namespace Lykke.Snow.Notifications.Controllers
         /// <returns></returns>
         [HttpDelete("{deviceId}")]
         [ProducesResponseType(typeof(ErrorCodeResponse<DeviceConfigurationErrorCodeContract>), (int)HttpStatusCode.OK)]
+        [ServiceFilter(typeof(DeviceConfigurationDeleteExceptionFilter))]
         public async Task<ErrorCodeResponse<DeviceConfigurationErrorCodeContract>> Delete([FromRoute] string deviceId)
         {
-            try
-            {
-                await _repository.RemoveAsync(deviceId);
-            }
-            catch (EntityNotFoundException)
-            {
-                return DeviceConfigurationErrorCodeContract.DoesNotExist;
-            }
+            await _repository.RemoveAsync(deviceId);
 
             return DeviceConfigurationErrorCodeContract.None;
         }
@@ -80,56 +68,14 @@ namespace Lykke.Snow.Notifications.Controllers
         /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(typeof(ErrorCodeResponse<DeviceConfigurationErrorCodeContract>), (int)HttpStatusCode.OK)]
+        [ServiceFilter(typeof(DeviceConfigurationPostExceptionFilter))]
         public async Task<ErrorCodeResponse<DeviceConfigurationErrorCodeContract>> AddOrUpdate(
             DeviceConfigurationContract deviceConfiguration)
         {
-            try
-            {
-                var dc = _mapper.Map<DeviceConfiguration>(deviceConfiguration);
-                await _repository.AddOrUpdateAsync(dc);
+            var dc = _mapper.Map<DeviceConfiguration>(deviceConfiguration);
+            await _repository.AddOrUpdateAsync(dc);
 
-                return DeviceConfigurationErrorCodeContract.None;
-            }
-            catch (AutoMapperMappingException e) when (e.InnerException is ArgumentNullException)
-            {
-                return DeviceConfigurationErrorCodeContract.InvalidInput;
-            }
-            catch (ArgumentNullException)
-            {
-                return DeviceConfigurationErrorCodeContract.InvalidInput;
-            }
-            catch (AutoMapperMappingException e) when (e.InnerException is UnsupportedLocaleException)
-            {
-                return DeviceConfigurationErrorCodeContract.UnsupportedLocale;
-            }
-            catch (UnsupportedLocaleException)
-            {
-                return DeviceConfigurationErrorCodeContract.UnsupportedLocale;
-            }
-            catch (AutoMapperMappingException e) when (e.InnerException is DuplicateNotificationException)
-            {
-                return DeviceConfigurationErrorCodeContract.DuplicateNotificationType;
-            }
-            catch (DuplicateNotificationException)
-            {
-                return DeviceConfigurationErrorCodeContract.DuplicateNotificationType;
-            }
-            catch (AutoMapperMappingException e) when (e.InnerException is UnsupportedNotificationTypeException)
-            {
-                return DeviceConfigurationErrorCodeContract.UnsupportedNotificationType;
-            }
-            catch (UnsupportedNotificationTypeException)
-            {
-                return DeviceConfigurationErrorCodeContract.UnsupportedNotificationType;
-            }
-            catch (EntityNotFoundException)
-            {
-                return DeviceConfigurationErrorCodeContract.Conflict;
-            }
-            catch (EntityAlreadyExistsException)
-            {
-                return DeviceConfigurationErrorCodeContract.Conflict;
-            }
+            return DeviceConfigurationErrorCodeContract.None;
         }
     }
 }

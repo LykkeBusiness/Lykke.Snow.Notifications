@@ -29,5 +29,10 @@ namespace Lykke.Snow.Notifications.Client.Model
         /// The attempt in registering device token has failed because unsupported locale was provided.
         /// </summary>
         UnsupportedLocale,
+        
+        /// <summary>
+        /// One of the required fields is null or empty.
+        /// </summary>
+        InvalidInput,
     }
 }
