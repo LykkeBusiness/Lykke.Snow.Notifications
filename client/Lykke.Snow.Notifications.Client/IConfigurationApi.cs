@@ -19,7 +19,7 @@ namespace Lykke.Snow.Notifications.Client
         /// <param name="deviceId">Device id</param>
         /// <param name="accountId">Account id</param>
         /// <returns></returns>
-        [Get("/api/DeviceConfiguration/{deviceId}")]
+        [Get("/api/DeviceConfiguration/{deviceId}/{accountId}")]
         Task<DeviceConfigurationResponse> Get([Required] string deviceId, [Required] string accountId);
 
         /// <summary>
