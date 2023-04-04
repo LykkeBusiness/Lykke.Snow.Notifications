@@ -59,6 +59,7 @@ namespace Lykke.Snow.Notifications.Tests.Repository
             var cache = new DeviceConfigurationCache(_decorateeMock.Object, _memoryCache, TimeSpan.FromMinutes(1),  _logger);
 
             // Act
+            await cache.GetAsync(deviceId, accountId);
             await cache.AddOrUpdateAsync(deviceConfiguration);
             await cache.GetAsync(deviceId, accountId);
 
