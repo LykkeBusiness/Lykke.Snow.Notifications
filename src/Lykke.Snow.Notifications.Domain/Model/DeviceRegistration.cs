@@ -21,8 +21,8 @@ namespace Lykke.Snow.Notifications.Domain.Model
             if(string.IsNullOrEmpty(deviceId))
                 throw new ArgumentNullException(nameof(deviceId));
             
-            if(registeredOn == default(DateTime))
-                throw new ArgumentException();
+            if(registeredOn == default)
+                throw new ArgumentException("Value cannot be default.", nameof(registeredOn));
         
             if(registeredOn > DateTime.UtcNow)
                 throw new ArgumentException($"{nameof(registeredOn)} value cannot be in the future.");
