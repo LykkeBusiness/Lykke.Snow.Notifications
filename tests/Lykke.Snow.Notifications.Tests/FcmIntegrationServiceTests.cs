@@ -37,21 +37,24 @@ namespace Lykke.Snow.Notifications.Tests
 
     public class FcmIntegrationServiceTests
     {
-        [Fact]
-        public void InstantiatingWithNullCredentialsPath_ShouldThrow_ArgumentNullException()
+        [Theory]
+        [InlineData("")]
+        [InlineData(" ")]
+        [InlineData(null)]
+        public void InstantiatingWithNullCredentialsPath_ShouldThrow_ArgumentNullException(string credentialsPath)
         {
-            Assert.Throws<ArgumentNullException>(() => CreateSut(null));
+            Assert.Throws<ArgumentNullException>(() => CreateSut(credentialsPath));
         }
 
         [Fact]
         public void InstantiatingWithInvalidCredentialsPath_ShouldThrow_FirebaseCredentialsFileNotFoundException()
         {
-            Assert.Throws<FirebaseCredentialsFileNotFoundException>(() => CreateSut("any-credentials-path"));
+            Assert.Throws<FirebaseCredentialsFileNotFoundException>(() => CreateSut("invalid-path"));
         }
         
-        private FcmIntegrationService CreateSut(string credentialsFilePath)
+        private static FcmIntegrationService CreateSut(string credentialsPath)
         {
-            return new FcmIntegrationService(credentialsFilePath: credentialsFilePath);
+            return new FcmIntegrationService(new FcmOptionsFactory(credentialsPath));
         }
     }
 }
