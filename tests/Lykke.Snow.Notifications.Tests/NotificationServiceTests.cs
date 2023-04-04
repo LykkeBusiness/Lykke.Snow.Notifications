@@ -15,6 +15,32 @@ namespace Lykke.Snow.Notifications.Tests
 {
     public class NotificationServiceTests
     {
+        class NotificationMessageData : IEnumerable<object[]>
+        {
+            public IEnumerator<object[]> GetEnumerator()
+            {
+                var message1 = new NotificationMessage(title: "Notification title", body: "Notification body", 
+                    type: NotificationType.AccountLocked,
+                    new Dictionary<string, string>());
+
+                var token1 = "device-token-1";
+            
+                var keyValueBag = new Dictionary<string, string>();
+                keyValueBag.Add("key1", "value1");
+                keyValueBag.Add("key2", "value2");
+                var message2 = new NotificationMessage(title: "Notification title 2", body: "Notification body 2",
+                    NotificationType.CashLocked,
+                    keyValueBag);
+
+                var token2 = "device-token-2";
+            
+                yield return new object[] { message1, token1 };
+                yield return new object[] { message2, token2 };
+            }
+
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        }
+        
         class NotificationMessageTestData : IEnumerable<object[]>
         {
             public IEnumerator<object[]> GetEnumerator()
