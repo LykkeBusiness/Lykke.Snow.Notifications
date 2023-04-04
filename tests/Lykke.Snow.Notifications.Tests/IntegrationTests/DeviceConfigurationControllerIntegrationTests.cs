@@ -23,7 +23,7 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
         [Fact]
         public async Task Get_ReturnsNotFound_ForNonExistentDevice()
         {
-            var response = await _client.GetAsync("/api/DeviceConfiguration/NonExistentDevice");
+            var response = await _client.GetAsync("/api/DeviceConfiguration/NonExistentDevice/NonExistentAccount");
             await response.AssertErrorAsync(DeviceConfigurationErrorCodeContract.DoesNotExist);
         }
 
@@ -37,7 +37,7 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
             await addOrUpdateResponse.AssertSuccessAsync(DeviceConfigurationErrorCodeContract.None);
 
             // Get the added device configuration
-            var getResponse = await _client.GetAsync($"/api/DeviceConfiguration/{deviceConfiguration.DeviceId}");
+            var getResponse = await _client.GetAsync($"/api/DeviceConfiguration/{deviceConfiguration.DeviceId}/{deviceConfiguration.AccountId}");
             await getResponse.AssertAsync<DeviceConfigurationResponse>(result =>
             {
                 Assert.Equal(DeviceConfigurationErrorCodeContract.None, result.ErrorCode);
@@ -51,7 +51,7 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
         [Fact]
         public async Task Delete_ReturnsNotFound_ForNonExistentDevice()
         {
-            var response = await _client.DeleteAsync("/api/DeviceConfiguration/NonExistentDevice");
+            var response = await _client.DeleteAsync("/api/DeviceConfiguration/NonExistentDevice/NonExistentAccount");
             await response.AssertErrorAsync(DeviceConfigurationErrorCodeContract.DoesNotExist);
         }
 
@@ -65,11 +65,11 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
             await addOrUpdateResponse.AssertSuccessAsync(DeviceConfigurationErrorCodeContract.None);
 
             // Delete the added device configuration
-            var deleteResponse = await _client.DeleteAsync($"/api/DeviceConfiguration/{deviceConfiguration.DeviceId}");
+            var deleteResponse = await _client.DeleteAsync($"/api/DeviceConfiguration/{deviceConfiguration.DeviceId}/{deviceConfiguration.AccountId}");
             await deleteResponse.AssertSuccessAsync(DeviceConfigurationErrorCodeContract.None);
 
             // Check if the device configuration is deleted
-            var getResponse = await _client.GetAsync($"/api/DeviceConfiguration/{deviceConfiguration.DeviceId}");
+            var getResponse = await _client.GetAsync($"/api/DeviceConfiguration/{deviceConfiguration.DeviceId}/{deviceConfiguration.AccountId}");
             await getResponse.AssertErrorAsync(DeviceConfigurationErrorCodeContract.DoesNotExist);
         }
 

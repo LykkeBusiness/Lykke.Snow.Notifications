@@ -22,6 +22,12 @@ namespace Lykke.Snow.Notifications.Client.Models
         /// <param name="deviceConfiguration"></param>
         public DeviceConfigurationResponse(DeviceConfigurationContract deviceConfiguration)
         {
+            if(deviceConfiguration == null)
+            {
+                ErrorCode = DeviceConfigurationErrorCodeContract.DoesNotExist;
+                return;
+            }
+
             DeviceConfiguration = deviceConfiguration;
             ErrorCode = DeviceConfigurationErrorCodeContract.None;
         }
