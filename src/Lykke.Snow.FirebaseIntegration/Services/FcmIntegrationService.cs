@@ -9,12 +9,18 @@ using Lykke.Snow.FirebaseIntegration.Interfaces;
 
 namespace Lykke.Snow.FirebaseIntegration.Services
 {
-    public class FcmIntegrationService : IFcmIntegrationService {
+    /// <summary>
+    /// Firebase Cloud Messaging client. Communicates to Firebase services.
+    /// </summary>
+    public class FcmIntegrationService : IFcmIntegrationService 
+    {
         private readonly string _credentialsFilePath;
+        private readonly ProxyConfiguration? _proxyConfiguration;
 
-        public FcmIntegrationService(string? credentialsFilePath)
+        public FcmIntegrationService(string? credentialsFilePath, ProxyConfiguration? proxyConfiguration = null)
         {
             _credentialsFilePath = credentialsFilePath ?? throw new ArgumentNullException(nameof(credentialsFilePath));
+            _proxyConfiguration = proxyConfiguration;
 
             if (!System.IO.File.Exists(_credentialsFilePath))
                 throw new FirebaseCredentialsFileNotFoundException(attemptedPath: _credentialsFilePath);
@@ -50,12 +56,11 @@ namespace Lykke.Snow.FirebaseIntegration.Services
             if(FirebaseMessaging.DefaultInstance != null)
                 return;
 
+            var options = CreateAppOptions();
+            
             try
             {
-                FirebaseApp.Create(new AppOptions() 
-                {
-                    Credential = GoogleCredential.FromFile(_credentialsFilePath)
-                });
+                FirebaseApp.Create(options);
             }
             catch(ArgumentException)
             {
@@ -83,6 +88,21 @@ namespace Lykke.Snow.FirebaseIntegration.Services
             }
 
             return true;
+        }
+        
+        private AppOptions CreateAppOptions()
+        {
+            var options = new AppOptions
+            {
+                Credential = GoogleCredential.FromFile(_credentialsFilePath)
+            };
+
+            if (_proxyConfiguration != null)
+            {
+                options.HttpClientFactory = new HttpClientFactoryWithProxy(_proxyConfiguration.Value);
+            }
+
+            return options;
         }
     }
 }
