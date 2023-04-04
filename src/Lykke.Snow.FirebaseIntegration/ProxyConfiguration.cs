@@ -12,14 +12,14 @@ namespace Lykke.Snow.FirebaseIntegration
         
         public ProxyConfiguration(string address, string? username = null, string? password = null)
         {
-            if (string.IsNullOrEmpty(address))
+            if (string.IsNullOrWhiteSpace(address))
                 throw new ArgumentNullException(nameof(address));
 
             // check if both username and password are specified or none of them
-            if (string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
+            if (string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password))
                 throw new ArgumentException("Password cannot be specified without username");
             
-            if (!string.IsNullOrEmpty(username) && string.IsNullOrEmpty(password))
+            if (!string.IsNullOrWhiteSpace(username) && string.IsNullOrWhiteSpace(password))
                 throw new ArgumentException("Username cannot be specified without password");
             
             Address = address;
