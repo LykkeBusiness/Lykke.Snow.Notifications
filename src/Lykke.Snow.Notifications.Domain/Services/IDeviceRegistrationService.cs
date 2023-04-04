@@ -22,7 +22,7 @@ namespace Lykke.Snow.Notifications.Domain.Services
             string locale);
 
         /// <summary>
-        /// Unregisters the device for all accounts.
+        /// Unregisters the device.
         /// </summary>
         /// <param name="deviceToken"></param>
         /// <returns></returns>

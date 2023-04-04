@@ -53,7 +53,8 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Migrations
 
                     b.HasKey("Oid");
 
-                    b.HasIndex("DeviceId");
+                    b.HasIndex("DeviceId")
+                        .IsUnique();
 
                     b.ToTable("DeviceConfigurations", "notifications");
                 });
@@ -113,9 +114,8 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Migrations
 
                     b.HasKey("Oid");
 
-                    b.HasIndex("DeviceId");
-
-                    b.HasIndex("DeviceToken");
+                    b.HasIndex("DeviceToken")
+                        .IsUnique();
 
                     b.ToTable("DeviceRegistrations", "notifications");
                 });

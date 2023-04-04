@@ -30,21 +30,19 @@ namespace Lykke.Snow.Notifications.Tests.Repository
         {
             // Arrange
             const string deviceId = "test-device-1";
-            const string accountId = "test-account-1";
+            var deviceConfiguration = DeviceConfiguration.Default(deviceId, "test-account-1");
 
-            var deviceConfiguration = new DeviceConfiguration(deviceId, accountId);
-
-            _decorateeMock.Setup(x => x.GetAsync(deviceId, accountId)).ReturnsAsync(deviceConfiguration);
+            _decorateeMock.Setup(x => x.GetAsync(deviceId)).ReturnsAsync(deviceConfiguration);
             var cache = new DeviceConfigurationCache(_decorateeMock.Object, _memoryCache, TimeSpan.FromMinutes(1), _logger);
 
             // Act
-            var result1 = await cache.GetAsync(deviceId, accountId);
-            var result2 = await cache.GetAsync(deviceId, accountId);
+            var result1 = await cache.GetAsync(deviceId);
+            var result2 = await cache.GetAsync(deviceId);
 
             // Assert
             Assert.Equal(deviceConfiguration, result1);
             Assert.Equal(deviceConfiguration, result2);
-            _decorateeMock.Verify(x => x.GetAsync(deviceId, accountId), Times.Once);
+            _decorateeMock.Verify(x => x.GetAsync(deviceId), Times.Once);
         }
         
         [Fact]
@@ -52,19 +50,17 @@ namespace Lykke.Snow.Notifications.Tests.Repository
         {
             // Arrange
             const string deviceId = "test-device-2";
-            const string accountId = "test-account-2";
-
-            var deviceConfiguration = new DeviceConfiguration(deviceId, accountId);
-            _decorateeMock.Setup(x => x.GetAsync(deviceId, accountId)).ReturnsAsync(deviceConfiguration);
+            var deviceConfiguration = new DeviceConfiguration(deviceId, "test-account-2");
+            _decorateeMock.Setup(x => x.GetAsync(deviceId)).ReturnsAsync(deviceConfiguration);
             var cache = new DeviceConfigurationCache(_decorateeMock.Object, _memoryCache, TimeSpan.FromMinutes(1),  _logger);
 
             // Act
-            await cache.GetAsync(deviceId, accountId);
+            await cache.GetAsync(deviceId);
             await cache.AddOrUpdateAsync(deviceConfiguration);
-            await cache.GetAsync(deviceId, accountId);
+            await cache.GetAsync(deviceId);
 
             // Assert
-            _decorateeMock.Verify(x => x.GetAsync(deviceId, accountId), Times.Exactly(2));
+            _decorateeMock.Verify(x => x.GetAsync(deviceId), Times.Exactly(2));
         }
         
         [Fact]
@@ -72,19 +68,17 @@ namespace Lykke.Snow.Notifications.Tests.Repository
         {
             // Arrange
             const string deviceId = "test-device-3";
-            const string accountId = "test-account-3";
-
-            var deviceConfiguration = new DeviceConfiguration(deviceId, accountId);
-            _decorateeMock.Setup(x => x.GetAsync(deviceId, accountId)).ReturnsAsync(deviceConfiguration);
+            var deviceConfiguration = new DeviceConfiguration(deviceId, "test-account-3");
+            _decorateeMock.Setup(x => x.GetAsync(deviceId)).ReturnsAsync(deviceConfiguration);
             var cache = new DeviceConfigurationCache(_decorateeMock.Object, _memoryCache, TimeSpan.FromMinutes(1),  _logger);
 
             // Act
-            await cache.GetAsync(deviceId, accountId);
-            await cache.RemoveAsync(deviceId, accountId);
-            await cache.GetAsync(deviceId, accountId);
+            await cache.GetAsync(deviceId);
+            await cache.RemoveAsync(deviceId);
+            await cache.GetAsync(deviceId);
 
             // Assert
-            _decorateeMock.Verify(x => x.GetAsync(deviceId, accountId), Times.Exactly(2));
+            _decorateeMock.Verify(x => x.GetAsync(deviceId), Times.Exactly(2));
         }
         
         [Fact]
@@ -92,24 +86,21 @@ namespace Lykke.Snow.Notifications.Tests.Repository
         {
             // Arrange
             const string deviceId = "test-device-4";
-            const string accountId = "test-device-4";
-
             const int cacheExpirationInSeconds = 3;
-            var deviceConfiguration = new DeviceConfiguration(deviceId, accountId);
-
-            _decorateeMock.Setup(x => x.GetAsync(deviceId, accountId)).ReturnsAsync(deviceConfiguration);
+            var deviceConfiguration = new DeviceConfiguration(deviceId, "test-account-4");
+            _decorateeMock.Setup(x => x.GetAsync(deviceId)).ReturnsAsync(deviceConfiguration);
             var cache = new DeviceConfigurationCache(_decorateeMock.Object,
                 _memoryCache,
                 TimeSpan.FromSeconds(cacheExpirationInSeconds),
                 _logger);
 
             // Act
-            await cache.GetAsync(deviceId, accountId);
+            await cache.GetAsync(deviceId);
             await Task.Delay(TimeSpan.FromSeconds(cacheExpirationInSeconds + 1));
-            await cache.GetAsync(deviceId, accountId);
+            await cache.GetAsync(deviceId);
 
             // Assert
-            _decorateeMock.Verify(x => x.GetAsync(deviceId, accountId), Times.Exactly(2));
+            _decorateeMock.Verify(x => x.GetAsync(deviceId), Times.Exactly(2));
         }
     }
 }

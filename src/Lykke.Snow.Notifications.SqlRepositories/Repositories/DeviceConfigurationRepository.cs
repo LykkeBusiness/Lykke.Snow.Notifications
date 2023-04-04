@@ -28,14 +28,17 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
         /// <param name="deviceId">Teh device id</param>
         /// <returns></returns>
         /// <exception cref="EntityNotFoundException">When there is no device configuration for device id</exception>
-        public async Task<DeviceConfiguration> GetAsync(string deviceId, string accountId)
+        public async Task<DeviceConfiguration> GetAsync(string deviceId)
         {
             await using var context = _contextFactory.CreateDataContext();
 
             var entity = await context.DeviceConfigurations
                 .Include(x => x.Notifications)
-                .FirstOrDefaultAsync(x => x.DeviceId == deviceId && x.AccountId == accountId);
+                .FirstOrDefaultAsync(x => x.DeviceId == deviceId);
             
+            if (entity == null)
+                throw new EntityNotFoundException(deviceId);
+
             return _mapper.Map<DeviceConfiguration>(entity);
         }
 
@@ -57,7 +60,7 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
 
             var existingEntity = await context.DeviceConfigurations
                 .Include(x => x.Notifications)
-                .FirstOrDefaultAsync(x => x.DeviceId == deviceConfiguration.DeviceId && x.AccountId == deviceConfiguration.AccountId);
+                .FirstOrDefaultAsync(x => x.DeviceId == deviceConfiguration.DeviceId);
 
             if (existingEntity == null)
             {
@@ -72,11 +75,10 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
         /// Removes device configuration
         /// </summary>
         /// <param name="deviceId">The device id</param>
-        /// <param name="accountId">The account id</param>
         /// <exception cref="EntityNotFoundException">
         /// When there is no device configuration for device id.
         /// </exception>
-        public async Task RemoveAsync(string deviceId, string accountId)
+        public async Task RemoveAsync(string deviceId)
         {
             await using var context = _contextFactory.CreateDataContext();
 

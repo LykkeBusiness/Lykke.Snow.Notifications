@@ -28,14 +28,14 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                 .SetAbsoluteExpiration(cacheExpirationPeriod ?? DefaultCacheExpirationPeriod);
         }
 
-        public async Task<DeviceConfiguration> GetAsync(string deviceId, string accountId)
+        public async Task<DeviceConfiguration> GetAsync(string deviceId)
         {
-            var cacheKey = GetCacheKey(deviceId, accountId);
+            var cacheKey = GetCacheKey(deviceId);
 
             if (_cache.TryGetValue(cacheKey, out DeviceConfiguration deviceConfiguration))
                 return deviceConfiguration;
 
-            deviceConfiguration = await _decoratee.GetAsync(deviceId, accountId);
+            deviceConfiguration = await _decoratee.GetAsync(deviceId);
 
             _cache.Set(cacheKey, deviceConfiguration, _cacheOptions);
             _logger.LogDebug("Device configuration with key {Key} was added to cache", cacheKey);
@@ -47,22 +47,21 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
         {
             await _decoratee.AddOrUpdateAsync(deviceConfiguration);
 
-            var cacheKey = GetCacheKey(deviceConfiguration.DeviceId, deviceConfiguration.AccountId);
+            var cacheKey = GetCacheKey(deviceConfiguration.DeviceId);
             _cache.Remove(cacheKey);
             _logger.LogDebug("Device configuration with key {Key} was removed from cache due to add or update",
                 cacheKey);
         }
 
-        public async Task RemoveAsync(string deviceId, string accountId)
+        public async Task RemoveAsync(string deviceId)
         {
-            await _decoratee.RemoveAsync(deviceId, accountId);
+            await _decoratee.RemoveAsync(deviceId);
 
-            var cacheKey = GetCacheKey(deviceId, accountId);
+            var cacheKey = GetCacheKey(deviceId);
             _cache.Remove(cacheKey);
             _logger.LogDebug("Device configuration with key {Key} was removed from cache", cacheKey);
         }
 
-        private static string GetCacheKey(string deviceId, string accountId) => $"DeviceConfiguration_{deviceId}_{accountId}";
-
+        private static string GetCacheKey(string deviceId) => $"DeviceConfiguration_{deviceId}";
     }
 }

@@ -34,15 +34,13 @@ namespace Lykke.Snow.Notifications.Controllers
         /// Retrieves a device configuration by its ID.
         /// </summary>
         /// <param name="deviceId">Device id</param>
-        /// <param name="accountId">Account id</param>
         /// <returns></returns>
-        [HttpGet("{deviceId}/{accountId}")]
+        [HttpGet("{deviceId}")]
         [ProducesResponseType(typeof(DeviceConfigurationResponse), (int)HttpStatusCode.OK)]
         [ServiceFilter(typeof(DeviceConfigurationGetExceptionFilter))]
-        public async Task<DeviceConfigurationResponse> Get([FromRoute] string deviceId, [FromRoute] string accountId)
+        public async Task<DeviceConfigurationResponse> Get([FromRoute] string deviceId)
         {
-            var deviceConfiguration = await _repository.GetAsync(deviceId, accountId);
-
+            var deviceConfiguration = await _repository.GetAsync(deviceId);
             var contract = _mapper.Map<DeviceConfigurationContract>(deviceConfiguration);
 
             return new DeviceConfigurationResponse(contract);
@@ -52,14 +50,13 @@ namespace Lykke.Snow.Notifications.Controllers
         /// Deletes a device configuration by its ID.
         /// </summary>
         /// <param name="deviceId">Device id</param>
-        /// <param name="accountId">Account id</param>
         /// <returns></returns>
-        [HttpDelete("{deviceId}/{accountId}")]
+        [HttpDelete("{deviceId}")]
         [ProducesResponseType(typeof(ErrorCodeResponse<DeviceConfigurationErrorCodeContract>), (int)HttpStatusCode.OK)]
         [ServiceFilter(typeof(DeviceConfigurationDeleteExceptionFilter))]
-        public async Task<ErrorCodeResponse<DeviceConfigurationErrorCodeContract>> Delete([FromRoute] string deviceId, [FromRoute] string accountId)
+        public async Task<ErrorCodeResponse<DeviceConfigurationErrorCodeContract>> Delete([FromRoute] string deviceId)
         {
-            await _repository.RemoveAsync(deviceId, accountId);
+            await _repository.RemoveAsync(deviceId);
 
             return DeviceConfigurationErrorCodeContract.None;
         }

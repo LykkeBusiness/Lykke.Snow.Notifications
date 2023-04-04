@@ -17,19 +17,17 @@ namespace Lykke.Snow.Notifications.Client
         /// Gets device configuration by device id
         /// </summary>
         /// <param name="deviceId">Device id</param>
-        /// <param name="accountId">Account id</param>
         /// <returns></returns>
-        [Get("/api/DeviceConfiguration/{deviceId}/{accountId}")]
-        Task<DeviceConfigurationResponse> Get([Required] string deviceId, [Required] string accountId);
+        [Get("/api/DeviceConfiguration/{deviceId}")]
+        Task<DeviceConfigurationResponse> Get([Required] string deviceId);
 
         /// <summary>
         /// Removes device configuration by device id
         /// </summary>
         /// <param name="deviceId"></param>
-        /// <param name="accountId"></param>
         /// <returns></returns>
         [Delete("/api/DeviceConfiguration/{deviceId}")]
-        Task<ErrorCodeResponse<DeviceConfigurationErrorCodeContract>> Delete([Required] string deviceId, [Required] string accountId);
+        Task<ErrorCodeResponse<DeviceConfigurationErrorCodeContract>> Delete([Required] string deviceId);
 
         /// <summary>
         /// Creates or updates device configuration by device id

@@ -40,13 +40,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             {
                 await _repository.AddOrUpdateAsync(deviceRegistration);
 
-                var existingConfig = await _deviceConfigurationRepository.GetAsync(deviceRegistration.DeviceId, deviceRegistration.AccountId);
-                
-                // If the registration has been done with the same device id and account id, we don't need to create a new configuration
-                // To not to override existing notification preferences.
-                if (existingConfig != null)
-                    return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.None);
-
                 await _deviceConfigurationRepository.AddOrUpdateAsync(
                     DeviceConfiguration.Default(deviceRegistration.DeviceId, deviceRegistration.AccountId, locale));
 
@@ -64,14 +57,24 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
         public async Task<Result<DeviceRegistrationErrorCode>> UnregisterDeviceAsync(string deviceToken)
         {
+            DeviceRegistration? result;
             try
             {
-                IEnumerable<DeviceRegistration> deviceRegistrations = await _repository.GetDeviceRegistrationsAsync(deviceToken);
+                result = await _repository.GetDeviceRegistrationAsync(deviceToken: deviceToken);
+            }
+            catch (EntityNotFoundException)
+            {
+                return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DoesNotExist);
+            }
 
-                foreach(var reg in deviceRegistrations)
-                {
-                    await _repository.RemoveAsync(reg.Oid);
-                }
+            if (result == null)
+            {
+                return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DoesNotExist);
+            }
+
+            try
+            {
+                await _repository.RemoveAsync(oid: result.Oid);
 
                 return new Result<DeviceRegistrationErrorCode>();
             }

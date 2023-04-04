@@ -23,14 +23,15 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
             _mapper = mapper;
         }
 
-
-        public async Task<IReadOnlyList<DeviceRegistration>> GetDeviceRegistrationsAsync(string deviceToken)
+        public async Task<DeviceRegistration> GetDeviceRegistrationAsync(string deviceToken)
         {
             await using var context = _contextFactory.CreateDataContext();
-            var entities = await context.DeviceRegistrations.Where(x => x.DeviceToken == deviceToken)
-                .Select(e => _mapper.Map<DeviceRegistration>(e)).ToListAsync();
+            var entity = await context.DeviceRegistrations.SingleOrDefaultAsync(x => x.DeviceToken == deviceToken);
             
-            return entities;
+            if (entity == null)
+                throw new EntityNotFoundException(deviceToken);
+        
+            return _mapper.Map<DeviceRegistration>(entity);
         }
 
         public async Task<IReadOnlyList<DeviceRegistration>> GetDeviceRegistrationsByAccountIdAsync(string accountId)
@@ -57,7 +58,7 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
         {
             await using var context = _contextFactory.CreateDataContext();
             var existingEntity = await context.DeviceRegistrations
-                .SingleOrDefaultAsync(x => x.DeviceToken == deviceRegistration.DeviceToken && x.AccountId == deviceRegistration.AccountId);
+                .SingleOrDefaultAsync(x => x.DeviceToken == deviceRegistration.DeviceToken);
                 
             if(existingEntity == null)
             {
@@ -72,15 +73,15 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
         {
             await using var context = _contextFactory.CreateDataContext();
             var entity = new DeviceRegistrationEntity() { Oid = oid };
-
+            
             context.Attach(entity);
             context.DeviceRegistrations.Remove(entity);
-
-            try
+            
+            try 
             {
                 await context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException e) when (e.IsMissingDataException())
+            catch(DbUpdateConcurrencyException e) when (e.IsMissingDataException())
             {
                 throw new EntityNotFoundException(oid);
             }
@@ -120,6 +121,5 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
                 throw new EntityNotFoundException(existingEntity.Oid);
             }
         }
-
     }
 }

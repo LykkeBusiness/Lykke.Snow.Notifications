@@ -11,7 +11,7 @@ namespace Lykke.Snow.Notifications.SqlRepositories.EntityConfigurations
             builder.HasKey(x => x.Oid);
             builder.Property(x => x.Oid).ValueGeneratedOnAdd();
             builder.Property(x => x.DeviceId).HasMaxLength(128).IsRequired();
-            builder.HasIndex(x => x.DeviceId);
+            builder.HasIndex(x => x.DeviceId).IsUnique();
             
             builder.Property(x => x.AccountId).HasMaxLength(128).IsRequired();
             builder.Property(x => x.Locale).HasMaxLength(10).IsRequired();
