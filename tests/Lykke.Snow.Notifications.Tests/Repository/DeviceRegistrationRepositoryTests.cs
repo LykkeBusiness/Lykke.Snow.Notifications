@@ -13,15 +13,14 @@ namespace Lykke.Snow.Notifications.Tests.Repository
 {
     public class DeviceRegistrationRepositoryTests
     {
-        //TODO: fix
-        //[Fact]
-        //public async Task GetDeviceRegistrationAsync_ShouldThrow_EntityNotFoundException_WhenEntityIsNull()
-        //{
-        //    var sut = CreateSut();
-
-        //    await Assert.ThrowsAsync<EntityNotFoundException>(async () =>
-        //        await sut.GetDeviceRegistrationAsync("device-token-that-does-not-exist-on-database"));
-        //}
+        [Fact]
+        public async Task GetDeviceRegistrationAsync_ShouldReturnEmptyCollection_WhenPassedNonExistentDeviceToken()
+        {
+            var sut = CreateSut();
+            var result = await sut.GetDeviceRegistrationsAsync("device-token-that-does-not-exist-on-database");
+            
+            Assert.Empty(result);
+        }
 
         private DeviceRegistrationRepository CreateSut()
         {

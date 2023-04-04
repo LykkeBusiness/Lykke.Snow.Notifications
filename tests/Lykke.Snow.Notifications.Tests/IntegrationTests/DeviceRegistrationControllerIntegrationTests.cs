@@ -33,7 +33,7 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
         {
             FcmIntegrationServiceFake.SetIsDeviceTokenValid(true);
 
-            var registerDeviceRequest = new RegisterDeviceRequest("account-id", "device-token", "device-id", "en");
+            var registerDeviceRequest = new RegisterDeviceRequest(accountId: Guid.NewGuid().ToString(), deviceToken: Guid.NewGuid().ToString(), deviceId: Guid.NewGuid().ToString(), "en");
             
             var response = await _client.PostAsJsonAsync("/api/DeviceRegistration", registerDeviceRequest);
 
@@ -45,7 +45,7 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
         {
             FcmIntegrationServiceFake.SetIsDeviceTokenValid(false);
 
-            var registerDeviceRequest = new RegisterDeviceRequest("account-id", "invalid-device-token", "device-id", "en");
+            var registerDeviceRequest = new RegisterDeviceRequest(accountId: Guid.NewGuid().ToString(), deviceToken: Guid.NewGuid().ToString(), deviceId: Guid.NewGuid().ToString(), "en");
 
             var response = await _client.PostAsJsonAsync("/api/DeviceRegistration", registerDeviceRequest);
 
@@ -57,7 +57,8 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
         {
             FcmIntegrationServiceFake.SetIsDeviceTokenValid(true);
 
-            var registerDeviceRequest = new RegisterDeviceRequest("account-id", "device-token", "device-id", "lang-invalid");
+            var registerDeviceRequest = new RegisterDeviceRequest(accountId: Guid.NewGuid().ToString(), deviceToken: Guid.NewGuid().ToString(), 
+                    deviceId: Guid.NewGuid().ToString(), "lang-invalid");
             
             var response = await _client.PostAsJsonAsync("/api/DeviceRegistration", registerDeviceRequest);
 
@@ -72,7 +73,8 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
         {
             FcmIntegrationServiceFake.SetIsDeviceTokenValid(true);
 
-            var registerDeviceRequest = new RegisterDeviceRequest(accountId, "device-token", "device-id", "en");
+            var registerDeviceRequest = new RegisterDeviceRequest(accountId: accountId, deviceToken: Guid.NewGuid().ToString(), 
+                    deviceId: Guid.NewGuid().ToString(), "lang-invalid");
             
             var response = await _client.PostAsJsonAsync("/api/DeviceRegistration", registerDeviceRequest);
 
@@ -129,7 +131,7 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
         [InlineData("")]
         [InlineData(" ")]
         [InlineData(null)]
-        public async Task UnregisterDevice_WithNullOrEmptyDeviceToken_ShouldReturnBadRequest(string deviceToken)
+        public async Task UnregisterDevice_WithNullOrEmptyDeviceToken_ShouldReturnInvalidInput(string deviceToken)
         {
             var unregisterDeviceRequest = new UnregisterDeviceRequest(deviceToken);
             
@@ -139,13 +141,13 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
         }
 
         [Fact]
-        public async Task UnregisterDevice_WithDeviceTokenThatDoesntExist_ShouldReturnDoesNotExist()
+        public async Task UnregisterDevice_WithDeviceTokenThatDoesntExist_ShouldReturnNone()
         {
             var unregisterDeviceRequest = new UnregisterDeviceRequest("device-token-that-does-not-exist");
             
             var response = await _client.DeleteWithPayloadAsync("/api/DeviceRegistration", unregisterDeviceRequest);
             
-            await response.AssertErrorAsync(DeviceRegistrationErrorCode.DoesNotExist);
+            await response.AssertErrorAsync(DeviceRegistrationErrorCode.None);
         }
 
         [Fact]
