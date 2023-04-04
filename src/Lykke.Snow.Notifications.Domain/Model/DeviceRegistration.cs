@@ -2,7 +2,7 @@ using System;
 
 namespace Lykke.Snow.Notifications.Domain.Model
 {
-    public sealed class DeviceRegistration
+    public sealed class DeviceRegistration : IEquatable<DeviceRegistration>
     {
         public int Oid { get; set; }
         public string AccountId { get; }
@@ -39,6 +39,26 @@ namespace Lykke.Snow.Notifications.Domain.Model
                    $"DeviceToken: {DeviceToken}, " +
                    $"DeviceId: {DeviceId}, " +
                    $"RegisteredOn: {RegisteredOn}";
+        }
+
+        public bool Equals(DeviceRegistration? other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return AccountId == other.AccountId &&
+                   DeviceToken == other.DeviceToken &&
+                   DeviceId == other.DeviceId &&
+                   RegisteredOn.Equals(other.RegisteredOn);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return ReferenceEquals(this, obj) || obj is DeviceRegistration other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(AccountId, DeviceToken, DeviceId, RegisteredOn);
         }
     }
 }

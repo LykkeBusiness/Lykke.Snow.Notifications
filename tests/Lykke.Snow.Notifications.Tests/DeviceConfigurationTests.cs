@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
 using FsCheck;
 using FsCheck.Xunit;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
+using Lykke.Snow.Notifications.MappingProfiles;
+using Lykke.Snow.Notifications.SqlRepositories.Entities;
 using Xunit;
 
 namespace Lykke.Snow.Notifications.Tests
@@ -319,6 +322,20 @@ namespace Lykke.Snow.Notifications.Tests
             {
                 var types = dc.Notifications.Select(n => n.Type).ToList();
                 return types.Count == types.Distinct().Count();
+            });
+        }
+
+        [Property]
+        public Property DeviceConfiguration_Mapping_ToEntityAndBack_ShouldReturnSameObject()
+        {
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile(new MappingProfile()))
+                .CreateMapper();
+            
+            return Prop.ForAll(Gens.DeviceConfiguration.ToArbitrary(), origin =>
+            {
+                var entity = mapper.Map<DeviceConfigurationEntity>(origin);
+                var mapped = mapper.Map<DeviceConfiguration>(entity);
+                return origin.Equals(mapped);
             });
         }
     }
