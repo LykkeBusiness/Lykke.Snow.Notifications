@@ -113,6 +113,28 @@ namespace Lykke.Snow.Notifications.Tests.Repository
 
             Assert.Null(result);
         }
+        
+        [Fact]
+        public async Task AddOrUpdateAsync_MultipleConfigurations_For_Same_Device_Should_Be_Possible()
+        {
+            // Arrange
+            var repo = new DeviceConfigurationRepository(new MssqlContextFactoryFake(), _mapper);
+            var dcAccountA = DeviceConfiguration.Default("device-id-6", "account-id-a");
+            var dcAccountB = new DeviceConfiguration("device-id-6",
+                "account-id-b",
+                "de",
+                new List<DeviceConfiguration.Notification> { new DeviceConfiguration.Notification("AccountLocked") });
+
+            // Act
+            await repo.AddOrUpdateAsync(dcAccountA);
+            await repo.AddOrUpdateAsync(dcAccountB);
+
+            // Assert
+            var addedA = await repo.GetAsync(dcAccountA.DeviceId, dcAccountA.AccountId);
+            Assert.Equal(dcAccountA, addedA);
+            var addedB = await repo.GetAsync(dcAccountB.DeviceId, dcAccountB.AccountId);
+            Assert.Equal(dcAccountB, addedB);
+        }
 
         [Fact]
         public async Task RemoveAsync_Should_Throw_EntityNotFoundException_When_Not_Exists()
