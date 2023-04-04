@@ -4,15 +4,20 @@
     <LangVersion>8.0</LangVersion>
     <Version>1.0.0</Version>
     <Nullable>enable</Nullable>
-    <WarningsNotAsErrors>CS8604</WarningsNotAsErrors>
-    <NoWarn>CS8604</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>CS8625</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="FsCheck.Xunit" Version="2.16.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.15" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
     <PackageReference Include="Moq" Version="4.10.0" />
     <PackageReference Include="xunit" Version="2.4.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+    <PackageReference Include="coverlet.collector" Version="3.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\client\Lykke.Snow.Notifications.Client\Lykke.Snow.Notifications.Client.csproj" />

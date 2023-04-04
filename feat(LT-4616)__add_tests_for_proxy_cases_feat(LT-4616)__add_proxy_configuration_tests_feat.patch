@@ -1,0 +1,1180 @@
+Subject: [PATCH] feat(LT-4616): add tests for proxy cases
+feat(LT-4616): add proxy configuration tests
+feat(LT-4616): introduce fcm options factory
+feat(LT-4616): update README.md with caching and proxy configuration instructions
+feat(LT-4616): add optional proxy to FCM interaction
+fix(LT-4616): ConfigurationCache is optional
+feat(LT-4616): add configuration configuration cache expiration timeout
+feat(LT-4616): add more property tests
+---
+Index: src/Lykke.Snow.Notifications.Domain/Model/DeviceConfiguration.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Lykke.Snow.Notifications.Domain/Model/DeviceConfiguration.cs b/src/Lykke.Snow.Notifications.Domain/Model/DeviceConfiguration.cs
+--- a/src/Lykke.Snow.Notifications.Domain/Model/DeviceConfiguration.cs	(revision 09202bb42769500b355ed6040b4a93491a0dee62)
++++ b/src/Lykke.Snow.Notifications.Domain/Model/DeviceConfiguration.cs	(revision 3d1b403778e492b29de66d89370ad56c72e91157)
+@@ -9,9 +9,9 @@
+     /// <summary>
+     /// Device configuration
+     /// </summary>
+-    public sealed class DeviceConfiguration
++    public sealed class DeviceConfiguration : IEquatable<DeviceConfiguration>
+     {
+-        public class Notification
++        public sealed class Notification : IEquatable<Notification>
+         {
+             /// <summary>
+             /// Creates a new notification
+@@ -39,6 +39,26 @@
+ 
+             public NotificationType Type { get; }
+             public bool Enabled { get; }
++
++            public bool Equals(Notification? other)
++            {
++                if (ReferenceEquals(null, other)) return false;
++                if (ReferenceEquals(this, other)) return true;
++                return Type == other.Type && Enabled == other.Enabled;
++            }
++
++            public override bool Equals(object? obj)
++            {
++                if (ReferenceEquals(null, obj)) return false;
++                if (ReferenceEquals(this, obj)) return true;
++                if (obj.GetType() != this.GetType()) return false;
++                return Equals((Notification)obj);
++            }
++
++            public override int GetHashCode()
++            {
++                return HashCode.Combine((int)Type, Enabled);
++            }
+         }
+         public string DeviceId { get; }
+         public string AccountId { get; }
+@@ -140,5 +160,25 @@
+                 locale: locale,
+                 notifications: allNotificationTypes.ToList());
+         }
++
++        public bool Equals(DeviceConfiguration? other)
++        {
++            if (ReferenceEquals(null, other)) return false;
++            if (ReferenceEquals(this, other)) return true;
++            return DeviceId == other.DeviceId &&
++                   AccountId == other.AccountId &&
++                   Locale == other.Locale &&
++                   Notifications.SequenceEqual(other.Notifications);
++        }
++
++        public override bool Equals(object? obj)
++        {
++            return ReferenceEquals(this, obj) || obj is DeviceConfiguration other && Equals(other);
++        }
++
++        public override int GetHashCode()
++        {
++            return HashCode.Combine(DeviceId, AccountId, (int)Locale, Notifications);
++        }
+     }
+ }
+Index: src/Lykke.Snow.Notifications.Domain/Model/DeviceRegistration.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Lykke.Snow.Notifications.Domain/Model/DeviceRegistration.cs b/src/Lykke.Snow.Notifications.Domain/Model/DeviceRegistration.cs
+--- a/src/Lykke.Snow.Notifications.Domain/Model/DeviceRegistration.cs	(revision 09202bb42769500b355ed6040b4a93491a0dee62)
++++ b/src/Lykke.Snow.Notifications.Domain/Model/DeviceRegistration.cs	(revision 3d1b403778e492b29de66d89370ad56c72e91157)
+@@ -2,7 +2,7 @@
+ 
+ namespace Lykke.Snow.Notifications.Domain.Model
+ {
+-    public sealed class DeviceRegistration
++    public sealed class DeviceRegistration : IEquatable<DeviceRegistration>
+     {
+         public int Oid { get; set; }
+         public string AccountId { get; }
+@@ -40,5 +40,25 @@
+                    $"DeviceId: {DeviceId}, " +
+                    $"RegisteredOn: {RegisteredOn}";
+         }
++
++        public bool Equals(DeviceRegistration? other)
++        {
++            if (ReferenceEquals(null, other)) return false;
++            if (ReferenceEquals(this, other)) return true;
++            return AccountId == other.AccountId &&
++                   DeviceToken == other.DeviceToken &&
++                   DeviceId == other.DeviceId &&
++                   RegisteredOn.Equals(other.RegisteredOn);
++        }
++
++        public override bool Equals(object? obj)
++        {
++            return ReferenceEquals(this, obj) || obj is DeviceRegistration other && Equals(other);
++        }
++
++        public override int GetHashCode()
++        {
++            return HashCode.Combine(AccountId, DeviceToken, DeviceId, RegisteredOn);
++        }
+     }
+ }
+Index: tests/Lykke.Snow.Notifications.Tests/DeviceConfigurationTests.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tests/Lykke.Snow.Notifications.Tests/DeviceConfigurationTests.cs b/tests/Lykke.Snow.Notifications.Tests/DeviceConfigurationTests.cs
+--- a/tests/Lykke.Snow.Notifications.Tests/DeviceConfigurationTests.cs	(revision 09202bb42769500b355ed6040b4a93491a0dee62)
++++ b/tests/Lykke.Snow.Notifications.Tests/DeviceConfigurationTests.cs	(revision 3d1b403778e492b29de66d89370ad56c72e91157)
+@@ -1,11 +1,14 @@
+ using System;
+ using System.Collections.Generic;
+ using System.Linq;
++using AutoMapper;
+ using FsCheck;
+ using FsCheck.Xunit;
+ using Lykke.Snow.Notifications.Domain.Enums;
+ using Lykke.Snow.Notifications.Domain.Exceptions;
+ using Lykke.Snow.Notifications.Domain.Model;
++using Lykke.Snow.Notifications.MappingProfiles;
++using Lykke.Snow.Notifications.SqlRepositories.Entities;
+ using Xunit;
+ 
+ namespace Lykke.Snow.Notifications.Tests
+@@ -321,5 +324,19 @@
+                 return types.Count == types.Distinct().Count();
+             });
+         }
++
++        [Property]
++        public Property DeviceConfiguration_Mapping_ToEntityAndBack_ShouldReturnSameObject()
++        {
++            var mapper = new MapperConfiguration(cfg => cfg.AddProfile(new MappingProfile()))
++                .CreateMapper();
++            
++            return Prop.ForAll(Gens.DeviceConfiguration.ToArbitrary(), origin =>
++            {
++                var entity = mapper.Map<DeviceConfigurationEntity>(origin);
++                var mapped = mapper.Map<DeviceConfiguration>(entity);
++                return origin.Equals(mapped);
++            });
++        }
+     }
+ }
+Index: tests/Lykke.Snow.Notifications.Tests/DeviceRegistrationTests.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tests/Lykke.Snow.Notifications.Tests/DeviceRegistrationTests.cs b/tests/Lykke.Snow.Notifications.Tests/DeviceRegistrationTests.cs
+--- a/tests/Lykke.Snow.Notifications.Tests/DeviceRegistrationTests.cs	(revision 09202bb42769500b355ed6040b4a93491a0dee62)
++++ b/tests/Lykke.Snow.Notifications.Tests/DeviceRegistrationTests.cs	(revision 3d1b403778e492b29de66d89370ad56c72e91157)
+@@ -1,5 +1,10 @@
+ using System;
++using AutoMapper;
++using FsCheck;
++using FsCheck.Xunit;
+ using Lykke.Snow.Notifications.Domain.Model;
++using Lykke.Snow.Notifications.MappingProfiles;
++using Lykke.Snow.Notifications.SqlRepositories.Entities;
+ using Xunit;
+ 
+ namespace Lykke.Snow.Notifications.Tests
+@@ -35,5 +40,19 @@
+             Assert.Throws<ArgumentException>(() => new DeviceRegistration(accountId: "any-account-id", deviceToken: "any-device-token", deviceId: "any-device-id", registeredOn: default(DateTime))); 
+             Assert.Throws<ArgumentException>(() => new DeviceRegistration(accountId: "any-account-id", deviceToken: "any-device-token", deviceId: "any-device-id", registeredOn: DateTime.UtcNow.AddSeconds(1))); 
+         }
++        
++        [Property]
++        public Property DeviceRegistration_Mapping_ToEntityAndBack_ShouldReturnSameObject()
++        {
++            var mapper = new MapperConfiguration(cfg => cfg.AddProfile(new MappingProfile()))
++                .CreateMapper();
++            
++            return Prop.ForAll(Gens.DeviceRegistration.ToArbitrary(), origin =>
++            {
++                var entity = mapper.Map<DeviceRegistrationEntity>(origin);
++                var mapped = mapper.Map<DeviceRegistration>(entity);
++                return origin.Equals(mapped);
++            });
++        }
+     }
+ }
+Index: src/Lykke.Snow.Notifications.DomainServices/Services/DeviceConfigurationCache.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Lykke.Snow.Notifications.DomainServices/Services/DeviceConfigurationCache.cs b/src/Lykke.Snow.Notifications.DomainServices/Services/DeviceConfigurationCache.cs
+--- a/src/Lykke.Snow.Notifications.DomainServices/Services/DeviceConfigurationCache.cs	(revision 3d1b403778e492b29de66d89370ad56c72e91157)
++++ b/src/Lykke.Snow.Notifications.DomainServices/Services/DeviceConfigurationCache.cs	(revision bbabfba09505c00941be91fc57cd81112ffb8f56)
+@@ -12,17 +12,20 @@
+         private readonly IDeviceConfigurationRepository _decoratee;
+         private readonly IMemoryCache _cache;
+         private readonly ILogger<DeviceConfigurationCache> _logger;
++        private readonly MemoryCacheEntryOptions _cacheOptions;
+         
+-        private static readonly MemoryCacheEntryOptions CacheOptions = new MemoryCacheEntryOptions()
+-            .SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
++        private static TimeSpan DefaultCacheExpirationPeriod => TimeSpan.FromMinutes(10);
+ 
+         public DeviceConfigurationCache(IDeviceConfigurationRepository decoratee,
+             IMemoryCache cache,
++            TimeSpan? cacheExpirationPeriod,
+             ILogger<DeviceConfigurationCache> logger)
+         {
+             _decoratee = decoratee;
+             _cache = cache;
+             _logger = logger;
++            _cacheOptions = new MemoryCacheEntryOptions()
++                .SetAbsoluteExpiration(cacheExpirationPeriod ?? DefaultCacheExpirationPeriod);
+         }
+ 
+         public async Task<DeviceConfiguration> GetAsync(string deviceId)
+@@ -34,7 +37,7 @@
+ 
+             deviceConfiguration = await _decoratee.GetAsync(deviceId);
+ 
+-            _cache.Set(cacheKey, deviceConfiguration, CacheOptions);
++            _cache.Set(cacheKey, deviceConfiguration, _cacheOptions);
+             _logger.LogDebug("Device configuration with key {Key} was added to cache", cacheKey);
+ 
+             return deviceConfiguration;
+Index: src/Lykke.Snow.Notifications/Modules/DalModule.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Lykke.Snow.Notifications/Modules/DalModule.cs b/src/Lykke.Snow.Notifications/Modules/DalModule.cs
+--- a/src/Lykke.Snow.Notifications/Modules/DalModule.cs	(revision 3d1b403778e492b29de66d89370ad56c72e91157)
++++ b/src/Lykke.Snow.Notifications/Modules/DalModule.cs	(revision bbabfba09505c00941be91fc57cd81112ffb8f56)
+@@ -1,24 +1,29 @@
++using System;
+ using Autofac;
+ using Lykke.Common.MsSql;
+ using Lykke.Snow.Notifications.Domain.Repositories;
+ using Lykke.Snow.Notifications.DomainServices.Services;
++using Lykke.Snow.Notifications.Settings;
+ using Lykke.Snow.Notifications.SqlRepositories;
+ using Lykke.Snow.Notifications.SqlRepositories.Repositories;
++using Microsoft.Extensions.Caching.Memory;
++using Microsoft.Extensions.Logging;
+ 
+ namespace Lykke.Snow.Notifications.Modules
+ {
+     public class DalModule : Module
+     {
+-        private readonly string _connectionString;
++        private readonly NotificationServiceSettings _notificationServiceSettings;
+ 
+-        public DalModule(string connectionString)
++        public DalModule(NotificationServiceSettings notificationServiceSettings)
+         {
+-            _connectionString = connectionString;
++            _notificationServiceSettings = notificationServiceSettings ??
++                                           throw new ArgumentNullException(nameof(notificationServiceSettings));
+         }
+ 
+         protected override void Load(ContainerBuilder builder)
+         {
+-            builder.RegisterMsSql(_connectionString,
++            builder.RegisterMsSql(_notificationServiceSettings.Db.ConnectionString,
+                 connStr => new NotificationsDbContext(connStr, isTracingEnabled: false), 
+                 dbConnection => new NotificationsDbContext(dbConnection));
+         
+@@ -29,8 +34,13 @@
+             builder.RegisterType<DeviceConfigurationRepository>()
+                 .As<IDeviceConfigurationRepository>()
+                 .SingleInstance();
+-            
+-            builder.RegisterDecorator<DeviceConfigurationCache, IDeviceConfigurationRepository>();
++
++            builder.RegisterDecorator<IDeviceConfigurationRepository>((ctx, decoratee) => new DeviceConfigurationCache(
++                    decoratee,
++                    ctx.Resolve<IMemoryCache>(),
++                    _notificationServiceSettings.ConfigurationCache?.ExpirationPeriod,
++                    ctx.Resolve<ILogger<DeviceConfigurationCache>>()),
++                fromKey: "DeviceConfigurationRepository");
+         }
+     }
+ }
+Index: src/Lykke.Snow.Notifications/Modules/RabbitMqModule.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Lykke.Snow.Notifications/Modules/RabbitMqModule.cs b/src/Lykke.Snow.Notifications/Modules/RabbitMqModule.cs
+--- a/src/Lykke.Snow.Notifications/Modules/RabbitMqModule.cs	(revision 3d1b403778e492b29de66d89370ad56c72e91157)
++++ b/src/Lykke.Snow.Notifications/Modules/RabbitMqModule.cs	(revision bbabfba09505c00941be91fc57cd81112ffb8f56)
+@@ -12,7 +12,8 @@
+ 
+         public RabbitMqModule(NotificationServiceSettings notificationServiceSettings)
+         {
+-            _notificationServiceSettings = notificationServiceSettings ?? throw new ArgumentNullException(nameof(notificationServiceSettings));
++            _notificationServiceSettings = notificationServiceSettings ??
++                                           throw new ArgumentNullException(nameof(notificationServiceSettings));
+         }
+ 
+         protected override void Load(ContainerBuilder builder)
+Index: src/Lykke.Snow.Notifications/Settings/CacheSettings.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Lykke.Snow.Notifications/Settings/CacheSettings.cs b/src/Lykke.Snow.Notifications/Settings/CacheSettings.cs
+new file mode 100644
+--- /dev/null	(revision bbabfba09505c00941be91fc57cd81112ffb8f56)
++++ b/src/Lykke.Snow.Notifications/Settings/CacheSettings.cs	(revision bbabfba09505c00941be91fc57cd81112ffb8f56)
+@@ -0,0 +1,10 @@
++using System;
++using Lykke.SettingsReader.Attributes;
++
++namespace Lykke.Snow.Notifications.Settings
++{
++    public class CacheSettings
++    {
++        [Optional] public TimeSpan? ExpirationPeriod { get; set; }
++    }
++}
+Index: src/Lykke.Snow.Notifications/Settings/NotificationServiceSettings.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Lykke.Snow.Notifications/Settings/NotificationServiceSettings.cs b/src/Lykke.Snow.Notifications/Settings/NotificationServiceSettings.cs
+--- a/src/Lykke.Snow.Notifications/Settings/NotificationServiceSettings.cs	(revision 3d1b403778e492b29de66d89370ad56c72e91157)
++++ b/src/Lykke.Snow.Notifications/Settings/NotificationServiceSettings.cs	(revision 2b1a18bf4e4d3f8ba46dd59932d0762d84cc711c)
+@@ -5,12 +5,15 @@
+ {
+     public class NotificationServiceSettings
+     {
+-        public DbSettings? Db { get; set; }
+-
++        public DbSettings Db { get; set; } = new DbSettings();
+         [Optional]
+         public ClientSettings? NotificationServiceClient { get; set; }
+-        public CqrsSettings? Cqrs { get; set; }
+-        public FcmSettings? Fcm { get; set; }
++        public CqrsSettings Cqrs { get; set; } = new CqrsSettings();
++        public FcmSettings Fcm { get; set; } = new FcmSettings();
+         public SubscribersSettings? Subscribers { get; set; }
++        [Optional]
++        public CacheSettings? ConfigurationCache { get; set; }
++        [Optional]
++        public ProxySettings? Proxy { get; set; }
+     }
+ }
+Index: src/Lykke.Snow.Notifications/Startup/HostConfiguration.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Lykke.Snow.Notifications/Startup/HostConfiguration.cs b/src/Lykke.Snow.Notifications/Startup/HostConfiguration.cs
+--- a/src/Lykke.Snow.Notifications/Startup/HostConfiguration.cs	(revision 3d1b403778e492b29de66d89370ad56c72e91157)
++++ b/src/Lykke.Snow.Notifications/Startup/HostConfiguration.cs	(revision bbabfba09505c00941be91fc57cd81112ffb8f56)
+@@ -42,7 +42,7 @@
+                     // LINK: https://github.com/dotnet/aspnetcore/issues/14907
+                     if (!ctx.HostingEnvironment.IsEnvironment("integration-tests"))
+                     {
+-                        cBuilder.RegisterModule(new DalModule(settings.CurrentValue.NotificationService.Db.ConnectionString));
++                        cBuilder.RegisterModule(new DalModule(settings.CurrentValue.NotificationService));
+                         cBuilder.RegisterModule(new CqrsModule(settings.CurrentValue.NotificationService.Cqrs));
+                         cBuilder.RegisterModule(new RabbitMqModule(settings.CurrentValue.NotificationService));
+                         cBuilder.RegisterModule(new FirebaseModule(settings.CurrentValue.NotificationService));
+Index: src/Lykke.Snow.Notifications/appsettings.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Lykke.Snow.Notifications/appsettings.json b/src/Lykke.Snow.Notifications/appsettings.json
+--- a/src/Lykke.Snow.Notifications/appsettings.json	(revision 3d1b403778e492b29de66d89370ad56c72e91157)
++++ b/src/Lykke.Snow.Notifications/appsettings.json	(revision bbabfba09505c00941be91fc57cd81112ffb8f56)
+@@ -11,6 +11,9 @@
+     "Fcm": {
+       "CredentialFilePath": ""
+     },
++    "ConfigurationCache": {
++      "ExpirationPeriod": "00:01:00"
++    },
+     "NotificationServiceClient": {
+       "Url": "http://notification-service.mt.svc.cluster.local",
+       "ApiKey": ""
+Index: tests/Lykke.Snow.Notifications.Tests/Repository/DeviceConfigurationCacheTests.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tests/Lykke.Snow.Notifications.Tests/Repository/DeviceConfigurationCacheTests.cs b/tests/Lykke.Snow.Notifications.Tests/Repository/DeviceConfigurationCacheTests.cs
+--- a/tests/Lykke.Snow.Notifications.Tests/Repository/DeviceConfigurationCacheTests.cs	(revision 3d1b403778e492b29de66d89370ad56c72e91157)
++++ b/tests/Lykke.Snow.Notifications.Tests/Repository/DeviceConfigurationCacheTests.cs	(revision bbabfba09505c00941be91fc57cd81112ffb8f56)
+@@ -1,3 +1,4 @@
++using System;
+ using System.Threading.Tasks;
+ using Lykke.Snow.Notifications.Domain.Model;
+ using Lykke.Snow.Notifications.Domain.Repositories;
+@@ -32,7 +33,7 @@
+             var deviceConfiguration = DeviceConfiguration.Default(deviceId, "test-account-1");
+ 
+             _decorateeMock.Setup(x => x.GetAsync(deviceId)).ReturnsAsync(deviceConfiguration);
+-            var cache = new DeviceConfigurationCache(_decorateeMock.Object, _memoryCache, _logger);
++            var cache = new DeviceConfigurationCache(_decorateeMock.Object, _memoryCache, TimeSpan.FromMinutes(1), _logger);
+ 
+             // Act
+             var result1 = await cache.GetAsync(deviceId);
+@@ -51,7 +52,7 @@
+             const string deviceId = "test-device-2";
+             var deviceConfiguration = new DeviceConfiguration(deviceId, "test-account-2");
+             _decorateeMock.Setup(x => x.GetAsync(deviceId)).ReturnsAsync(deviceConfiguration);
+-            var cache = new DeviceConfigurationCache(_decorateeMock.Object, _memoryCache, _logger);
++            var cache = new DeviceConfigurationCache(_decorateeMock.Object, _memoryCache, TimeSpan.FromMinutes(1),  _logger);
+ 
+             // Act
+             await cache.GetAsync(deviceId);
+@@ -66,15 +67,37 @@
+         public async Task RemoveAsync_Should_Invalidate_Cache()
+         {
+             // Arrange
+-            const string deviceId = "test-device-2";
++            const string deviceId = "test-device-3";
+             var deviceConfiguration = new DeviceConfiguration(deviceId, "test-account-3");
+             _decorateeMock.Setup(x => x.GetAsync(deviceId)).ReturnsAsync(deviceConfiguration);
+-            var cache = new DeviceConfigurationCache(_decorateeMock.Object, _memoryCache, _logger);
++            var cache = new DeviceConfigurationCache(_decorateeMock.Object, _memoryCache, TimeSpan.FromMinutes(1),  _logger);
+ 
+             // Act
+             await cache.GetAsync(deviceId);
+             await cache.RemoveAsync(deviceId);
+             await cache.GetAsync(deviceId);
++
++            // Assert
++            _decorateeMock.Verify(x => x.GetAsync(deviceId), Times.Exactly(2));
++        }
++        
++        [Fact]
++        public async Task GetAsync_Should_Fetch_From_Decoratee_If_Cache_Invalidates()
++        {
++            // Arrange
++            const string deviceId = "test-device-4";
++            const int cacheExpirationInSeconds = 3;
++            var deviceConfiguration = new DeviceConfiguration(deviceId, "test-account-4");
++            _decorateeMock.Setup(x => x.GetAsync(deviceId)).ReturnsAsync(deviceConfiguration);
++            var cache = new DeviceConfigurationCache(_decorateeMock.Object,
++                _memoryCache,
++                TimeSpan.FromSeconds(cacheExpirationInSeconds),
++                _logger);
++
++            // Act
++            await cache.GetAsync(deviceId);
++            await Task.Delay(TimeSpan.FromSeconds(cacheExpirationInSeconds + 1));
++            await cache.GetAsync(deviceId);
+ 
+             // Assert
+             _decorateeMock.Verify(x => x.GetAsync(deviceId), Times.Exactly(2));
+Index: src/Lykke.Snow.FirebaseIntegration/HttpClientFactoryWithProxy.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Lykke.Snow.FirebaseIntegration/HttpClientFactoryWithProxy.cs b/src/Lykke.Snow.FirebaseIntegration/HttpClientFactoryWithProxy.cs
+new file mode 100644
+--- /dev/null	(revision 2b1a18bf4e4d3f8ba46dd59932d0762d84cc711c)
++++ b/src/Lykke.Snow.FirebaseIntegration/HttpClientFactoryWithProxy.cs	(revision 2b1a18bf4e4d3f8ba46dd59932d0762d84cc711c)
+@@ -0,0 +1,27 @@
++using System.Net;
++using System.Net.Http;
++using Google.Apis.Http;
++
++namespace Lykke.Snow.FirebaseIntegration
++{
++    public sealed class HttpClientFactoryWithProxy : HttpClientFactory
++    {
++        private readonly ProxyConfiguration _proxyConfiguration;
++
++        public HttpClientFactoryWithProxy(ProxyConfiguration proxyConfiguration)
++        {
++            _proxyConfiguration = proxyConfiguration;
++        }
++
++        protected override HttpMessageHandler CreateHandler(CreateHttpClientArgs args)
++        {
++            var proxy = new WebProxy(_proxyConfiguration.Address);
++            if (_proxyConfiguration.CanUseCredentials)
++            {
++                proxy.Credentials = new NetworkCredential(_proxyConfiguration.Username, _proxyConfiguration.Password);
++            }
++
++            return new HttpClientHandler { Proxy = proxy };
++        }
++    }
++}
+Index: src/Lykke.Snow.FirebaseIntegration/ProxyConfiguration.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Lykke.Snow.FirebaseIntegration/ProxyConfiguration.cs b/src/Lykke.Snow.FirebaseIntegration/ProxyConfiguration.cs
+new file mode 100644
+--- /dev/null	(revision f440cb9037b2c4c573aee339c749bc895b304f95)
++++ b/src/Lykke.Snow.FirebaseIntegration/ProxyConfiguration.cs	(revision f440cb9037b2c4c573aee339c749bc895b304f95)
+@@ -0,0 +1,30 @@
++using System;
++
++namespace Lykke.Snow.FirebaseIntegration
++{
++    public readonly struct ProxyConfiguration
++    {
++        public string Address { get; }
++        public string? Username { get; }
++        public string? Password { get; }
++
++        public bool CanUseCredentials => !string.IsNullOrEmpty(Username); 
++        
++        public ProxyConfiguration(string address, string? username = null, string? password = null)
++        {
++            if (string.IsNullOrWhiteSpace(address))
++                throw new ArgumentNullException(nameof(address));
++
++            // check if both username and password are specified or none of them
++            if (string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password))
++                throw new ArgumentException("Password cannot be specified without username");
++            
++            if (!string.IsNullOrWhiteSpace(username) && string.IsNullOrWhiteSpace(password))
++                throw new ArgumentException("Username cannot be specified without password");
++            
++            Address = address;
++            Username = username;
++            Password = password;
++        }
++    }
++}
+Index: src/Lykke.Snow.FirebaseIntegration/Services/FcmIntegrationService.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Lykke.Snow.FirebaseIntegration/Services/FcmIntegrationService.cs b/src/Lykke.Snow.FirebaseIntegration/Services/FcmIntegrationService.cs
+--- a/src/Lykke.Snow.FirebaseIntegration/Services/FcmIntegrationService.cs	(revision 868ad1806e34b374dcd953af8926e0e08e78dbc9)
++++ b/src/Lykke.Snow.FirebaseIntegration/Services/FcmIntegrationService.cs	(revision c14f5fd2974331f6154335c398a508bd99d215c3)
+@@ -2,24 +2,20 @@
+ using System.Threading.Tasks;
+ using FirebaseAdmin;
+ using FirebaseAdmin.Messaging;
+-using Google.Apis.Auth.OAuth2;
+ using Lykke.Snow.Common.Model;
+ using Lykke.Snow.FirebaseIntegration.Exceptions;
+ using Lykke.Snow.FirebaseIntegration.Interfaces;
+ 
+ namespace Lykke.Snow.FirebaseIntegration.Services
+ {
+-    public class FcmIntegrationService : IFcmIntegrationService {
+-        private readonly string _credentialsFilePath;
+-
+-        public FcmIntegrationService(string? credentialsFilePath)
++    /// <summary>
++    /// Firebase Cloud Messaging client. Communicates to Firebase services.
++    /// </summary>
++    public class FcmIntegrationService : IFcmIntegrationService
++    {
++        public FcmIntegrationService(IFcmOptionsFactory optionsFactory)
+         {
+-            _credentialsFilePath = credentialsFilePath ?? throw new ArgumentNullException(nameof(credentialsFilePath));
+-
+-            if (!System.IO.File.Exists(_credentialsFilePath))
+-                throw new FirebaseCredentialsFileNotFoundException(attemptedPath: _credentialsFilePath);
+-
+-            Initialize();
++            Initialize(optionsFactory);
+         }
+ 
+         public async Task<Result<string, MessagingErrorCode>> SendNotification(Message fcmMessage)
+@@ -45,25 +41,6 @@
+             }
+         }
+ 
+-        private void Initialize()
+-        {
+-            if(FirebaseMessaging.DefaultInstance != null)
+-                return;
+-
+-            try
+-            {
+-                FirebaseApp.Create(new AppOptions() 
+-                {
+-                    Credential = GoogleCredential.FromFile(_credentialsFilePath)
+-                });
+-            }
+-            catch(ArgumentException)
+-            {
+-                //ArgumentException is thrown if Firebase is already initialized according to the documentation
+-                //So we silently ignore that ArgumentException that's caused by already existing app 
+-            }
+-        }
+-
+         public async Task<bool> IsDeviceTokenValid(string deviceToken)
+         {
+             if(string.IsNullOrEmpty(deviceToken))
+@@ -84,5 +61,23 @@
+ 
+             return true;
+         }
++        
++        private static void Initialize(IFcmOptionsFactory optionsFactory)
++        {
++            if(FirebaseMessaging.DefaultInstance != null)
++                return;
++
++            var options = optionsFactory.Create();
++            
++            try
++            {
++                FirebaseApp.Create(options);
++            }
++            catch(ArgumentException)
++            {
++                //ArgumentException is thrown if Firebase is already initialized according to the documentation
++                //So we silently ignore that ArgumentException that's caused by already existing app 
++            }
++        }
+     }
+ }
+Index: src/Lykke.Snow.Notifications/Modules/FirebaseModule.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Lykke.Snow.Notifications/Modules/FirebaseModule.cs b/src/Lykke.Snow.Notifications/Modules/FirebaseModule.cs
+--- a/src/Lykke.Snow.Notifications/Modules/FirebaseModule.cs	(revision 868ad1806e34b374dcd953af8926e0e08e78dbc9)
++++ b/src/Lykke.Snow.Notifications/Modules/FirebaseModule.cs	(revision eb26f1d4a928d290d7ebe3495367d1d36dde72ec)
+@@ -1,5 +1,6 @@
+ using System;
+ using Autofac;
++using Lykke.Snow.FirebaseIntegration;
+ using Lykke.Snow.FirebaseIntegration.Interfaces;
+ using Lykke.Snow.FirebaseIntegration.Services;
+ using Lykke.Snow.Notifications.Settings;
+@@ -17,14 +18,23 @@
+ 
+         protected override void Load(ContainerBuilder builder)
+         {
+-            if(_serviceSettings.Fcm == null)
+-                throw new ArgumentNullException(nameof(_serviceSettings.Fcm));
+-
+-            if(_serviceSettings.Fcm.CredentialFilePath == null)
+-                throw new ArgumentNullException(nameof(_serviceSettings.Fcm.CredentialFilePath));
+-
+-            builder.RegisterType<FcmIntegrationService>()
++            builder.RegisterType<FileCredentials>()
+                 .WithParameter("credentialsFilePath", _serviceSettings.Fcm.CredentialFilePath)
++                .As<IGoogleCredentialsProvider>()
++                .SingleInstance();
++            
++            var fcmOptionsFactoryBuilder = builder.RegisterType<FcmOptionsFactory>()
++                .As<IFcmOptionsFactory>()
++                .SingleInstance();
++            if (_serviceSettings.Proxy != null)
++            {
++                var proxyConfiguration = new ProxyConfiguration(_serviceSettings.Proxy.Address,
++                    _serviceSettings.Proxy.Username,
++                    _serviceSettings.Proxy.Password);
++                fcmOptionsFactoryBuilder.WithParameter("proxyConfiguration", proxyConfiguration);
++            }
++
++            builder.RegisterType<FcmIntegrationService>()
+                 .As<IFcmIntegrationService>()
+                 .SingleInstance();
+         }
+Index: src/Lykke.Snow.Notifications/Settings/ProxySettings.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Lykke.Snow.Notifications/Settings/ProxySettings.cs b/src/Lykke.Snow.Notifications/Settings/ProxySettings.cs
+new file mode 100644
+--- /dev/null	(revision 2b1a18bf4e4d3f8ba46dd59932d0762d84cc711c)
++++ b/src/Lykke.Snow.Notifications/Settings/ProxySettings.cs	(revision 2b1a18bf4e4d3f8ba46dd59932d0762d84cc711c)
+@@ -0,0 +1,15 @@
++using Lykke.SettingsReader.Attributes;
++
++namespace Lykke.Snow.Notifications.Settings
++{
++    public class ProxySettings
++    {
++        public string Address { get; set; } = "";
++        
++        [Optional]
++        public string? Username { get; set; }
++        
++        [Optional]
++        public string? Password { get; set; }
++    }
++}
+Index: README.md
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/README.md b/README.md
+--- a/README.md	(revision 2b1a18bf4e4d3f8ba46dd59932d0762d84cc711c)
++++ b/README.md	(revision e8c8729eae832440943d224ee75349f67471dd83)
+@@ -77,6 +77,31 @@
+ 
+ All notification types can be found at [here](./src/Lykke.Snow.Notifications.Domain/Enums/NotificationType.cs). 
+ 
++### 4. Proxy
++
++Proxy is optional. Being set, it will be used for all FCM outgoing requests.
++
++```json
++{
++    "Proxy": {
++        "Address": "proxy.lykke.com",
++        "UserName": "user",
++        "Password": "password"
++    }
++}
++```
++
++### 5. Caching
++
++Device configurations are cached in memory. The cache is invalidated on any change in the database. Additionally, there is an expiration time for the cache. The default value is 10 minutes but it can be changed in the configuration file.
++
++```json
++{
++  "ConfigurationCache": {
++    "ExpirationPeriod": "00:01:00"
++  }
++}
++```
+ 
+ ### Environment variables
+ 
+Index: src/Lykke.Snow.FirebaseIntegration/Interfaces/IFcmOptionsFactory.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Lykke.Snow.FirebaseIntegration/Interfaces/IFcmOptionsFactory.cs b/src/Lykke.Snow.FirebaseIntegration/Interfaces/IFcmOptionsFactory.cs
+new file mode 100644
+--- /dev/null	(revision c14f5fd2974331f6154335c398a508bd99d215c3)
++++ b/src/Lykke.Snow.FirebaseIntegration/Interfaces/IFcmOptionsFactory.cs	(revision c14f5fd2974331f6154335c398a508bd99d215c3)
+@@ -0,0 +1,9 @@
++using FirebaseAdmin;
++
++namespace Lykke.Snow.FirebaseIntegration.Interfaces
++{
++    public interface IFcmOptionsFactory
++    {
++        AppOptions Create();
++    }
++}
+Index: src/Lykke.Snow.FirebaseIntegration/Services/FcmOptionsFactory.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Lykke.Snow.FirebaseIntegration/Services/FcmOptionsFactory.cs b/src/Lykke.Snow.FirebaseIntegration/Services/FcmOptionsFactory.cs
+new file mode 100644
+--- /dev/null	(revision eb26f1d4a928d290d7ebe3495367d1d36dde72ec)
++++ b/src/Lykke.Snow.FirebaseIntegration/Services/FcmOptionsFactory.cs	(revision eb26f1d4a928d290d7ebe3495367d1d36dde72ec)
+@@ -0,0 +1,30 @@
++using FirebaseAdmin;
++using Lykke.Snow.FirebaseIntegration.Interfaces;
++
++namespace Lykke.Snow.FirebaseIntegration.Services
++{
++    public sealed class FcmOptionsFactory : IFcmOptionsFactory
++    {
++        private readonly IGoogleCredentialsProvider _credentialsProvider;
++        private readonly ProxyConfiguration? _proxyConfiguration;
++
++        public FcmOptionsFactory(IGoogleCredentialsProvider credentialsProvider,
++            ProxyConfiguration? proxyConfiguration = null)
++        {
++            _credentialsProvider = credentialsProvider;
++            _proxyConfiguration = proxyConfiguration;
++        }
++
++        public AppOptions Create()
++        {
++            var options = new AppOptions { Credential = _credentialsProvider.Get() };
++
++            if (_proxyConfiguration != null)
++            {
++                options.HttpClientFactory = new HttpClientFactoryWithProxy(_proxyConfiguration.Value);
++            }
++
++            return options;
++        }
++    }
++}
+Index: src/Lykke.Snow.Notifications/Settings/FcmSettings.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Lykke.Snow.Notifications/Settings/FcmSettings.cs b/src/Lykke.Snow.Notifications/Settings/FcmSettings.cs
+--- a/src/Lykke.Snow.Notifications/Settings/FcmSettings.cs	(revision e8c8729eae832440943d224ee75349f67471dd83)
++++ b/src/Lykke.Snow.Notifications/Settings/FcmSettings.cs	(revision c14f5fd2974331f6154335c398a508bd99d215c3)
+@@ -2,6 +2,6 @@
+ {
+     public class FcmSettings
+     {
+-        public string? CredentialFilePath { get; set; }
++        public string CredentialFilePath { get; set; } = "";
+     }
+ }
+Index: tests/Lykke.Snow.Notifications.Tests/FcmIntegrationServiceTests.cs
+===================================================================
+diff --git a/tests/Lykke.Snow.Notifications.Tests/FcmIntegrationServiceTests.cs b/tests/Lykke.Snow.Notifications.Tests/FcmIntegrationServiceTests.cs
+deleted file mode 100644
+--- a/tests/Lykke.Snow.Notifications.Tests/FcmIntegrationServiceTests.cs	(revision e8c8729eae832440943d224ee75349f67471dd83)
++++ /dev/null	(revision e8c8729eae832440943d224ee75349f67471dd83)
+@@ -1,57 +0,0 @@
+-using System;
+-using System.Collections;
+-using System.Collections.Generic;
+-using Lykke.Snow.FirebaseIntegration.Exceptions;
+-using Lykke.Snow.FirebaseIntegration.Services;
+-using Lykke.Snow.Notifications.Domain.Enums;
+-using Lykke.Snow.Notifications.Domain.Model;
+-using Xunit;
+-
+-namespace Lykke.Snow.Notifications.Tests
+-{
+-    class NotificationMessageData : IEnumerable<object[]>
+-    {
+-        public IEnumerator<object[]> GetEnumerator()
+-        {
+-            var message1 = new NotificationMessage(title: "Notification title", body: "Notification body", 
+-                type: NotificationType.AccountLocked,
+-                new Dictionary<string, string>());
+-
+-            var token1 = "device-token-1";
+-            
+-            var keyValueBag = new Dictionary<string, string>();
+-            keyValueBag.Add("key1", "value1");
+-            keyValueBag.Add("key2", "value2");
+-            var message2 = new NotificationMessage(title: "Notification title 2", body: "Notification body 2",
+-                NotificationType.CashLocked,
+-                keyValueBag);
+-
+-            var token2 = "device-token-2";
+-            
+-            yield return new object[] { message1, token1 };
+-            yield return new object[] { message2, token2 };
+-        }
+-
+-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+-    }
+-
+-    public class FcmIntegrationServiceTests
+-    {
+-        [Fact]
+-        public void InstantiatingWithNullCredentialsPath_ShouldThrow_ArgumentNullException()
+-        {
+-            Assert.Throws<ArgumentNullException>(() => CreateSut(null));
+-        }
+-
+-        [Fact]
+-        public void InstantiatingWithInvalidCredentialsPath_ShouldThrow_FirebaseCredentialsFileNotFoundException()
+-        {
+-            Assert.Throws<FirebaseCredentialsFileNotFoundException>(() => CreateSut("any-credentials-path"));
+-        }
+-        
+-        private FcmIntegrationService CreateSut(string credentialsFilePath)
+-        {
+-            return new FcmIntegrationService(credentialsFilePath: credentialsFilePath);
+-        }
+-    }
+-}
+Index: tests/Lykke.Snow.Notifications.Tests/Gens.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tests/Lykke.Snow.Notifications.Tests/Gens.cs b/tests/Lykke.Snow.Notifications.Tests/Gens.cs
+--- a/tests/Lykke.Snow.Notifications.Tests/Gens.cs	(revision c14f5fd2974331f6154335c398a508bd99d215c3)
++++ b/tests/Lykke.Snow.Notifications.Tests/Gens.cs	(revision f440cb9037b2c4c573aee339c749bc895b304f95)
+@@ -1,6 +1,7 @@
+ using System;
+ using System.Linq;
+ using FsCheck;
++using Lykke.Snow.FirebaseIntegration;
+ using Lykke.Snow.Notifications.Domain.Enums;
+ using Lykke.Snow.Notifications.Domain.Model;
+ 
+@@ -39,5 +40,11 @@
+             from deviceToken in Arb.Default.NonWhiteSpaceString().Generator
+             from registeredOn in RegisteredOn
+             select new DeviceRegistration(accountId.Get, deviceToken.Get, deviceId.Get, registeredOn);
++
++        internal static Gen<ProxyConfiguration> ProxyConfigurationWithCredentials  =>
++            from address in Arb.Default.NonWhiteSpaceString().Generator
++            from username in Arb.Default.NonWhiteSpaceString().Generator
++            from password in Arb.Default.NonWhiteSpaceString().Generator
++            select new ProxyConfiguration(address.Get, username.Get, password.Get);
+     }
+ }
+Index: tests/Lykke.Snow.Notifications.Tests/ProxyConfigurationTests.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tests/Lykke.Snow.Notifications.Tests/ProxyConfigurationTests.cs b/tests/Lykke.Snow.Notifications.Tests/ProxyConfigurationTests.cs
+new file mode 100644
+--- /dev/null	(revision f440cb9037b2c4c573aee339c749bc895b304f95)
++++ b/tests/Lykke.Snow.Notifications.Tests/ProxyConfigurationTests.cs	(revision f440cb9037b2c4c573aee339c749bc895b304f95)
+@@ -0,0 +1,42 @@
++using System;
++using FsCheck;
++using FsCheck.Xunit;
++using Lykke.Snow.FirebaseIntegration;
++using Xunit;
++
++namespace Lykke.Snow.Notifications.Tests
++{
++    public class ProxyConfigurationTests
++    {
++        [Theory]
++        [InlineData("")]
++        [InlineData(" ")]
++        [InlineData(null)]
++        public void Cannot_Create_With_Empty_Address(string address)
++        {
++            Assert.Throws<ArgumentNullException>(() => new ProxyConfiguration(address));
++        }
++        
++        [Theory]
++        [InlineData("")]
++        [InlineData(" ")]
++        [InlineData(null)]
++        public void Cannot_Create_With_Username_And_No_Password(string password)
++        {
++            Assert.Throws<ArgumentException>(() => new ProxyConfiguration("http://localhost", "username", password));
++        }
++        
++        [Theory]
++        [InlineData("")]
++        [InlineData(" ")]
++        [InlineData(null)]
++        public void Cannot_Create_With_Password_And_No_Username(string username)
++        {
++            Assert.Throws<ArgumentException>(() => new ProxyConfiguration("http://localhost", username, "password"));
++        }
++
++        [Property]
++        public Property Can_Use_Credentials_If_Only_They_Are_Specified() =>
++            Prop.ForAll(Gens.ProxyConfigurationWithCredentials.ToArbitrary(), cfg => cfg.CanUseCredentials);
++    }
++}
+Index: src/Lykke.Snow.FirebaseIntegration/Interfaces/IGoogleCredentialsProvider.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Lykke.Snow.FirebaseIntegration/Interfaces/IGoogleCredentialsProvider.cs b/src/Lykke.Snow.FirebaseIntegration/Interfaces/IGoogleCredentialsProvider.cs
+new file mode 100644
+--- /dev/null	(revision eb26f1d4a928d290d7ebe3495367d1d36dde72ec)
++++ b/src/Lykke.Snow.FirebaseIntegration/Interfaces/IGoogleCredentialsProvider.cs	(revision eb26f1d4a928d290d7ebe3495367d1d36dde72ec)
+@@ -0,0 +1,9 @@
++using Google.Apis.Auth.OAuth2;
++
++namespace Lykke.Snow.FirebaseIntegration.Interfaces
++{
++    public interface IGoogleCredentialsProvider
++    {
++        GoogleCredential Get();
++    }
++}
+Index: src/Lykke.Snow.FirebaseIntegration/Services/FileCredentials.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Lykke.Snow.FirebaseIntegration/Services/FileCredentials.cs b/src/Lykke.Snow.FirebaseIntegration/Services/FileCredentials.cs
+new file mode 100644
+--- /dev/null	(revision eb26f1d4a928d290d7ebe3495367d1d36dde72ec)
++++ b/src/Lykke.Snow.FirebaseIntegration/Services/FileCredentials.cs	(revision eb26f1d4a928d290d7ebe3495367d1d36dde72ec)
+@@ -0,0 +1,25 @@
++using System;
++using Google.Apis.Auth.OAuth2;
++using Lykke.Snow.FirebaseIntegration.Exceptions;
++using Lykke.Snow.FirebaseIntegration.Interfaces;
++
++namespace Lykke.Snow.FirebaseIntegration.Services
++{
++    public class FileCredentials : IGoogleCredentialsProvider
++    {
++        private readonly string _credentialsFilePath;
++
++        public FileCredentials(string credentialsFilePath)
++        {
++            if (string.IsNullOrWhiteSpace(credentialsFilePath))
++                throw new ArgumentNullException(nameof(credentialsFilePath));
++
++            if (!System.IO.File.Exists(credentialsFilePath))
++                throw new FirebaseCredentialsFileNotFoundException(attemptedPath: credentialsFilePath);
++            
++            _credentialsFilePath = credentialsFilePath;
++        }
++
++        public GoogleCredential Get() => GoogleCredential.FromFile(_credentialsFilePath);
++    }
++}
+Index: tests/Lykke.Snow.Notifications.Tests/FcmOptionsFactoryTests.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tests/Lykke.Snow.Notifications.Tests/FcmOptionsFactoryTests.cs b/tests/Lykke.Snow.Notifications.Tests/FcmOptionsFactoryTests.cs
+new file mode 100644
+--- /dev/null	(revision eb26f1d4a928d290d7ebe3495367d1d36dde72ec)
++++ b/tests/Lykke.Snow.Notifications.Tests/FcmOptionsFactoryTests.cs	(revision eb26f1d4a928d290d7ebe3495367d1d36dde72ec)
+@@ -0,0 +1,22 @@
++using Lykke.Snow.FirebaseIntegration;
++using Lykke.Snow.FirebaseIntegration.Interfaces;
++using Lykke.Snow.FirebaseIntegration.Services;
++using Moq;
++using Xunit;
++
++namespace Lykke.Snow.Notifications.Tests
++{
++    public class FcmOptionsFactoryTests
++    {
++        [Fact]
++        public void When_ProxyConfiguration_Passed_Then_HttpClientFactoryWithProxy_IsUsed()
++        {
++            var options = new FcmOptionsFactory(Mock.Of<IGoogleCredentialsProvider>(),
++                    new ProxyConfiguration("address", "username", "password"))
++                .Create();
++            
++            Assert.NotNull(options.HttpClientFactory);
++            Assert.IsType<HttpClientFactoryWithProxy>(options.HttpClientFactory);
++        }
++    }
++}
+Index: tests/Lykke.Snow.Notifications.Tests/FileCredentialsTests.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tests/Lykke.Snow.Notifications.Tests/FileCredentialsTests.cs b/tests/Lykke.Snow.Notifications.Tests/FileCredentialsTests.cs
+new file mode 100644
+--- /dev/null	(revision eb26f1d4a928d290d7ebe3495367d1d36dde72ec)
++++ b/tests/Lykke.Snow.Notifications.Tests/FileCredentialsTests.cs	(revision eb26f1d4a928d290d7ebe3495367d1d36dde72ec)
+@@ -0,0 +1,30 @@
++using System;
++using Lykke.Snow.FirebaseIntegration.Exceptions;
++using Lykke.Snow.FirebaseIntegration.Services;
++using Xunit;
++
++namespace Lykke.Snow.Notifications.Tests
++{
++    public class FileCredentialsTests
++    {
++        [Theory]
++        [InlineData("")]
++        [InlineData(" ")]
++        [InlineData(null)]
++        public void InstantiatingWithNullCredentialsPath_ShouldThrow_ArgumentNullException(string credentialsPath)
++        {
++            Assert.Throws<ArgumentNullException>(() => CreateSut(credentialsPath));
++        }
++
++        [Fact]
++        public void InstantiatingWithInvalidCredentialsPath_ShouldThrow_FirebaseCredentialsFileNotFoundException()
++        {
++            Assert.Throws<FirebaseCredentialsFileNotFoundException>(() => CreateSut("invalid-path"));
++        }
++        
++        private static FileCredentials CreateSut(string credentialsPath)
++        {
++            return new FileCredentials(credentialsPath);
++        }
++    }
++}
+Index: tests/Lykke.Snow.Notifications.Tests/HttpClientFactoryWithProxyTests.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tests/Lykke.Snow.Notifications.Tests/HttpClientFactoryWithProxyTests.cs b/tests/Lykke.Snow.Notifications.Tests/HttpClientFactoryWithProxyTests.cs
+new file mode 100644
+--- /dev/null	(revision eb26f1d4a928d290d7ebe3495367d1d36dde72ec)
++++ b/tests/Lykke.Snow.Notifications.Tests/HttpClientFactoryWithProxyTests.cs	(revision eb26f1d4a928d290d7ebe3495367d1d36dde72ec)
+@@ -0,0 +1,29 @@
++using System.Net.Http;
++using Google.Apis.Http;
++using Lykke.Snow.FirebaseIntegration;
++using Xunit;
++
++namespace Lykke.Snow.Notifications.Tests
++{
++    public class HttpClientFactoryWithProxyTests
++    {
++        [Fact]
++        public void When_CredentialsPassed_InnerHandler_WithCredentials()
++        {
++            var proxyConfiguration = new ProxyConfiguration("address", "username", "password");
++
++            var messageHandler = new HttpClientFactoryWithProxy(proxyConfiguration)
++                .CreateHttpClient(new CreateHttpClientArgs())
++                .MessageHandler;
++            
++            Assert.NotNull(messageHandler.InnerHandler);
++            Assert.IsType<HttpClientHandler>(messageHandler.InnerHandler);
++            
++            var credentials = ((HttpClientHandler)messageHandler.InnerHandler!).Proxy!.Credentials;
++            
++            Assert.NotNull(credentials);
++            Assert.Equal("username", credentials!.GetCredential(null, null)!.UserName);
++            Assert.Equal("password", credentials!.GetCredential(null, null)!.Password);
++        }
++    }
++}
+Index: tests/Lykke.Snow.Notifications.Tests/NotificationServiceTests.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tests/Lykke.Snow.Notifications.Tests/NotificationServiceTests.cs b/tests/Lykke.Snow.Notifications.Tests/NotificationServiceTests.cs
+--- a/tests/Lykke.Snow.Notifications.Tests/NotificationServiceTests.cs	(revision f440cb9037b2c4c573aee339c749bc895b304f95)
++++ b/tests/Lykke.Snow.Notifications.Tests/NotificationServiceTests.cs	(revision eb26f1d4a928d290d7ebe3495367d1d36dde72ec)
+@@ -15,6 +15,32 @@
+ {
+     public class NotificationServiceTests
+     {
++        class NotificationMessageData : IEnumerable<object[]>
++        {
++            public IEnumerator<object[]> GetEnumerator()
++            {
++                var message1 = new NotificationMessage(title: "Notification title", body: "Notification body", 
++                    type: NotificationType.AccountLocked,
++                    new Dictionary<string, string>());
++
++                var token1 = "device-token-1";
++            
++                var keyValueBag = new Dictionary<string, string>();
++                keyValueBag.Add("key1", "value1");
++                keyValueBag.Add("key2", "value2");
++                var message2 = new NotificationMessage(title: "Notification title 2", body: "Notification body 2",
++                    NotificationType.CashLocked,
++                    keyValueBag);
++
++                var token2 = "device-token-2";
++            
++                yield return new object[] { message1, token1 };
++                yield return new object[] { message2, token2 };
++            }
++
++            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
++        }
++        
+         class NotificationMessageTestData : IEnumerable<object[]>
+         {
+             public IEnumerator<object[]> GetEnumerator()

@@ -2,8 +2,12 @@ using System;
 using Lykke.SettingsReader;
 using Lykke.Snow.Common.Startup;
 using Lykke.Snow.Common.Startup.ApiKey;
+using Lykke.Snow.Notifications.Client.Model;
+using Lykke.Snow.Notifications.Client.Models;
+using Lykke.Snow.Notifications.Filters;
 using Lykke.Snow.Notifications.MappingProfiles;
 using Lykke.Snow.Notifications.Settings;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
@@ -41,10 +45,24 @@ namespace Lykke.Snow.Notifications.Startup
 
                     if (!string.IsNullOrWhiteSpace(settings.CurrentValue.NotificationService.NotificationServiceClient?.ApiKey))
                         options.AddApiKeyAwareness();
+                    
+                    options.EnableXmlDocumentation();
                 })
                 .AddSwaggerGenNewtonsoftSupport();
 
-            services.AddAutoMapper(typeof(DeviceRegistrationMappingProfile).Assembly);
+            services.AddAutoMapper(typeof(MappingProfile).Assembly);
+
+            services.AddMemoryCache();
+
+            services.Configure<ApiBehaviorOptions>(opt =>
+            {
+                opt.SuppressModelStateInvalidFilter = true;
+            });
+            services.AddScoped<InvalidInputValidationFilter<DeviceRegistrationErrorCodeContract>>();
+            services.AddScoped<InvalidInputValidationFilter<DeviceConfigurationErrorCodeContract>>();
+            services.AddTransient<DeviceConfigurationPostExceptionFilter>();
+            services.AddTransient<DeviceConfigurationDeleteExceptionFilter>();
+            services.AddTransient<DeviceConfigurationGetExceptionFilter>();
 
             return services;
         }

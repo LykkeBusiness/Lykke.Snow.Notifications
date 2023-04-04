@@ -4,7 +4,8 @@ using Lykke.Snow.FirebaseIntegration.Interfaces;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Services;
 using FirebaseAdmin.Messaging;
-using Lykke.Snow.FirebaseIntegration.Exceptions;
+using Lykke.Snow.Notifications.Domain.Enums;
+using System.Collections.Generic;
 
 namespace Lykke.Snow.Notifications.DomainServices.Services
 {
@@ -14,8 +15,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
         public NotificationService(IFcmIntegrationService fcmIntegrationService)
         {
-            _fcmIntegrationService =
-                fcmIntegrationService ?? throw new ArgumentNullException(nameof(fcmIntegrationService));
+            _fcmIntegrationService = fcmIntegrationService ?? throw new ArgumentNullException(nameof(fcmIntegrationService));
         }
 
         public async Task SendNotification(NotificationMessage message, string deviceToken)
@@ -23,23 +23,8 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             ThrowIfCannotSend(message, deviceToken);
             
             var fcmMessage = MapToFcmMessage(messageArg: message, deviceToken: deviceToken);
-            
-            try
-            {
-                await _fcmIntegrationService.SendNotification(message: fcmMessage); 
-            }
-            catch(ArgumentNullException)
-            {
-                throw;
-            }
-            catch(ArgumentException)
-            {
-                throw;
-            }
-            catch(CannotSendNotificationException)
-            {
-                throw;
-            }
+
+            await _fcmIntegrationService.SendNotification(message: fcmMessage);
         }
         
         private void ThrowIfCannotSend(NotificationMessage message, string deviceToken)
@@ -61,8 +46,46 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                     Title = messageArg.Title,
                     Body = messageArg.Body
                 },
-                Data = messageArg.KeyValueCollection
+                Data = messageArg.KeyValueCollection,
+                Android = new AndroidConfig
+                {
+                    Priority = Priority.High,
+                    Notification = new AndroidNotification
+                    {
+                        DefaultSound = true
+                    }
+                },
+                Apns = new ApnsConfig
+                {
+                    Aps = new Aps
+                    {
+                        ContentAvailable = true,
+                        Sound = "default"
+                    }
+                }
             };
+        }
+
+        public bool IsDeviceTargeted(DeviceConfiguration deviceConfiguration, NotificationType type)
+        {
+            return deviceConfiguration.IsNotificationEnabled(type);
+        }
+
+        public NotificationMessage BuildNotificationMessage(NotificationType notificationType, string? title, string? body, Dictionary<string, string> keyValuePairs)
+        {
+            if(string.IsNullOrEmpty(title))
+                throw new ArgumentNullException(nameof(title));
+            
+            if(string.IsNullOrEmpty(body))
+                throw new ArgumentNullException(nameof(body));
+
+            var notificationMessage = new NotificationMessage(
+                title, 
+                body, 
+                notificationType, 
+                keyValuePairs);
+            
+            return notificationMessage;
         }
     }
 }

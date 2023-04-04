@@ -6,7 +6,8 @@
     <UserSecretsId>6dda81c2-ad00-4dcc-8740-1aff19f684c3</UserSecretsId>
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>CS8618</NoWarn>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <None Update="Dockerfile">
@@ -14,10 +15,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\client\Lykke.Snow.Notifications.Client\Lykke.Snow.Notifications.Client.csproj" />
     <ProjectReference Include="..\Lykke.Snow.Notifications.Domain\Lykke.Snow.Notifications.Domain.csproj" />
     <ProjectReference Include="..\Lykke.Snow.Notifications.DomainServices\Lykke.Snow.Notifications.DomainServices.csproj" />
     <ProjectReference Include="..\Lykke.Snow.Notifications.SqlRepositories\Lykke.Snow.Notifications.SqlRepositories.csproj" />
-    <ProjectReference Include="..\..\contract\Lykke.Snow.Notifications.Contract\Lykke.Snow.Notifications.Contract.csproj" />
+    <ProjectReference Include="..\..\client\Lykke.Snow.Notifications.Client\Lykke.Snow.Notifications.Client.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />

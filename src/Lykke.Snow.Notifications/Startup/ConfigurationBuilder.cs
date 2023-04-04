@@ -16,12 +16,11 @@ namespace Lykke.Snow.Notifications.Startup
 
             var configuration = builder.Configuration
                 .SetBasePath(builder.Environment.ContentRootPath)
-                .AddJsonFile("appsettings.json")
                 .AddSerilogJson(builder.Environment)
                 .AddUserSecrets<Program>()
                 .AddEnvironmentVariables()
                 .Build();
-
+            
             var settingsManager = configuration.LoadSettings<AppSettings>(_ => { });
 
             return (configuration, settingsManager);

@@ -1,24 +1,23 @@
-using Common;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Lykke.MarginTrading.Activities.Contracts.Models;
-using Microsoft.Extensions.Logging;
+using Lykke.Snow.Notifications.Domain.Services;
 
 namespace Lykke.Snow.Notifications.DomainServices.Projections
 {
     public class ActivityProjection
     {
-        private readonly ILogger<ActivityProjection> _logger;
+        private readonly IActivityHandler _activityHandler;
 
-        public ActivityProjection(ILogger<ActivityProjection> logger)
+        public ActivityProjection(IActivityHandler activityHandler)
         {
-            _logger = logger;
+            _activityHandler = activityHandler;
         }
-        
+
         [UsedImplicitly]
-        public void Handle(ActivityEvent e)
+        public async Task Handle(ActivityEvent e)
         {
-            //TODO: Handle the event and send corresponding push notifications
-            _logger.LogInformation("A new activity event has just arrived {ActivityEvent}", e.ToJson());
+            await _activityHandler.Handle(e);
         }
     }
 }

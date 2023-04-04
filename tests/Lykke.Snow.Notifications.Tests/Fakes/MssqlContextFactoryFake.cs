@@ -7,38 +7,44 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Lykke.Snow.Notifications.Tests.Fakes
 {
-    public class MssqlContextFactoryFake : Lykke.Common.MsSql.IDbContextFactory<NotificationsDbContext>, IDisposable
+    public class MssqlContextFactoryFake : Lykke.Common.MsSql.IDbContextFactory<NotificationsDbContext>
     {
-        private readonly NotificationsDbContext ctx;
-
+        private readonly DbContextOptions<NotificationsDbContext> _options;
+        
         public MssqlContextFactoryFake()
         {
-            var contextOptions = new DbContextOptionsBuilder<NotificationsDbContext>()
-               .UseInMemoryDatabase("NotificationsDbTest")
-               .ConfigureWarnings(b => b.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-               .Options;
-            
-            ctx = new NotificationsDbContext(contextOptions);
+            _options = new DbContextOptionsBuilder<NotificationsDbContext>()
+                .UseInMemoryDatabase("NotificationsDbTest")
+                .ConfigureWarnings(b => b.Ignore(InMemoryEventId.TransactionIgnoredWarning))
+                .Options;
 
-             ctx.DeviceRegistrations.Add(
-                new DeviceRegistrationEntity() { DeviceToken = "device-token-1", AccountId = "account-id-1", RegisteredOn = DateTime.UtcNow });
-
-             ctx.SaveChanges();
+            Seed();
         }
 
         public NotificationsDbContext CreateDataContext()
         {
-            return ctx;
+            return new NotificationsDbContext(_options);
         }
 
         public NotificationsDbContext CreateDataContext(TransactionContext transactionContext)
         {
-            return ctx;
+            return new NotificationsDbContext(_options);
         }
 
-        public void Dispose()
+        private void Seed()
         {
-            ctx.Dispose();
+            using var context = new NotificationsDbContext(_options);
+            
+            context.DeviceRegistrations.Add(
+                new DeviceRegistrationEntity
+                {
+                    DeviceToken = "device-token-1",
+                    AccountId = "account-id-1",
+                    DeviceId = "device-id",
+                    RegisteredOn = DateTime.UtcNow
+                });
+
+            context.SaveChanges();
         }
     }
 }

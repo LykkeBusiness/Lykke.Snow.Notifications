@@ -7,8 +7,7 @@
     <Company>Lykke Business</Company>
     <Product>Lykke.Snow.Notifications</Product>
     <Description>Client for Lykke.Snow.Notifications API</Description>
-    <PackageLicenseUrl>https://github.com/LykkeBusiness/Lykke.Snow.Notifications/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/LykkeBusiness/Lykke.Snow.Notifications</PackageProjectUrl>
+    <PackageId>Lykke.Snow.Notifications.Client</PackageId>
     <RepositoryUrl>https://github.com/LykkeBusiness/Lykke.Snow.Notifications.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>LykkeBusiness</PackageTags>
@@ -25,8 +24,8 @@
     <None Remove="Lykke.Snow.Notifications.Client.xml" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Lykke.Snow.Contracts" Version="1.49.0" />
     <PackageReference Include="LykkeBiz.HttpClientGenerator" Version="5.5.0" />
-    <PackageReference Include="LykkeBiz.SettingsReader" Version="7.1.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
