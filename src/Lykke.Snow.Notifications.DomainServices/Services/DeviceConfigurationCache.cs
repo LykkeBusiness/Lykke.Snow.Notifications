@@ -14,7 +14,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
         private readonly ILogger<DeviceConfigurationCache> _logger;
         private readonly MemoryCacheEntryOptions _cacheOptions;
         
-        private static TimeSpan DefaultCacheExpirationPeriod => TimeSpan.FromSeconds(10);
+        private static TimeSpan DefaultCacheExpirationPeriod => TimeSpan.FromMinutes(10);
 
         public DeviceConfigurationCache(IDeviceConfigurationRepository decoratee,
             IMemoryCache cache,
