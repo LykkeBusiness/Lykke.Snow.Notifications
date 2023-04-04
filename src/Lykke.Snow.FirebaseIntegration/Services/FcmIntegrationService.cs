@@ -2,20 +2,24 @@ using System;
 using System.Threading.Tasks;
 using FirebaseAdmin;
 using FirebaseAdmin.Messaging;
+using Google.Apis.Auth.OAuth2;
 using Lykke.Snow.Common.Model;
 using Lykke.Snow.FirebaseIntegration.Exceptions;
 using Lykke.Snow.FirebaseIntegration.Interfaces;
 
 namespace Lykke.Snow.FirebaseIntegration.Services
 {
-    /// <summary>
-    /// Firebase Cloud Messaging client. Communicates to Firebase services.
-    /// </summary>
-    public class FcmIntegrationService : IFcmIntegrationService
-    {
-        public FcmIntegrationService(IFcmOptionsFactory optionsFactory)
+    public class FcmIntegrationService : IFcmIntegrationService {
+        private readonly string _credentialsFilePath;
+
+        public FcmIntegrationService(string? credentialsFilePath)
         {
-            Initialize(optionsFactory);
+            _credentialsFilePath = credentialsFilePath ?? throw new ArgumentNullException(nameof(credentialsFilePath));
+
+            if (!System.IO.File.Exists(_credentialsFilePath))
+                throw new FirebaseCredentialsFileNotFoundException(attemptedPath: _credentialsFilePath);
+
+            Initialize();
         }
 
         public async Task<Result<string, MessagingErrorCode>> SendNotification(Message fcmMessage)
@@ -41,6 +45,25 @@ namespace Lykke.Snow.FirebaseIntegration.Services
             }
         }
 
+        private void Initialize()
+        {
+            if(FirebaseMessaging.DefaultInstance != null)
+                return;
+
+            try
+            {
+                FirebaseApp.Create(new AppOptions() 
+                {
+                    Credential = GoogleCredential.FromFile(_credentialsFilePath)
+                });
+            }
+            catch(ArgumentException)
+            {
+                //ArgumentException is thrown if Firebase is already initialized according to the documentation
+                //So we silently ignore that ArgumentException that's caused by already existing app 
+            }
+        }
+
         public async Task<bool> IsDeviceTokenValid(string deviceToken)
         {
             if(string.IsNullOrEmpty(deviceToken))
@@ -60,24 +83,6 @@ namespace Lykke.Snow.FirebaseIntegration.Services
             }
 
             return true;
-        }
-        
-        private static void Initialize(IFcmOptionsFactory optionsFactory)
-        {
-            if(FirebaseMessaging.DefaultInstance != null)
-                return;
-
-            var options = optionsFactory.Create();
-            
-            try
-            {
-                FirebaseApp.Create(options);
-            }
-            catch(ArgumentException)
-            {
-                //ArgumentException is thrown if Firebase is already initialized according to the documentation
-                //So we silently ignore that ArgumentException that's caused by already existing app 
-            }
         }
     }
 }

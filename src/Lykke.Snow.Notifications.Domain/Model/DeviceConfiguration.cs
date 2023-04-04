@@ -9,9 +9,9 @@ namespace Lykke.Snow.Notifications.Domain.Model
     /// <summary>
     /// Device configuration
     /// </summary>
-    public sealed class DeviceConfiguration : IEquatable<DeviceConfiguration>
+    public sealed class DeviceConfiguration
     {
-        public sealed class Notification : IEquatable<Notification>
+        public class Notification
         {
             /// <summary>
             /// Creates a new notification
@@ -39,26 +39,6 @@ namespace Lykke.Snow.Notifications.Domain.Model
 
             public NotificationType Type { get; }
             public bool Enabled { get; }
-
-            public bool Equals(Notification? other)
-            {
-                if (ReferenceEquals(null, other)) return false;
-                if (ReferenceEquals(this, other)) return true;
-                return Type == other.Type && Enabled == other.Enabled;
-            }
-
-            public override bool Equals(object? obj)
-            {
-                if (ReferenceEquals(null, obj)) return false;
-                if (ReferenceEquals(this, obj)) return true;
-                if (obj.GetType() != this.GetType()) return false;
-                return Equals((Notification)obj);
-            }
-
-            public override int GetHashCode()
-            {
-                return HashCode.Combine((int)Type, Enabled);
-            }
         }
         public string DeviceId { get; }
         public string AccountId { get; }
@@ -159,26 +139,6 @@ namespace Lykke.Snow.Notifications.Domain.Model
                 accountId, 
                 locale: locale,
                 notifications: allNotificationTypes.ToList());
-        }
-
-        public bool Equals(DeviceConfiguration? other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return DeviceId == other.DeviceId &&
-                   AccountId == other.AccountId &&
-                   Locale == other.Locale &&
-                   Notifications.SequenceEqual(other.Notifications);
-        }
-
-        public override bool Equals(object? obj)
-        {
-            return ReferenceEquals(this, obj) || obj is DeviceConfiguration other && Equals(other);
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(DeviceId, AccountId, (int)Locale, Notifications);
         }
     }
 }

@@ -12,8 +12,7 @@ namespace Lykke.Snow.Notifications.Modules
 
         public RabbitMqModule(NotificationServiceSettings notificationServiceSettings)
         {
-            _notificationServiceSettings = notificationServiceSettings ??
-                                           throw new ArgumentNullException(nameof(notificationServiceSettings));
+            _notificationServiceSettings = notificationServiceSettings ?? throw new ArgumentNullException(nameof(notificationServiceSettings));
         }
 
         protected override void Load(ContainerBuilder builder)

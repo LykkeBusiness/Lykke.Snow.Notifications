@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Repositories;
@@ -33,7 +32,7 @@ namespace Lykke.Snow.Notifications.Tests.Repository
             var deviceConfiguration = DeviceConfiguration.Default(deviceId, "test-account-1");
 
             _decorateeMock.Setup(x => x.GetAsync(deviceId)).ReturnsAsync(deviceConfiguration);
-            var cache = new DeviceConfigurationCache(_decorateeMock.Object, _memoryCache, TimeSpan.FromMinutes(1), _logger);
+            var cache = new DeviceConfigurationCache(_decorateeMock.Object, _memoryCache, _logger);
 
             // Act
             var result1 = await cache.GetAsync(deviceId);
@@ -52,7 +51,7 @@ namespace Lykke.Snow.Notifications.Tests.Repository
             const string deviceId = "test-device-2";
             var deviceConfiguration = new DeviceConfiguration(deviceId, "test-account-2");
             _decorateeMock.Setup(x => x.GetAsync(deviceId)).ReturnsAsync(deviceConfiguration);
-            var cache = new DeviceConfigurationCache(_decorateeMock.Object, _memoryCache, TimeSpan.FromMinutes(1),  _logger);
+            var cache = new DeviceConfigurationCache(_decorateeMock.Object, _memoryCache, _logger);
 
             // Act
             await cache.GetAsync(deviceId);
@@ -67,36 +66,14 @@ namespace Lykke.Snow.Notifications.Tests.Repository
         public async Task RemoveAsync_Should_Invalidate_Cache()
         {
             // Arrange
-            const string deviceId = "test-device-3";
+            const string deviceId = "test-device-2";
             var deviceConfiguration = new DeviceConfiguration(deviceId, "test-account-3");
             _decorateeMock.Setup(x => x.GetAsync(deviceId)).ReturnsAsync(deviceConfiguration);
-            var cache = new DeviceConfigurationCache(_decorateeMock.Object, _memoryCache, TimeSpan.FromMinutes(1),  _logger);
+            var cache = new DeviceConfigurationCache(_decorateeMock.Object, _memoryCache, _logger);
 
             // Act
             await cache.GetAsync(deviceId);
             await cache.RemoveAsync(deviceId);
-            await cache.GetAsync(deviceId);
-
-            // Assert
-            _decorateeMock.Verify(x => x.GetAsync(deviceId), Times.Exactly(2));
-        }
-        
-        [Fact]
-        public async Task GetAsync_Should_Fetch_From_Decoratee_If_Cache_Invalidates()
-        {
-            // Arrange
-            const string deviceId = "test-device-4";
-            const int cacheExpirationInSeconds = 3;
-            var deviceConfiguration = new DeviceConfiguration(deviceId, "test-account-4");
-            _decorateeMock.Setup(x => x.GetAsync(deviceId)).ReturnsAsync(deviceConfiguration);
-            var cache = new DeviceConfigurationCache(_decorateeMock.Object,
-                _memoryCache,
-                TimeSpan.FromSeconds(cacheExpirationInSeconds),
-                _logger);
-
-            // Act
-            await cache.GetAsync(deviceId);
-            await Task.Delay(TimeSpan.FromSeconds(cacheExpirationInSeconds + 1));
             await cache.GetAsync(deviceId);
 
             // Assert

@@ -42,7 +42,7 @@ namespace Lykke.Snow.Notifications.Startup
                     // LINK: https://github.com/dotnet/aspnetcore/issues/14907
                     if (!ctx.HostingEnvironment.IsEnvironment("integration-tests"))
                     {
-                        cBuilder.RegisterModule(new DalModule(settings.CurrentValue.NotificationService));
+                        cBuilder.RegisterModule(new DalModule(settings.CurrentValue.NotificationService.Db.ConnectionString));
                         cBuilder.RegisterModule(new CqrsModule(settings.CurrentValue.NotificationService.Cqrs));
                         cBuilder.RegisterModule(new RabbitMqModule(settings.CurrentValue.NotificationService));
                         cBuilder.RegisterModule(new FirebaseModule(settings.CurrentValue.NotificationService));

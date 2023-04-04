@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using FsCheck;
-using Lykke.Snow.FirebaseIntegration;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Model;
 
@@ -40,11 +39,5 @@ namespace Lykke.Snow.Notifications.Tests
             from deviceToken in Arb.Default.NonWhiteSpaceString().Generator
             from registeredOn in RegisteredOn
             select new DeviceRegistration(accountId.Get, deviceToken.Get, deviceId.Get, registeredOn);
-
-        internal static Gen<ProxyConfiguration> ProxyConfigurationWithCredentials  =>
-            from address in Arb.Default.NonWhiteSpaceString().Generator
-            from username in Arb.Default.NonWhiteSpaceString().Generator
-            from password in Arb.Default.NonWhiteSpaceString().Generator
-            select new ProxyConfiguration(address.Get, username.Get, password.Get);
     }
 }
