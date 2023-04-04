@@ -18,8 +18,12 @@ namespace Lykke.Snow.Notifications.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
-            var fcmOptionsFactoryBuilder = builder.RegisterType<FcmOptionsFactory>()
+            builder.RegisterType<FileCredentials>()
                 .WithParameter("credentialsFilePath", _serviceSettings.Fcm.CredentialFilePath)
+                .As<IGoogleCredentialsProvider>()
+                .SingleInstance();
+            
+            var fcmOptionsFactoryBuilder = builder.RegisterType<FcmOptionsFactory>()
                 .As<IFcmOptionsFactory>()
                 .SingleInstance();
             if (_serviceSettings.Proxy != null)
