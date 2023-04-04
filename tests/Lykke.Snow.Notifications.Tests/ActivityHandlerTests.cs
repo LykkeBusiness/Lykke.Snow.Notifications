@@ -182,7 +182,7 @@ namespace Lykke.Snow.Notifications.Tests
             await sut.Handle(activity);
             
             deviceRegistrationServiceMock.Verify(x => x.GetDeviceRegistrationsAsync(It.IsAny<string>()), Times.Never);
-            deviceConfigurationRepositoryMock.Verify(x => x.GetAsync(It.IsAny<string>()), Times.Never);
+            deviceConfigurationRepositoryMock.Verify(x => x.GetAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             notificationServiceMock.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Never);
             notificationServiceMock.Verify(x => x.BuildNotificationMessage(It.IsAny<NotificationType>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Never);
             notificationServiceMock.Verify(x => x.SendNotification(It.IsAny<NotificationMessage>(), It.IsAny<string>()), Times.Never);
@@ -217,7 +217,7 @@ namespace Lykke.Snow.Notifications.Tests
             
             await sut.Handle(activity);
             
-            deviceConfigurationRepositoryMock.Verify(x => x.GetAsync(It.IsAny<string>()), Times.Never);
+            deviceConfigurationRepositoryMock.Verify(x => x.GetAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             notificationServiceMock.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Never);
             notificationServiceMock.Verify(x => x.BuildNotificationMessage(It.IsAny<NotificationType>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Never);
             notificationServiceMock.Verify(x => x.SendNotification(It.IsAny<NotificationMessage>(), It.IsAny<string>()), Times.Never);

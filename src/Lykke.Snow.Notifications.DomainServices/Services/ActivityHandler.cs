@@ -59,7 +59,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             {
                 try 
                 {
-                    var deviceConfiguration = await _deviceConfigurationRepository.GetAsync(deviceId: deviceRegistration.DeviceId);
+                    var deviceConfiguration = await _deviceConfigurationRepository.GetAsync(deviceId: deviceRegistration.DeviceId, accountId: deviceRegistration.AccountId);
                         
                     if(!_notificationService.IsDeviceTargeted(deviceConfiguration, notificationType))
                         continue;
