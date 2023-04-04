@@ -18,27 +18,21 @@ namespace Lykke.Snow.Notifications.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
-            if(_serviceSettings.Fcm == null)
-                throw new ArgumentNullException(nameof(_serviceSettings.Fcm));
-
-            if(_serviceSettings.Fcm.CredentialFilePath == null)
-                throw new ArgumentNullException(nameof(_serviceSettings.Fcm.CredentialFilePath));
-
-
-            // Register FCM service with proxy if it is configured
-            var fcmRegistrationBuilder = builder.RegisterType<FcmIntegrationService>()
+            var fcmOptionsFactoryBuilder = builder.RegisterType<FcmOptionsFactory>()
                 .WithParameter("credentialsFilePath", _serviceSettings.Fcm.CredentialFilePath)
-                .As<IFcmIntegrationService>()
+                .As<IFcmOptionsFactory>()
                 .SingleInstance();
-
             if (_serviceSettings.Proxy != null)
             {
                 var proxyConfiguration = new ProxyConfiguration(_serviceSettings.Proxy.Address,
-                    _serviceSettings.Proxy.Username, 
+                    _serviceSettings.Proxy.Username,
                     _serviceSettings.Proxy.Password);
-
-                fcmRegistrationBuilder.WithParameter("proxyConfiguration", proxyConfiguration);
+                fcmOptionsFactoryBuilder.WithParameter("proxyConfiguration", proxyConfiguration);
             }
+
+            builder.RegisterType<FcmIntegrationService>()
+                .As<IFcmIntegrationService>()
+                .SingleInstance();
         }
     }
 }
