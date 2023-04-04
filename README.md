@@ -77,6 +77,31 @@ And the languages should be put in lowercase format. (i.e. `en`, `es`, `de`)
 
 All notification types can be found at [here](./src/Lykke.Snow.Notifications.Domain/Enums/NotificationType.cs). 
 
+### 4. Proxy
+
+Proxy is optional. Being set, it will be used for all FCM outgoing requests.
+
+```json
+{
+    "Proxy": {
+        "Address": "proxy.lykke.com",
+        "UserName": "user",
+        "Password": "password"
+    }
+}
+```
+
+### 5. Caching
+
+Device configurations are cached in memory. The cache is invalidated on any change in the database. Additionally, there is an expiration time for the cache. The default value is 10 minutes but it can be changed in the configuration file.
+
+```json
+{
+  "ConfigurationCache": {
+    "ExpirationPeriod": "00:01:00"
+  }
+}
+```
 
 ### Environment variables
 
