@@ -14,6 +14,7 @@ namespace Lykke.Snow.Notifications.Settings
         public FcmSettings Fcm { get; set; } = new FcmSettings();
         public SubscribersSettings? Subscribers { get; set; }
         
+        [Optional]
         public CacheSettings? ConfigurationCache { get; set; }
     }
 }
