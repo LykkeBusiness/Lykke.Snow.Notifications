@@ -44,7 +44,7 @@ namespace Lykke.Snow.Notifications.Tests
         }
         
         [Property]
-        public Property Notification_Constructor_Accepts_SupportedEnumTypes()
+        public Property Notification_Constructor_Accepts_AllEnumTypes()
         {
             return Prop.ForAll(Arb.From<NotificationType>(), type =>
             {
@@ -53,10 +53,6 @@ namespace Lykke.Snow.Notifications.Tests
                     .Select(c => new System.Random().Next(2) == 0 ? char.ToUpper(c) : char.ToLower(c))
                     .Aggregate("", (s, c) => s + c);
 
-                // skip not supported types
-                if (DeviceConfiguration.Notification.ParseType(randomCaseTypeString) == null)
-                    return true;
-                
                 var exception =
                     Record.Exception(() => new DeviceConfiguration.Notification(randomCaseTypeString));
 
@@ -293,9 +289,8 @@ namespace Lykke.Snow.Notifications.Tests
             Assert.Equal(defaultLocale, config.Locale);
             Assert.NotNull(config.Notifications);
 
-            // Ensure all allowed notification types are enabled
-            foreach (var type in Enum.GetNames(typeof(NotificationType))
-                         .Where(t => DeviceConfiguration.Notification.ParseType(t) != null))
+            // Ensure all notification types are enabled
+            foreach (NotificationType type in Enum.GetValues(typeof(NotificationType)))
             {
                 Assert.True(config.IsNotificationEnabled(type));
             }

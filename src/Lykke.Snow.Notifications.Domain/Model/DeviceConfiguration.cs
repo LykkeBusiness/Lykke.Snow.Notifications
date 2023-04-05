@@ -24,27 +24,12 @@ namespace Lykke.Snow.Notifications.Domain.Model
             {
                 if (string.IsNullOrWhiteSpace(type))
                     throw new ArgumentNullException(nameof(type), "Notification type cannot be null or empty");
-                
-                var notificationType = ParseType(type);
-                if (notificationType == null)
-                    throw new UnsupportedNotificationTypeException(type);
-
-                Type = notificationType.Value;
-                Enabled = enabled;
-            }
-            
-            public static NotificationType? ParseType(string type)
-            {
-                if (string.IsNullOrWhiteSpace(type))
-                    return null;
 
                 if (!Enum.TryParse<NotificationType>(type, true, out var notificationType))
-                    return null;
+                    throw new UnsupportedNotificationTypeException(type);
 
-                if (notificationType == NotificationType.NotSpecified)
-                    return null;
-
-                return notificationType;
+                Type = notificationType;
+                Enabled = enabled;
             }
 
             public override string ToString()
@@ -166,14 +151,14 @@ namespace Lykke.Snow.Notifications.Domain.Model
         /// <returns></returns>
         public static DeviceConfiguration Default(string deviceId, string accountId, string locale = "en")
         {
-            var allowedNotifications = Enum.GetNames(typeof(NotificationType))
-                .Where(t => Notification.ParseType(t) != null)
-                .Select(t => new Notification(t));
+            var allNotificationTypes = Enum.GetValues(typeof(NotificationType))
+                .Cast<NotificationType>()
+                .Select(t => new Notification(t.ToString()));
 
             return new DeviceConfiguration(deviceId, 
                 accountId, 
                 locale: locale,
-                notifications: allowedNotifications.ToList());
+                notifications: allNotificationTypes.ToList());
         }
 
         public bool Equals(DeviceConfiguration? other)
