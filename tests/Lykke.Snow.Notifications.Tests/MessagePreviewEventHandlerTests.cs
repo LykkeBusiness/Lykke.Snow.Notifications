@@ -133,6 +133,35 @@ namespace Lykke.Snow.Notifications.Tests
         }
 
         [Theory]
+        [ClassData(typeof(DeviceRegistrationsTestData))]
+        public async Task Handle_ShouldExitMethod_IfDeviceConfigurationWasNotFound(List<DeviceRegistration> deviceRegistrations)
+        {
+            var mockDeviceRegistrationService = new Mock<IDeviceRegistrationService>();
+            mockDeviceRegistrationService.Setup(x => x.GetDeviceRegistrationsAsync(It.IsAny<string>())).ReturnsAsync(deviceRegistrations);
+
+            var mockNotificationService = new Mock<INotificationService>();
+            var mockDeviceConfigurationRepository = new Mock<IDeviceConfigurationRepository>();
+            mockDeviceConfigurationRepository.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult<DeviceConfiguration>(null));
+
+            var sut = CreateSut(notificationServiceArg: mockNotificationService.Object,
+                deviceRegistrationServiceArg: mockDeviceRegistrationService.Object,
+                deviceConfigurationRepositoryArg: mockDeviceConfigurationRepository.Object);
+
+            var e = new MessagePreviewEvent() 
+            {
+                Recipients = new List<string> { "account-id-1" }
+            };
+            
+            await sut.Handle(e);
+
+            mockNotificationService.Verify(x => x.BuildNotificationMessage(It.IsAny<NotificationType>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Never);
+            mockDeviceConfigurationRepository.Verify(x => x.GetAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+            mockNotificationService.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Never);
+            mockNotificationService.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Never);
+            mockNotificationService.Verify(x => x.SendNotification(It.IsAny<NotificationMessage>(), It.IsAny<string>()), Times.Never);
+        }
+
+        [Theory]
         [ClassData(typeof(DeviceAndNotificationTestDataMultipleAccountId))]
         public async Task ProcessMessageAsync_Verify_ExpectedMethodCalls(
             IEnumerable<DeviceRegistration> deviceRegistrations, 

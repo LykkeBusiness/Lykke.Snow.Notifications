@@ -67,6 +67,25 @@ namespace Lykke.Snow.Notifications.Tests
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
+    class DeviceRegistrationsTestData : IEnumerable<object[]>
+    {
+        public IEnumerator<object[]> GetEnumerator()
+        {
+            yield return new object[] 
+            { 
+                new List<DeviceRegistration> 
+                {
+                    new DeviceRegistration("account-id-1", "device-token-3", "device3", DateTime.UtcNow),
+                    new DeviceRegistration("account-id-1", "device-token-4", "device4", DateTime.UtcNow),
+                    new DeviceRegistration("account-id-1", "device-token-5", "device5", DateTime.UtcNow),
+                },
+            };
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
+
     public class ActivityHandlerTests
     {
         #region Notification type mapping
@@ -196,6 +215,45 @@ namespace Lykke.Snow.Notifications.Tests
             deviceRegistrationServiceMock.Setup(x => x.GetDeviceRegistrationsAsync(It.IsAny<string>())).ReturnsAsync(new Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DoesNotExist));
             
             var deviceConfigurationRepositoryMock = new Mock<IDeviceConfigurationRepository>();
+            var notificationServiceMock = new Mock<INotificationService>();
+            var localizationServiceMock = new Mock<ILocalizationService>();
+            
+            var sut = CreateSut(deviceRegistrationServiceArg: deviceRegistrationServiceMock.Object, 
+                localizationServiceArg: localizationServiceMock.Object);
+
+            var activity = new ActivityEvent
+            {
+                Activity = new ActivityContract("some-id", 
+                    accountId: "some-account-id", 
+                    instrument: "some-instrument", 
+                    "some-event-source-id", 
+                    DateTime.UtcNow, 
+                    ActivityCategoryContract.Account,
+                    ActivityTypeContract.SessionSwitchedToOnBehalfTrading, 
+                    descriptionAttributes: new[] { "100", "Buy", "Market", "Facebook Inc" }, 
+                    new string[]{})
+            };
+            
+            await sut.Handle(activity);
+            
+            deviceConfigurationRepositoryMock.Verify(x => x.GetAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+            notificationServiceMock.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Never);
+            notificationServiceMock.Verify(x => x.BuildNotificationMessage(It.IsAny<NotificationType>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Never);
+            notificationServiceMock.Verify(x => x.SendNotification(It.IsAny<NotificationMessage>(), It.IsAny<string>()), Times.Never);
+            localizationServiceMock.Verify(x => x.GetLocalizedTextAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IReadOnlyList<string>>()), Times.Never);
+        }
+
+        [Theory]
+        [ClassData(typeof(DeviceRegistrationsTestData))]
+        public async Task HandleActivityEvent_ShouldExitMethod_IfDeviceConfigurationIsNotFound(List<DeviceRegistration> deviceRegistrations)
+        {
+            var deviceRegistrationServiceMock = new Mock<IDeviceRegistrationService>();
+            deviceRegistrationServiceMock.Setup(x => x.GetDeviceRegistrationsAsync(It.IsAny<string>())).ReturnsAsync(deviceRegistrations);
+            
+            var deviceConfigurationRepositoryMock = new Mock<IDeviceConfigurationRepository>();
+            deviceConfigurationRepositoryMock.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult<DeviceConfiguration>(null));
+            
+            
             var notificationServiceMock = new Mock<INotificationService>();
             var localizationServiceMock = new Mock<ILocalizationService>();
             

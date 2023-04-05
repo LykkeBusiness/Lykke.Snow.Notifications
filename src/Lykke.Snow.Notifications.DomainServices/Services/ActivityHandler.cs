@@ -60,6 +60,13 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                 try 
                 {
                     var deviceConfiguration = await _deviceConfigurationRepository.GetAsync(deviceId: deviceRegistration.DeviceId, accountId: deviceRegistration.AccountId);
+                    
+                    if(deviceConfiguration == null)
+                    {
+                        _logger.LogWarning("Device configuration could not be found for the device {DeviceId} and account {AccountId}", 
+                            deviceRegistration.DeviceId, deviceRegistration.AccountId);
+                        return;
+                    }
                         
                     if(!_notificationService.IsDeviceTargeted(deviceConfiguration, notificationType))
                         continue;
