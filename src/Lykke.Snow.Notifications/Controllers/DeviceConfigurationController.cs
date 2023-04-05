@@ -45,6 +45,9 @@ namespace Lykke.Snow.Notifications.Controllers
 
             var contract = _mapper.Map<DeviceConfigurationContract>(deviceConfiguration);
 
+            if(contract == null)
+                return new DeviceConfigurationResponse(DeviceConfigurationErrorCodeContract.DoesNotExist);
+
             return new DeviceConfigurationResponse(contract);
         }
 
