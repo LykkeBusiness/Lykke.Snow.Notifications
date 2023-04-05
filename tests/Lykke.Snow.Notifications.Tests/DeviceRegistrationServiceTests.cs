@@ -227,7 +227,7 @@ namespace Lykke.Snow.Notifications.Tests
         
         [Theory]
         [InlineData("device-id-1", "account-id-1")]
-        public void RegisterDevice_ShouldntAddDeviceConfiguration_IfThereIsAlreadyOne(string deviceId, string accountId)
+        public async void RegisterDevice_ShouldntAddDeviceConfiguration_IfThereIsAlreadyOne(string deviceId, string accountId)
         {
             var mockFcmIntegrationService = new Mock<IFcmIntegrationService>();
             mockFcmIntegrationService.Setup(mock => mock.IsDeviceTokenValid(It.IsAny<string>()))
@@ -240,6 +240,9 @@ namespace Lykke.Snow.Notifications.Tests
             var sut = CreateSut(fcmIntegrationServiceArg: mockFcmIntegrationService.Object, 
                 deviceConfigurationRepositoryArg: mockDeviceConfigurationRepository.Object);
         
+            var result = await sut.RegisterDeviceAsync(new DeviceRegistration(accountId, "device-token", deviceId, DateTime.UtcNow), "en");
+            Assert.Equal(DeviceRegistrationErrorCode.None, result.Error);
+            
             mockDeviceConfigurationRepository.Verify(x => x.AddOrUpdateAsync(It.IsAny<DeviceConfiguration>()), Times.Never);
         }
 
