@@ -40,6 +40,15 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             {
                 await _repository.AddOrUpdateAsync(deviceRegistration);
 
+                var existingConfig = await _deviceConfigurationRepository.GetAsync(deviceRegistration.DeviceId, deviceRegistration.AccountId);
+                
+                // If the registration has been done with the same device id and account id, we don't need to create a new configuration
+                // To not to override existing notification preferences.
+                // The language of the deviceConfiguration is not being updated upon calling this endpoint.
+                // It's handled by 'Update Device Configuration' endpoint.
+                if (existingConfig != null)
+                    return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.None);
+
                 await _deviceConfigurationRepository.AddOrUpdateAsync(
                     DeviceConfiguration.Default(deviceRegistration.DeviceId, deviceRegistration.AccountId, locale));
 
@@ -57,24 +66,17 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
         public async Task<Result<DeviceRegistrationErrorCode>> UnregisterDeviceAsync(string deviceToken)
         {
-            DeviceRegistration? result;
             try
             {
-                result = await _repository.GetDeviceRegistrationAsync(deviceToken: deviceToken);
-            }
-            catch (EntityNotFoundException)
-            {
-                return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DoesNotExist);
-            }
-
-            if (result == null)
-            {
-                return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DoesNotExist);
-            }
-
-            try
-            {
-                await _repository.RemoveAsync(oid: result.Oid);
+                IEnumerable<DeviceRegistration> deviceRegistrations = await _repository.GetDeviceRegistrationsAsync(deviceToken);
+                
+                if(!deviceRegistrations.Any())
+                    return new Result<DeviceRegistrationErrorCode>();
+                
+                // Here we remove all the deviceRegistration records that have been linked with the device token
+                // However, we don't touch device configurations that's been linked with the registration, 
+                // Which in turn, will lead to a set of unused deviceConfiguration entities.
+                await _repository.RemoveAllAsync(deviceRegistrations.Select(x => x.Oid).ToArray());
 
                 return new Result<DeviceRegistrationErrorCode>();
             }

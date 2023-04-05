@@ -14,6 +14,11 @@ namespace Lykke.Snow.Notifications.Domain.Exceptions
             Data.Add("key", key);
         }
         
+        public EntityNotFoundException(int[] keys) : base($"One or more requested entities with keys {string.Join(", ", keys)} were not found.")
+        {
+            Data.Add("key", keys);
+        }
+
         public EntityNotFoundException()
         {
         }

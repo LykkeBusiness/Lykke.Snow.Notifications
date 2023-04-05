@@ -7,6 +7,7 @@ using Lykke.Snow.Notifications.Client.Model;
 using Lykke.Snow.Notifications.Client.Model.Requests;
 using Lykke.Snow.Notifications.Client.Models;
 using Lykke.Snow.Notifications.Domain.Enums;
+using Lykke.Snow.Notifications.Domain.Repositories;
 using Lykke.Snow.Notifications.Domain.Services;
 using Lykke.Snow.Notifications.Tests.Extensions;
 using Lykke.Snow.Notifications.Tests.Fakes;
@@ -33,7 +34,7 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
         {
             FcmIntegrationServiceFake.SetIsDeviceTokenValid(true);
 
-            var registerDeviceRequest = new RegisterDeviceRequest("account-id", "device-token", "device-id", "en");
+            var registerDeviceRequest = new RegisterDeviceRequest(accountId: Guid.NewGuid().ToString(), deviceToken: Guid.NewGuid().ToString(), deviceId: Guid.NewGuid().ToString(), "en");
             
             var response = await _client.PostAsJsonAsync("/api/DeviceRegistration", registerDeviceRequest);
 
@@ -45,7 +46,7 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
         {
             FcmIntegrationServiceFake.SetIsDeviceTokenValid(false);
 
-            var registerDeviceRequest = new RegisterDeviceRequest("account-id", "invalid-device-token", "device-id", "en");
+            var registerDeviceRequest = new RegisterDeviceRequest(accountId: Guid.NewGuid().ToString(), deviceToken: Guid.NewGuid().ToString(), deviceId: Guid.NewGuid().ToString(), "en");
 
             var response = await _client.PostAsJsonAsync("/api/DeviceRegistration", registerDeviceRequest);
 
@@ -57,7 +58,8 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
         {
             FcmIntegrationServiceFake.SetIsDeviceTokenValid(true);
 
-            var registerDeviceRequest = new RegisterDeviceRequest("account-id", "device-token", "device-id", "lang-invalid");
+            var registerDeviceRequest = new RegisterDeviceRequest(accountId: Guid.NewGuid().ToString(), deviceToken: Guid.NewGuid().ToString(), 
+                    deviceId: Guid.NewGuid().ToString(), "lang-invalid");
             
             var response = await _client.PostAsJsonAsync("/api/DeviceRegistration", registerDeviceRequest);
 
@@ -72,7 +74,8 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
         {
             FcmIntegrationServiceFake.SetIsDeviceTokenValid(true);
 
-            var registerDeviceRequest = new RegisterDeviceRequest(accountId, "device-token", "device-id", "en");
+            var registerDeviceRequest = new RegisterDeviceRequest(accountId: accountId, deviceToken: Guid.NewGuid().ToString(), 
+                    deviceId: Guid.NewGuid().ToString(), "lang-invalid");
             
             var response = await _client.PostAsJsonAsync("/api/DeviceRegistration", registerDeviceRequest);
 
@@ -121,6 +124,41 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
             Assert.Equal(expected: registerDeviceRequest.DeviceId, registeredDevice.DeviceId);
         }
 
+        [Fact]
+        public async Task RegisterDevice_WithMultipleAccounts_ShouldCreateMutipleNotificationConfiguration()
+        {
+            FcmIntegrationServiceFake.SetIsDeviceTokenValid(true);
+
+            const string deviceId = "device-id";
+            const string lang = "en";
+            const string deviceToken = "device-token";
+
+            var firstAccountId = Guid.NewGuid().ToString();
+            var registerDeviceRequest = new RegisterDeviceRequest(firstAccountId, deviceToken, deviceId, lang);
+
+            var response = await _client.PostAsJsonAsync("/api/DeviceRegistration", registerDeviceRequest);
+            await response.AssertSuccessAsync(DeviceRegistrationErrorCode.None);
+            
+            var newAccountId = Guid.NewGuid().ToString();
+            registerDeviceRequest = new RegisterDeviceRequest(newAccountId, deviceToken, deviceId, lang);
+
+            response = await _client.PostAsJsonAsync("/api/DeviceRegistration", registerDeviceRequest);
+            await response.AssertSuccessAsync(DeviceRegistrationErrorCode.None);
+
+            IDeviceConfigurationRepository? deviceConfigurationRepository = 
+                _serviceProvider.GetService(typeof(IDeviceConfigurationRepository)) as IDeviceConfigurationRepository;
+                
+            if(deviceConfigurationRepository == null)
+                throw new NullReferenceException();
+            
+            var firstConfiguration = await deviceConfigurationRepository.GetAsync(deviceId, firstAccountId);
+            var secondConfiguration = await deviceConfigurationRepository.GetAsync(deviceId, newAccountId);
+            
+            Assert.NotEqual(firstConfiguration.AccountId, secondConfiguration.AccountId);
+            Assert.Equal(firstConfiguration.DeviceId, secondConfiguration.DeviceId);
+        }
+
+
         #endregion
         
         #region DELETE /api/DeviceRegistration
@@ -129,7 +167,7 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
         [InlineData("")]
         [InlineData(" ")]
         [InlineData(null)]
-        public async Task UnregisterDevice_WithNullOrEmptyDeviceToken_ShouldReturnBadRequest(string deviceToken)
+        public async Task UnregisterDevice_WithNullOrEmptyDeviceToken_ShouldReturnInvalidInput(string deviceToken)
         {
             var unregisterDeviceRequest = new UnregisterDeviceRequest(deviceToken);
             
@@ -139,13 +177,13 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
         }
 
         [Fact]
-        public async Task UnregisterDevice_WithDeviceTokenThatDoesntExist_ShouldReturnDoesNotExist()
+        public async Task UnregisterDevice_WithDeviceTokenThatDoesntExist_ShouldReturnNone()
         {
             var unregisterDeviceRequest = new UnregisterDeviceRequest("device-token-that-does-not-exist");
             
             var response = await _client.DeleteWithPayloadAsync("/api/DeviceRegistration", unregisterDeviceRequest);
             
-            await response.AssertErrorAsync(DeviceRegistrationErrorCode.DoesNotExist);
+            await response.AssertErrorAsync(DeviceRegistrationErrorCode.None);
         }
 
         [Fact]

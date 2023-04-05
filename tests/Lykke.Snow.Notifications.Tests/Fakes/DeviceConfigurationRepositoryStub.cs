@@ -13,13 +13,13 @@ namespace Lykke.Snow.Notifications.Tests.Fakes
             throw new System.NotImplementedException();
         }
 
-        public Task<DeviceConfiguration> GetAsync(string deviceId)
+        public Task<DeviceConfiguration> GetAsync(string deviceId, string accountId)
         {
             NumOfGetAsyncCalls++;
             return Task.FromResult(new DeviceConfiguration(deviceId, "any-account-id"));
         }
 
-        public Task RemoveAsync(string deviceId)
+        public Task RemoveAsync(string deviceId, string accountId)
         {
             throw new System.NotImplementedException();
         }

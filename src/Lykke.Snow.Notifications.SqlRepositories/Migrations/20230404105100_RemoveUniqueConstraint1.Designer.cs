@@ -4,6 +4,7 @@ using Lykke.Snow.Notifications.SqlRepositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lykke.Snow.Notifications.SqlRepositories.Migrations
 {
     [DbContext(typeof(NotificationsDbContext))]
-    partial class NotificationsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230404105100_RemoveUniqueConstraint1")]
+    partial class RemoveUniqueConstraint1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,9 +56,6 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Migrations
                     b.HasKey("Oid");
 
                     b.HasIndex("DeviceId");
-
-                    b.HasIndex("DeviceId", "AccountId")
-                        .IsUnique();
 
                     b.ToTable("DeviceConfigurations", "notifications");
                 });

@@ -34,14 +34,19 @@ namespace Lykke.Snow.Notifications.Controllers
         /// Retrieves a device configuration by its ID.
         /// </summary>
         /// <param name="deviceId">Device id</param>
+        /// <param name="accountId">Account id</param>
         /// <returns></returns>
-        [HttpGet("{deviceId}")]
+        [HttpGet("{deviceId}/{accountId}")]
         [ProducesResponseType(typeof(DeviceConfigurationResponse), (int)HttpStatusCode.OK)]
         [ServiceFilter(typeof(DeviceConfigurationGetExceptionFilter))]
-        public async Task<DeviceConfigurationResponse> Get([FromRoute] string deviceId)
+        public async Task<DeviceConfigurationResponse> Get([FromRoute] string deviceId, [FromRoute] string accountId)
         {
-            var deviceConfiguration = await _repository.GetAsync(deviceId);
+            var deviceConfiguration = await _repository.GetAsync(deviceId, accountId);
+
             var contract = _mapper.Map<DeviceConfigurationContract>(deviceConfiguration);
+
+            if(contract == null)
+                return new DeviceConfigurationResponse(DeviceConfigurationErrorCodeContract.DoesNotExist);
 
             return new DeviceConfigurationResponse(contract);
         }
@@ -50,13 +55,14 @@ namespace Lykke.Snow.Notifications.Controllers
         /// Deletes a device configuration by its ID.
         /// </summary>
         /// <param name="deviceId">Device id</param>
+        /// <param name="accountId">Account id</param>
         /// <returns></returns>
-        [HttpDelete("{deviceId}")]
+        [HttpDelete("{deviceId}/{accountId}")]
         [ProducesResponseType(typeof(ErrorCodeResponse<DeviceConfigurationErrorCodeContract>), (int)HttpStatusCode.OK)]
         [ServiceFilter(typeof(DeviceConfigurationDeleteExceptionFilter))]
-        public async Task<ErrorCodeResponse<DeviceConfigurationErrorCodeContract>> Delete([FromRoute] string deviceId)
+        public async Task<ErrorCodeResponse<DeviceConfigurationErrorCodeContract>> Delete([FromRoute] string deviceId, [FromRoute] string accountId)
         {
-            await _repository.RemoveAsync(deviceId);
+            await _repository.RemoveAsync(deviceId, accountId);
 
             return DeviceConfigurationErrorCodeContract.None;
         }

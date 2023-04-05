@@ -23,15 +23,14 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
             _mapper = mapper;
         }
 
-        public async Task<DeviceRegistration> GetDeviceRegistrationAsync(string deviceToken)
+
+        public async Task<IReadOnlyList<DeviceRegistration>> GetDeviceRegistrationsAsync(string deviceToken)
         {
             await using var context = _contextFactory.CreateDataContext();
-            var entity = await context.DeviceRegistrations.SingleOrDefaultAsync(x => x.DeviceToken == deviceToken);
+            var entities = await context.DeviceRegistrations.Where(x => x.DeviceToken == deviceToken)
+                .Select(e => _mapper.Map<DeviceRegistration>(e)).ToListAsync();
             
-            if (entity == null)
-                throw new EntityNotFoundException(deviceToken);
-        
-            return _mapper.Map<DeviceRegistration>(entity);
+            return entities;
         }
 
         public async Task<IReadOnlyList<DeviceRegistration>> GetDeviceRegistrationsByAccountIdAsync(string accountId)
@@ -58,7 +57,7 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
         {
             await using var context = _contextFactory.CreateDataContext();
             var existingEntity = await context.DeviceRegistrations
-                .SingleOrDefaultAsync(x => x.DeviceToken == deviceRegistration.DeviceToken);
+                .SingleOrDefaultAsync(x => x.DeviceToken == deviceRegistration.DeviceToken && x.AccountId == deviceRegistration.AccountId);
                 
             if(existingEntity == null)
             {
@@ -73,17 +72,35 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
         {
             await using var context = _contextFactory.CreateDataContext();
             var entity = new DeviceRegistrationEntity() { Oid = oid };
-            
+
             context.Attach(entity);
             context.DeviceRegistrations.Remove(entity);
-            
-            try 
+
+            try
             {
                 await context.SaveChangesAsync();
             }
-            catch(DbUpdateConcurrencyException e) when (e.IsMissingDataException())
+            catch (DbUpdateConcurrencyException e) when (e.IsMissingDataException())
             {
                 throw new EntityNotFoundException(oid);
+            }
+        }
+
+        public async Task RemoveAllAsync(int[] oids)
+        {
+            await using var context = _contextFactory.CreateDataContext();
+            var entities = oids.Select(x => new DeviceRegistrationEntity() { Oid = x }).ToList();
+
+            context.AttachRange(entities);
+            context.DeviceRegistrations.RemoveRange(entities);
+
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException e) when (e.IsMissingDataException())
+            {
+                throw new EntityNotFoundException(oids);
             }
         }
 

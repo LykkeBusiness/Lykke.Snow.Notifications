@@ -10,9 +10,9 @@ namespace Lykke.Snow.Notifications.SqlRepositories.EntityConfigurations
         {
             builder.HasKey(x => x.Oid);
             builder.Property(x => x.Oid).ValueGeneratedOnAdd();
-            builder.HasIndex(x => x.DeviceToken).IsUnique();
-            builder.HasIndex(x => x.DeviceId).IsUnique();
-            
+            builder.HasIndex(x => x.DeviceToken);
+            builder.HasIndex(x => x.DeviceId);            
+
             builder.Property(x => x.AccountId).HasMaxLength(128).IsRequired();
             builder.Property(x => x.DeviceToken).HasMaxLength(512).IsRequired();
             builder.Property(x => x.RegisteredOn).HasColumnType("datetime2").IsRequired();
