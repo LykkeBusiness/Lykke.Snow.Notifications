@@ -24,12 +24,27 @@ namespace Lykke.Snow.Notifications.Domain.Model
             {
                 if (string.IsNullOrWhiteSpace(type))
                     throw new ArgumentNullException(nameof(type), "Notification type cannot be null or empty");
-
-                if (!Enum.TryParse<NotificationType>(type, true, out var notificationType))
+                
+                var notificationType = ParseType(type);
+                if (notificationType == null)
                     throw new UnsupportedNotificationTypeException(type);
 
-                Type = notificationType;
+                Type = notificationType.Value;
                 Enabled = enabled;
+            }
+            
+            public static NotificationType? ParseType(string type)
+            {
+                if (string.IsNullOrWhiteSpace(type))
+                    return null;
+
+                if (!Enum.TryParse<NotificationType>(type, true, out var notificationType))
+                    return null;
+
+                if (notificationType == NotificationType.NotSpecified)
+                    return null;
+
+                return notificationType;
             }
 
             public override string ToString()
@@ -151,14 +166,14 @@ namespace Lykke.Snow.Notifications.Domain.Model
         /// <returns></returns>
         public static DeviceConfiguration Default(string deviceId, string accountId, string locale = "en")
         {
-            var allNotificationTypes = Enum.GetValues(typeof(NotificationType))
-                .Cast<NotificationType>()
-                .Select(t => new Notification(t.ToString()));
+            var allowedNotifications = Enum.GetNames(typeof(NotificationType))
+                .Where(t => Notification.ParseType(t) != null)
+                .Select(t => new Notification(t));
 
             return new DeviceConfiguration(deviceId, 
                 accountId, 
                 locale: locale,
-                notifications: allNotificationTypes.ToList());
+                notifications: allowedNotifications.ToList());
         }
 
         public bool Equals(DeviceConfiguration? other)

@@ -10,7 +10,8 @@ namespace Lykke.Snow.Notifications.Tests
     internal static class Gens
     {
         internal static Gen<DeviceConfiguration.Notification> Notification =>
-            from type in Gen.Elements(Enum.GetNames(typeof(NotificationType)))
+            from type in Gen.Elements(Enum.GetNames(typeof(NotificationType))
+                .Where(t => Domain.Model.DeviceConfiguration.Notification.ParseType(t) != null))
             from enabled in Arb.Default.Bool().Generator
             select new DeviceConfiguration.Notification(type, enabled);
 
