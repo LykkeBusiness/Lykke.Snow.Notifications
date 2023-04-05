@@ -82,7 +82,7 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
 
             var entity = await context.DeviceConfigurations
                 .Include(x => x.Notifications)
-                .FirstOrDefaultAsync(x => x.DeviceId == deviceId && x.AccountId == accountId);
+                .SingleOrDefaultAsync(x => x.DeviceId == deviceId && x.AccountId == accountId);
 
             if (entity == null)
                 throw new EntityNotFoundException(deviceId);
