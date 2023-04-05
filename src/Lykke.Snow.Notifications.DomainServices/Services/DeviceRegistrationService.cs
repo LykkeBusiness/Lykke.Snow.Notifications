@@ -67,11 +67,11 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             try
             {
                 IEnumerable<DeviceRegistration> deviceRegistrations = await _repository.GetDeviceRegistrationsAsync(deviceToken);
-
-                foreach(var reg in deviceRegistrations)
-                {
-                    await _repository.RemoveAsync(reg.Oid);
-                }
+                
+                if(!deviceRegistrations.Any())
+                    return new Result<DeviceRegistrationErrorCode>();
+                
+                await _repository.RemoveAllAsync(deviceRegistrations.Select(x => x.Oid).ToArray());
 
                 return new Result<DeviceRegistrationErrorCode>();
             }

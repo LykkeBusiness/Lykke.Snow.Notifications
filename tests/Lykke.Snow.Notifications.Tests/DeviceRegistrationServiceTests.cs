@@ -261,7 +261,8 @@ namespace Lykke.Snow.Notifications.Tests
             var actual = await sut.UnregisterDeviceAsync(deviceToken: deviceRegistration.DeviceToken);
             
             Assert.Null(actual.Error);
-            mockRepository.Verify(x => x.RemoveAsync(It.IsAny<int>()), Times.Never);
+
+            mockRepository.Verify(x => x.RemoveAllAsync(It.IsAny<int[]>()), Times.Never);
         }
 
       [Theory]
@@ -294,7 +295,7 @@ namespace Lykke.Snow.Notifications.Tests
               .ReturnsAsync(deviceRegistrations);
           
           // Setup the mock so that RemoveAsync() gets executed without exception
-          mockRepository.Setup(mock => mock.RemoveAsync(It.IsAny<int>()))
+          mockRepository.Setup(mock => mock.RemoveAllAsync(It.IsAny<int[]>()))
               .Returns(Task.CompletedTask);
           
           var sut = CreateSut(mockRepository.Object);
@@ -321,14 +322,8 @@ namespace Lykke.Snow.Notifications.Tests
           
           await sut.UnregisterDeviceAsync(deviceToken: deviceRegistrations[0].DeviceToken);
 
-          foreach(var reg in deviceRegistrations)
-          {
-              mockRepository.Verify(mock => 
-                  mock.RemoveAsync(It.Is<int>(x => x == reg.Oid)), Times.Once);
-          }
-
-          mockRepository.Verify(mock => 
-              mock.RemoveAsync(It.IsAny<int>()), Times.Exactly(deviceRegistrations.Count));
+         mockRepository.Verify(mock => 
+                  mock.RemoveAllAsync(It.IsAny<int[]>()), Times.Once);
       }
        #endregion
 
