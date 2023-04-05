@@ -12,17 +12,20 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
         private readonly IDeviceConfigurationRepository _decoratee;
         private readonly IMemoryCache _cache;
         private readonly ILogger<DeviceConfigurationCache> _logger;
+        private readonly MemoryCacheEntryOptions _cacheOptions;
         
-        private static readonly MemoryCacheEntryOptions CacheOptions = new MemoryCacheEntryOptions()
-            .SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
+        private static TimeSpan DefaultCacheExpirationPeriod => TimeSpan.FromMinutes(10);
 
         public DeviceConfigurationCache(IDeviceConfigurationRepository decoratee,
             IMemoryCache cache,
+            TimeSpan? cacheExpirationPeriod,
             ILogger<DeviceConfigurationCache> logger)
         {
             _decoratee = decoratee;
             _cache = cache;
             _logger = logger;
+            _cacheOptions = new MemoryCacheEntryOptions()
+                .SetAbsoluteExpiration(cacheExpirationPeriod ?? DefaultCacheExpirationPeriod);
         }
 
         public async Task<DeviceConfiguration> GetAsync(string deviceId)
@@ -34,7 +37,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
             deviceConfiguration = await _decoratee.GetAsync(deviceId);
 
-            _cache.Set(cacheKey, deviceConfiguration, CacheOptions);
+            _cache.Set(cacheKey, deviceConfiguration, _cacheOptions);
             _logger.LogDebug("Device configuration with key {Key} was added to cache", cacheKey);
 
             return deviceConfiguration;

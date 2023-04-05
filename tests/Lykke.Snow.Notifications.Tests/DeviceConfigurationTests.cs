@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
 using FsCheck;
 using FsCheck.Xunit;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
+using Lykke.Snow.Notifications.MappingProfiles;
+using Lykke.Snow.Notifications.SqlRepositories.Entities;
 using Xunit;
 
 namespace Lykke.Snow.Notifications.Tests
@@ -41,7 +44,7 @@ namespace Lykke.Snow.Notifications.Tests
         }
         
         [Property]
-        public Property Notification_Constructor_Accepts_AllEnumTypes()
+        public Property Notification_Constructor_Accepts_SupportedEnumTypes()
         {
             return Prop.ForAll(Arb.From<NotificationType>(), type =>
             {
@@ -50,6 +53,10 @@ namespace Lykke.Snow.Notifications.Tests
                     .Select(c => new System.Random().Next(2) == 0 ? char.ToUpper(c) : char.ToLower(c))
                     .Aggregate("", (s, c) => s + c);
 
+                // skip not supported types
+                if (DeviceConfiguration.Notification.ParseType(randomCaseTypeString) == null)
+                    return true;
+                
                 var exception =
                     Record.Exception(() => new DeviceConfiguration.Notification(randomCaseTypeString));
 
@@ -286,8 +293,9 @@ namespace Lykke.Snow.Notifications.Tests
             Assert.Equal(defaultLocale, config.Locale);
             Assert.NotNull(config.Notifications);
 
-            // Ensure all notification types are enabled
-            foreach (NotificationType type in Enum.GetValues(typeof(NotificationType)))
+            // Ensure all allowed notification types are enabled
+            foreach (var type in Enum.GetNames(typeof(NotificationType))
+                         .Where(t => DeviceConfiguration.Notification.ParseType(t) != null))
             {
                 Assert.True(config.IsNotificationEnabled(type));
             }
@@ -319,6 +327,20 @@ namespace Lykke.Snow.Notifications.Tests
             {
                 var types = dc.Notifications.Select(n => n.Type).ToList();
                 return types.Count == types.Distinct().Count();
+            });
+        }
+
+        [Property]
+        public Property DeviceConfiguration_Mapping_ToEntityAndBack_ShouldReturnSameObject()
+        {
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile(new MappingProfile()))
+                .CreateMapper();
+            
+            return Prop.ForAll(Gens.DeviceConfiguration.ToArbitrary(), origin =>
+            {
+                var entity = mapper.Map<DeviceConfigurationEntity>(origin);
+                var mapped = mapper.Map<DeviceConfiguration>(entity);
+                return origin.Equals(mapped);
             });
         }
     }

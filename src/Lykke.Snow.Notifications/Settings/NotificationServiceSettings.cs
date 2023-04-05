@@ -5,12 +5,15 @@ namespace Lykke.Snow.Notifications.Settings
 {
     public class NotificationServiceSettings
     {
-        public DbSettings? Db { get; set; }
-
+        public DbSettings Db { get; set; } = new DbSettings();
         [Optional]
         public ClientSettings? NotificationServiceClient { get; set; }
-        public CqrsSettings? Cqrs { get; set; }
-        public FcmSettings? Fcm { get; set; }
+        public CqrsSettings Cqrs { get; set; } = new CqrsSettings();
+        public FcmSettings Fcm { get; set; } = new FcmSettings();
         public SubscribersSettings? Subscribers { get; set; }
+        [Optional]
+        public CacheSettings? ConfigurationCache { get; set; }
+        [Optional]
+        public ProxySettings? Proxy { get; set; }
     }
 }

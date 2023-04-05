@@ -1,5 +1,6 @@
 using System;
 using Autofac;
+using Lykke.Snow.FirebaseIntegration;
 using Lykke.Snow.FirebaseIntegration.Interfaces;
 using Lykke.Snow.FirebaseIntegration.Services;
 using Lykke.Snow.Notifications.Settings;
@@ -17,14 +18,23 @@ namespace Lykke.Snow.Notifications.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
-            if(_serviceSettings.Fcm == null)
-                throw new ArgumentNullException(nameof(_serviceSettings.Fcm));
-
-            if(_serviceSettings.Fcm.CredentialFilePath == null)
-                throw new ArgumentNullException(nameof(_serviceSettings.Fcm.CredentialFilePath));
+            builder.RegisterType<FileCredentials>()
+                .WithParameter("credentialsFilePath", _serviceSettings.Fcm.CredentialFilePath)
+                .As<IGoogleCredentialsProvider>()
+                .SingleInstance();
+            
+            var fcmOptionsFactoryBuilder = builder.RegisterType<FcmOptionsFactory>()
+                .As<IFcmOptionsFactory>()
+                .SingleInstance();
+            if (_serviceSettings.Proxy != null)
+            {
+                var proxyConfiguration = new ProxyConfiguration(_serviceSettings.Proxy.Address,
+                    _serviceSettings.Proxy.Username,
+                    _serviceSettings.Proxy.Password);
+                fcmOptionsFactoryBuilder.WithParameter("proxyConfiguration", proxyConfiguration);
+            }
 
             builder.RegisterType<FcmIntegrationService>()
-                .WithParameter("credentialsFilePath", _serviceSettings.Fcm.CredentialFilePath)
                 .As<IFcmIntegrationService>()
                 .SingleInstance();
         }
