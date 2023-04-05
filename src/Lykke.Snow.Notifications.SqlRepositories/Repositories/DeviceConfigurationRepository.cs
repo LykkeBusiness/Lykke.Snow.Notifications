@@ -34,7 +34,7 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
 
             var entity = await context.DeviceConfigurations
                 .Include(x => x.Notifications)
-                .FirstOrDefaultAsync(x => x.DeviceId == deviceId && x.AccountId == accountId);
+                .SingleOrDefaultAsync(x => x.DeviceId == deviceId && x.AccountId == accountId);
             
             return _mapper.Map<DeviceConfiguration>(entity);
         }
@@ -57,7 +57,7 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
 
             var existingEntity = await context.DeviceConfigurations
                 .Include(x => x.Notifications)
-                .FirstOrDefaultAsync(x => x.DeviceId == deviceConfiguration.DeviceId && x.AccountId == deviceConfiguration.AccountId);
+                .SingleOrDefaultAsync(x => x.DeviceId == deviceConfiguration.DeviceId && x.AccountId == deviceConfiguration.AccountId);
 
             if (existingEntity == null)
             {

@@ -44,6 +44,8 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                 
                 // If the registration has been done with the same device id and account id, we don't need to create a new configuration
                 // To not to override existing notification preferences.
+                // The language of the deviceConfiguration is not being updated upon calling this endpoint.
+                // It's handled by 'Update Device Configuration' endpoint.
                 if (existingConfig != null)
                     return new Result<DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.None);
 
