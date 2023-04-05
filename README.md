@@ -131,6 +131,14 @@ Settings schema is
     {
       "CredentialFilePath": ""
     },
+    "ConfigurationCache": {
+      "ExpirationPeriod": "00:01:00"
+    },
+    "Proxy": {
+      "Address": "proxy.lykke.com",
+      "UserName": "user",
+      "Password": "password"
+    },
     "NotificationServiceClient": 
     {
       "Url": "",
