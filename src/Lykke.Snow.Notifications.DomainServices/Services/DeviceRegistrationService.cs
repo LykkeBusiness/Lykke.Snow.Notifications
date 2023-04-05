@@ -71,6 +71,9 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                 if(!deviceRegistrations.Any())
                     return new Result<DeviceRegistrationErrorCode>();
                 
+                // Here we remove all the deviceRegistration records that have been linked with the device token
+                // However, we don't touch device configurations that's been linked with the registration, 
+                // Which in turn, will lead to a set of unused deviceConfiguration entities.
                 await _repository.RemoveAllAsync(deviceRegistrations.Select(x => x.Oid).ToArray());
 
                 return new Result<DeviceRegistrationErrorCode>();
