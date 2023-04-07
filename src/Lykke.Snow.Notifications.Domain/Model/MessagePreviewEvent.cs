@@ -1,19 +1,10 @@
 using System;
 using System.Collections.Generic;
 using MessagePack;
+using Meteor.Client.Models;
 
 namespace Lykke.Snow.Notifications.Domain.Model
 {
-    public enum MessageEventType
-    {
-        Custom,
-        MarketHoliday,
-        PlatformHoliday,
-        PositionsAboutToClose,
-        PriceAlertTriggered,
-        PositionsAboutToClose_871m,
-    }
-
     [MessagePackObject]
     public class MessagePreviewEvent
     {

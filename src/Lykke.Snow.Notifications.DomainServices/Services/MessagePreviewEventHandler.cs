@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +9,8 @@ using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Repositories;
 using Lykke.Snow.Notifications.Domain.Services;
+using Lykke.Snow.Notifications.DomainServices.Mapping;
+using Meteor.Client.Models;
 using Microsoft.Extensions.Logging;
 
 namespace Lykke.Snow.Notifications.DomainServices.Services
@@ -18,24 +21,33 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
         private readonly INotificationService _notificationService;
         private readonly IDeviceConfigurationRepository _deviceConfigurationRepository;
         private readonly ILogger<MessagePreviewEventHandler> _logger;
+        private readonly ILocalizationService _localizationService;
 
         public MessagePreviewEventHandler(ILogger<MessagePreviewEventHandler> logger,
             IDeviceRegistrationService deviceRegistrationService,
             INotificationService notificationService,
-            IDeviceConfigurationRepository deviceConfigurationRepository)
+            IDeviceConfigurationRepository deviceConfigurationRepository,
+            ILocalizationService localizationService)
         {
             _logger = logger;
             _deviceRegistrationService = deviceRegistrationService;
             _notificationService = notificationService;
             _deviceConfigurationRepository = deviceConfigurationRepository;
+            _localizationService = localizationService;
         }
 
         public async Task Handle(MessagePreviewEvent e)
         {
             _logger.LogInformation("A new MessagePreviewEvent has arrived {Event}", e.ToJson());
             
-            if(e == null || e.Recipients == null || string.IsNullOrEmpty(e.Subject) || string.IsNullOrEmpty(e.Content))
+            if(e == null || e.Recipients == null)
                 return;
+
+            if(!TryGetNotificationType(MeteorMessageMapping.NotificationTypeMapping, e.Event, out var notificationType))
+            {
+                _logger.LogWarning("Could not find a notification type for the event type {EventType}", e.Event);
+                return;
+            }
 
             var accountIds = e.Recipients.ToArray();
 
@@ -49,11 +61,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                 return;
             }
                
-            var notificationMessage = _notificationService.BuildNotificationMessage(NotificationType.InboxMessage, 
-                title: e.Subject,
-                body: e.Content,
-                keyValuePairs: new Dictionary<string, string>());
-
             foreach(var deviceRegistration in deviceRegistrationsResult.Value)
             {
                 try 
@@ -69,6 +76,29 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                        
                     if(!_notificationService.IsDeviceTargeted(deviceConfiguration, NotificationType.InboxMessage))
                         continue;
+                    
+                    string title, body = "";
+                    
+                    if(notificationType == NotificationType.InboxMessage)
+                    {
+                        title = e.Subject ?? throw new ArgumentNullException();
+                        body = e.Content ?? throw new ArgumentNullException();
+                    }
+                    
+                    else
+                    {
+                        (title, body) = await _localizationService.GetLocalizedTextAsync(
+                            Enum.GetName(notificationType), 
+                            Enum.GetName(deviceConfiguration.Locale), 
+                            e.LocalizationAttributes ?? new string[] {});
+                    }
+
+                    var notificationMessage = _notificationService.BuildNotificationMessage(
+                        notificationType,
+                        title,
+                        body,
+                        new Dictionary<string, string>()
+                    );
 
                     await _notificationService.SendNotification(notificationMessage, deviceToken: deviceRegistration.DeviceToken);
 
@@ -83,6 +113,19 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                     }
                 }
             }
+        }
+
+        public static bool TryGetNotificationType(IReadOnlyDictionary<MessageEventType, NotificationType> notificationTypeMapping, MessageEventType messageType, out NotificationType type)
+        {
+            if(!notificationTypeMapping.ContainsKey(messageType))
+            {
+                type = NotificationType.NotSpecified;
+                return false;
+            }
+            
+            type = notificationTypeMapping[messageType];
+
+            return true;
         }
     }
 }

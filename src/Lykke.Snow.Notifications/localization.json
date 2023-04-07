@@ -59,6 +59,11 @@
       "en": "Withdrawal",
       "es": "Retiradas de efectivo",
       "de": "Auszahlung"
+    },
+    "CAPositionAboutToClose": {
+      "en": "Corporate Action",
+      "es": "ES-Corporate Action",
+      "de": "DE-Corporate Action"
     }
   },
   "Bodies": {
@@ -121,6 +126,11 @@
       "en": "{0} {1} has been debited from the account {2}.",
       "es": "La retirada de {0} {1} se ha completado con éxito de la cuenta {2}.",
       "de": "Die Auszahlung in Höhe von {0} {1} wurde vom Konto {2} abgebucht."
+    },
+    "CAPositionAboutToClose": {
+      "en": "Corporate Action",
+      "es": "ES-Corporate Action",
+      "de": "DE-Corporate Action"
     }
   }
 }
