@@ -10,6 +10,7 @@ using Lykke.Snow.Notifications.Domain.Repositories;
 using Lykke.Snow.Notifications.Domain.Services;
 using Lykke.Snow.Notifications.DomainServices.Services;
 using Lykke.Snow.Notifications.Tests.Fakes;
+using Meteor.Client.Models;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
@@ -53,10 +54,12 @@ namespace Lykke.Snow.Notifications.Tests
             var mockDeviceRegistrationService = new Mock<IDeviceRegistrationService>();
             var mockNotificationService = new Mock<INotificationService>();
             var mockDeviceConfigurationRepository = new Mock<IDeviceConfigurationRepository>();
+            var mockLocalizationService = new Mock<ILocalizationService>();
 
             var sut = CreateSut(notificationServiceArg: mockNotificationService.Object,
                 deviceRegistrationServiceArg: mockDeviceRegistrationService.Object,
-                deviceConfigurationRepositoryArg: mockDeviceConfigurationRepository.Object);
+                deviceConfigurationRepositoryArg: mockDeviceConfigurationRepository.Object,
+                localizationServiceArg: mockLocalizationService.Object);
             
             var e = new MessagePreviewEvent();
             
@@ -68,34 +71,8 @@ namespace Lykke.Snow.Notifications.Tests
             mockNotificationService.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Never);
             mockNotificationService.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Never);
             mockNotificationService.Verify(x => x.SendNotification(It.IsAny<NotificationMessage>(), It.IsAny<string>()), Times.Never);
+            mockLocalizationService.Verify(x => x.GetLocalizedTextAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IReadOnlyList<string>>()), Times.Never);
         }
-
-        // TODO: Update the test according to the new implementation    
-        //[Fact]
-        //public async Task Handle_ShouldExitMethod_IfSubjectOrContentIsNull()
-        //{
-        //    var mockDeviceRegistrationService = new Mock<IDeviceRegistrationService>();
-        //    var mockNotificationService = new Mock<INotificationService>();
-        //    var mockDeviceConfigurationRepository = new Mock<IDeviceConfigurationRepository>();
-
-        //    var sut = CreateSut(notificationServiceArg: mockNotificationService.Object,
-        //        deviceRegistrationServiceArg: mockDeviceRegistrationService.Object,
-        //        deviceConfigurationRepositoryArg: mockDeviceConfigurationRepository.Object);
-        //    
-        //    var e = new MessagePreviewEvent() 
-        //    {
-        //        Recipients = new List<string> { "account-id-1" }
-        //    };
-        //    
-        //    await sut.Handle(e);
-        //    
-        //    mockDeviceRegistrationService.Verify(x => x.GetDeviceRegistrationsAsync(It.IsAny<string[]>()), Times.Never);
-        //    mockNotificationService.Verify(x => x.BuildNotificationMessage(It.IsAny<NotificationType>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Never);
-        //    mockDeviceConfigurationRepository.Verify(x => x.GetAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-        //    mockNotificationService.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Never);
-        //    mockNotificationService.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Never);
-        //    mockNotificationService.Verify(x => x.SendNotification(It.IsAny<NotificationMessage>(), It.IsAny<string>()), Times.Never);
-        //}
 
         [Fact]
         public async Task Handle_ShouldExitMethod_IfEventIsNull()
@@ -103,10 +80,12 @@ namespace Lykke.Snow.Notifications.Tests
             var mockDeviceRegistrationService = new Mock<IDeviceRegistrationService>();
             var mockNotificationService = new Mock<INotificationService>();
             var mockDeviceConfigurationRepository = new Mock<IDeviceConfigurationRepository>();
+            var mockLocalizationService = new Mock<ILocalizationService>();
 
             var sut = CreateSut(notificationServiceArg: mockNotificationService.Object,
                 deviceRegistrationServiceArg: mockDeviceRegistrationService.Object,
-                deviceConfigurationRepositoryArg: mockDeviceConfigurationRepository.Object);
+                deviceConfigurationRepositoryArg: mockDeviceConfigurationRepository.Object,
+                localizationServiceArg: mockLocalizationService.Object);
             
             await sut.Handle(null);
             
@@ -116,21 +95,77 @@ namespace Lykke.Snow.Notifications.Tests
             mockNotificationService.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Never);
             mockNotificationService.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Never);
             mockNotificationService.Verify(x => x.SendNotification(It.IsAny<NotificationMessage>(), It.IsAny<string>()), Times.Never);
+            mockLocalizationService.Verify(x => x.GetLocalizedTextAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IReadOnlyList<string>>()), Times.Never);
         }
         
         [Fact]
-        public void Handle_ShouldExitMethod_IfGetDeviceRegistrationHasFailed()
+        public async Task Handle_ShouldExitMethod_IfNotificationTypeNotFound()
         {
             var mockDeviceRegistrationService = new Mock<IDeviceRegistrationService>();
             var mockNotificationService = new Mock<INotificationService>();
             var mockDeviceConfigurationRepository = new Mock<IDeviceConfigurationRepository>();
-            mockDeviceRegistrationService.Setup(x => x.GetDeviceRegistrationsAsync(It.IsAny<string>())).ReturnsAsync(new Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DoesNotExist));
+            var mockLocalizationService = new Mock<ILocalizationService>();
+            
+            // Create a mapping without the all the messageType mappings
+            var notificationTypeMapping = new Dictionary<MessageEventType, NotificationType>()
+            {
+                { MessageEventType.MarketHoliday, NotificationType.MarketHoliday }
+            };
 
+            var sut = CreateSut(notificationServiceArg: mockNotificationService.Object,
+                deviceRegistrationServiceArg: mockDeviceRegistrationService.Object,
+                deviceConfigurationRepositoryArg: mockDeviceConfigurationRepository.Object,
+                localizationServiceArg: mockLocalizationService.Object,
+                notificationTypeMappingArg: notificationTypeMapping as IReadOnlyDictionary<MessageEventType, NotificationType>);
+            
+            var e = new MessagePreviewEvent()
+            {
+                Recipients = new List<string> { "account-id-1" },
+                // An event that doesn't map to a notification type.
+                Event = MessageEventType.PriceAlertTriggered
+            };
+            
+            // Simulate the mapping not containing the event type
+            await sut.Handle(e);
+            
+            mockDeviceRegistrationService.Verify(x => x.GetDeviceRegistrationsAsync(It.IsAny<string[]>()), Times.Never);
             mockNotificationService.Verify(x => x.BuildNotificationMessage(It.IsAny<NotificationType>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Never);
             mockDeviceConfigurationRepository.Verify(x => x.GetAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             mockNotificationService.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Never);
             mockNotificationService.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Never);
             mockNotificationService.Verify(x => x.SendNotification(It.IsAny<NotificationMessage>(), It.IsAny<string>()), Times.Never);
+            mockLocalizationService.Verify(x => x.GetLocalizedTextAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IReadOnlyList<string>>()), Times.Never);
+        }
+        
+        [Fact]
+        public async Task Handle_ShouldExitMethod_IfGetDeviceRegistrationHasFailed()
+        {
+            var mockDeviceRegistrationService = new Mock<IDeviceRegistrationService>();
+            var mockNotificationService = new Mock<INotificationService>();
+            var mockDeviceConfigurationRepository = new Mock<IDeviceConfigurationRepository>();
+            var mockLocalizationService = new Mock<ILocalizationService>();
+
+            mockDeviceRegistrationService.Setup(x => x.GetDeviceRegistrationsAsync(It.IsAny<string[]>())).ReturnsAsync(new Result<IEnumerable<DeviceRegistration>, DeviceRegistrationErrorCode>(DeviceRegistrationErrorCode.DoesNotExist));
+
+            var sut = CreateSut(notificationServiceArg: mockNotificationService.Object,
+                deviceRegistrationServiceArg: mockDeviceRegistrationService.Object,
+                deviceConfigurationRepositoryArg: mockDeviceConfigurationRepository.Object,
+                localizationServiceArg: mockLocalizationService.Object);
+            
+            var e = new MessagePreviewEvent() 
+            {
+                Recipients = new List<string> { "account-id-1" }
+            };
+            
+            await sut.Handle(e);
+
+            mockDeviceRegistrationService.Verify(x => x.GetDeviceRegistrationsAsync(It.IsAny<string[]>()), Times.Once);
+            mockNotificationService.Verify(x => x.BuildNotificationMessage(It.IsAny<NotificationType>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Never);
+            mockDeviceConfigurationRepository.Verify(x => x.GetAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+            mockNotificationService.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Never);
+            mockNotificationService.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Never);
+            mockNotificationService.Verify(x => x.SendNotification(It.IsAny<NotificationMessage>(), It.IsAny<string>()), Times.Never);
+            mockLocalizationService.Verify(x => x.GetLocalizedTextAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IReadOnlyList<string>>()), Times.Never);
         }
 
         [Theory]
@@ -144,9 +179,12 @@ namespace Lykke.Snow.Notifications.Tests
             var mockDeviceConfigurationRepository = new Mock<IDeviceConfigurationRepository>();
             mockDeviceConfigurationRepository.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult<DeviceConfiguration>(null));
 
+            var mockLocalizationService = new Mock<ILocalizationService>();
+
             var sut = CreateSut(notificationServiceArg: mockNotificationService.Object,
                 deviceRegistrationServiceArg: mockDeviceRegistrationService.Object,
-                deviceConfigurationRepositoryArg: mockDeviceConfigurationRepository.Object);
+                deviceConfigurationRepositoryArg: mockDeviceConfigurationRepository.Object,
+                localizationServiceArg: mockLocalizationService.Object);
 
             var e = new MessagePreviewEvent() 
             {
@@ -159,16 +197,17 @@ namespace Lykke.Snow.Notifications.Tests
             mockNotificationService.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Never);
             mockNotificationService.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Never);
             mockNotificationService.Verify(x => x.SendNotification(It.IsAny<NotificationMessage>(), It.IsAny<string>()), Times.Never);
+            mockLocalizationService.Verify(x => x.GetLocalizedTextAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IReadOnlyList<string>>()), Times.Never);
         }
-
+        
         [Theory]
         [ClassData(typeof(DeviceAndNotificationTestDataMultipleAccountId))]
-        public async Task ProcessMessageAsync_Verify_ExpectedMethodCalls(
+        public async Task Handle_Verify_ExpectedMethodCalls(
             IEnumerable<DeviceRegistration> deviceRegistrations, 
             IEnumerable<string> enabledDevices,
             NotificationMessage notificationMessage)
         {
-            var e = new MessagePreviewEvent() { Recipients = new[] { "A01" }, Subject = "some-sobject", Content = "some-content" };
+            var e = new MessagePreviewEvent() { Recipients = new[] { "A01" }, Subject = "some-subject", Content = "some-content" };
             
             var mockDeviceRegistrationService = new Mock<IDeviceRegistrationService>();
 
@@ -196,11 +235,86 @@ namespace Lykke.Snow.Notifications.Tests
             
             await sut.Handle(e);
             
+            // Verify that the mock (DeviceRegistrationService) was called with the correct parameters
             mockDeviceRegistrationService.Verify(x => x.GetDeviceRegistrationsAsync(It.Is<string[]>(ids => ids.Count() == e.Recipients.Count())), Times.Once);
+            
+            // Verify that the mock (NotificationService).IsDeviceTargeted was called with the correct parameters
             mockNotificationService.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Exactly(deviceRegistrations.Count()));
+
+            // Verify that it calls BuildNotificationMessage and SendNotificationMessage X times where X equals to enabledDevices.Count
+            mockNotificationService.Verify(x => x.BuildNotificationMessage(It.IsAny<NotificationType>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Exactly(enabledDevices.Count()));
             mockNotificationService.Verify(x => x.SendNotification(notificationMessage, It.IsAny<string>()), Times.Exactly(enabledDevices.Count()));
 
+            // Verify that DeviceConfigurationRepository is called correct number of times.
             Assert.Equal(deviceConfigurationRepositoryStub.NumOfGetAsyncCalls, deviceRegistrations.Count());
+        }
+
+        #endregion
+        
+        #region BuildNotificationMessage
+
+        [Fact]
+        public async Task BuildNotificationType_InboxMessageMapping_HappyPath()
+        {
+            var e = new MessagePreviewEvent() { Subject = "some-subject", Content = "some-content" };
+            
+            var mockNotificationService = new Mock<INotificationService>();
+            
+            var sut = CreateSut(notificationServiceArg: mockNotificationService.Object);
+            
+            var message = await sut.BuildNotificationMessage(e, NotificationType.InboxMessage, Locale.En);
+            
+            mockNotificationService.Verify(x => x.BuildNotificationMessage(NotificationType.InboxMessage, e.Subject, e.Content, It.IsAny<Dictionary<string, string>>()), Times.Once);
+        }
+        
+        [Fact]
+        public async Task BuildNotificationMessage_ShouldntCallLocalizationService_IfItsAnInboxMessage()
+        {
+            var e = new MessagePreviewEvent() { Subject = "some-subject", Content = "some-content" };
+            
+            var mockLocalizationService = new Mock<ILocalizationService>();
+            var sut = CreateSut(localizationServiceArg: mockLocalizationService.Object);
+            
+            await sut.BuildNotificationMessage(e, NotificationType.InboxMessage, Locale.En);
+            
+            mockLocalizationService.Verify(x => x.GetLocalizedTextAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IReadOnlyList<string>>()), Times.Never);
+        }
+        
+        [Theory]
+        [InlineData(NotificationType.MarketHoliday, Locale.En)]
+        public async Task BuildNotificationMessage_HappyPath_IfItsNotInboxMessage(NotificationType notificationType, Locale locale)
+        {
+            var e = new MessagePreviewEvent() { LocalizationAttributes = new[] { "some-attribute" }};
+            
+            var localizedTitle = "localized-title";
+            var localizedBody = "localized-body";
+
+            var mockLocalizationService = new Mock<ILocalizationService>();
+            mockLocalizationService.Setup(x => x.GetLocalizedTextAsync(Enum.GetName(notificationType), Enum.GetName(locale), e.LocalizationAttributes)).ReturnsAsync((localizedTitle, localizedBody));
+            
+            var mockNotificationService = new Mock<INotificationService>();
+            
+            var sut = CreateSut(localizationServiceArg: mockLocalizationService.Object, 
+                notificationServiceArg: mockNotificationService.Object);
+            
+            await sut.BuildNotificationMessage(e, notificationType, locale);
+            
+            mockLocalizationService.Verify(x => x.GetLocalizedTextAsync(Enum.GetName(notificationType), Enum.GetName(locale), e.LocalizationAttributes), Times.Once);
+            mockNotificationService.Verify(x => x.BuildNotificationMessage(notificationType, localizedTitle, localizedBody, It.IsAny<Dictionary<string, string>>()), Times.Once);
+        }
+        
+        [Fact]
+        public async Task BuildNotificationMessage_PassEmptyArray_IfLocalizationAttributesIsNull()
+        {
+            var e = new MessagePreviewEvent();
+            
+            var mockLocalizationService = new Mock<ILocalizationService>();
+            
+            var sut = CreateSut(localizationServiceArg: mockLocalizationService.Object);
+            
+            await sut.BuildNotificationMessage(e, NotificationType.PlatformHoliday, Locale.En);
+            
+            mockLocalizationService.Verify(x => x.GetLocalizedTextAsync(It.IsAny<string>(), It.IsAny<string>(), Array.Empty<string>()), Times.Once);
         }
 
         #endregion
@@ -208,7 +322,8 @@ namespace Lykke.Snow.Notifications.Tests
         private MessagePreviewEventHandler CreateSut(INotificationService? notificationServiceArg = null,
             IDeviceRegistrationService? deviceRegistrationServiceArg = null,
             IDeviceConfigurationRepository? deviceConfigurationRepositoryArg = null,
-            ILocalizationService? localizationServiceArg = null)
+            ILocalizationService? localizationServiceArg = null,
+            IReadOnlyDictionary<MessageEventType, NotificationType>? notificationTypeMappingArg = null)
         {
             var mockLogger = new Mock<ILogger<MessagePreviewEventHandler>>();
 
@@ -216,6 +331,14 @@ namespace Lykke.Snow.Notifications.Tests
             IDeviceRegistrationService deviceRegistrationService = new Mock<IDeviceRegistrationService>().Object;
             IDeviceConfigurationRepository deviceConfigurationRepository = new Mock<IDeviceConfigurationRepository>().Object;
             ILocalizationService localizationService = new Mock<ILocalizationService>().Object;
+            IReadOnlyDictionary<MessageEventType, NotificationType> notificationTypeMapping = new Dictionary<MessageEventType, NotificationType>()
+            {
+                { MessageEventType.Custom, NotificationType.InboxMessage },
+                { MessageEventType.PositionsAboutToClose, NotificationType.CAPositionAboutToClose },
+                { MessageEventType.PositionsAboutToClose_871m, NotificationType.CAPositionAboutToClose },
+                { MessageEventType.MarketHoliday, NotificationType.MarketHoliday },
+                { MessageEventType.PlatformHoliday, NotificationType.PlatformHoliday }
+            };
             
             if(notificationServiceArg != null)
             {
@@ -237,11 +360,17 @@ namespace Lykke.Snow.Notifications.Tests
                 localizationService = localizationServiceArg;
             }
             
+            if(notificationTypeMappingArg != null)
+            {
+                notificationTypeMapping = notificationTypeMappingArg;
+            }
+            
             return new MessagePreviewEventHandler(mockLogger.Object,
                 deviceRegistrationService, 
                 notificationService,
                 deviceConfigurationRepository,
-                localizationService);
+                localizationService,
+                notificationTypeMapping);
         }
     }
 }

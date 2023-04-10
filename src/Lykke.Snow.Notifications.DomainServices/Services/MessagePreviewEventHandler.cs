@@ -9,7 +9,6 @@ using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Repositories;
 using Lykke.Snow.Notifications.Domain.Services;
-using Lykke.Snow.Notifications.DomainServices.Mapping;
 using Meteor.Client.Models;
 using Microsoft.Extensions.Logging;
 
@@ -22,18 +21,21 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
         private readonly IDeviceConfigurationRepository _deviceConfigurationRepository;
         private readonly ILogger<MessagePreviewEventHandler> _logger;
         private readonly ILocalizationService _localizationService;
+        private readonly IReadOnlyDictionary<MessageEventType, NotificationType> _notificationTypeMapping;
 
         public MessagePreviewEventHandler(ILogger<MessagePreviewEventHandler> logger,
             IDeviceRegistrationService deviceRegistrationService,
             INotificationService notificationService,
             IDeviceConfigurationRepository deviceConfigurationRepository,
-            ILocalizationService localizationService)
+            ILocalizationService localizationService,
+            IReadOnlyDictionary<MessageEventType, NotificationType> notificationTypeMapping)
         {
             _logger = logger;
             _deviceRegistrationService = deviceRegistrationService;
             _notificationService = notificationService;
             _deviceConfigurationRepository = deviceConfigurationRepository;
             _localizationService = localizationService;
+            _notificationTypeMapping = notificationTypeMapping;
         }
 
         public async Task Handle(MessagePreviewEvent e)
@@ -43,7 +45,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             if(e == null || e.Recipients == null)
                 return;
 
-            if(!TryGetNotificationType(MeteorMessageMapping.NotificationTypeMapping, e.Event, out var notificationType))
+            if(!TryGetNotificationType(_notificationTypeMapping, e.Event, out var notificationType))
             {
                 _logger.LogWarning("Could not find a notification type for the event type {EventType}", e.Event);
                 return;
@@ -74,31 +76,10 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                         return;
                     }
                        
-                    if(!_notificationService.IsDeviceTargeted(deviceConfiguration, NotificationType.InboxMessage))
+                    if(!_notificationService.IsDeviceTargeted(deviceConfiguration, notificationType))
                         continue;
                     
-                    string title, body = "";
-                    
-                    if(notificationType == NotificationType.InboxMessage)
-                    {
-                        title = e.Subject ?? throw new ArgumentNullException();
-                        body = e.Content ?? throw new ArgumentNullException();
-                    }
-                    
-                    else
-                    {
-                        (title, body) = await _localizationService.GetLocalizedTextAsync(
-                            Enum.GetName(notificationType), 
-                            Enum.GetName(deviceConfiguration.Locale), 
-                            e.LocalizationAttributes ?? new string[] {});
-                    }
-
-                    var notificationMessage = _notificationService.BuildNotificationMessage(
-                        notificationType,
-                        title,
-                        body,
-                        new Dictionary<string, string>()
-                    );
+                    var notificationMessage = await BuildNotificationMessage(e, notificationType, deviceConfiguration.Locale);
 
                     await _notificationService.SendNotification(notificationMessage, deviceToken: deviceRegistration.DeviceToken);
 
@@ -126,6 +107,28 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             type = notificationTypeMapping[messageType];
 
             return true;
+        }
+        
+        public async Task<NotificationMessage> BuildNotificationMessage(MessagePreviewEvent e, NotificationType notificationType, Locale locale)
+        {
+            string? title = e.Subject;
+            string? body = e.Content;
+
+            // We don't need localization if the notification is an inbox message
+            if(notificationType != NotificationType.InboxMessage)
+            {
+                (title, body) = await _localizationService.GetLocalizedTextAsync(
+                    Enum.GetName(notificationType), 
+                    Enum.GetName(locale), 
+                    e.LocalizationAttributes ?? Array.Empty<string>());
+            }
+            
+            return _notificationService.BuildNotificationMessage(
+                notificationType,
+                title,
+                body,
+                new Dictionary<string, string>()
+            );
         }
     }
 }
