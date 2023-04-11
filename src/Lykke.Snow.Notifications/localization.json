@@ -64,6 +64,16 @@
       "en": "Corporate Action",
       "es": "ES-Corporate Action",
       "de": "DE-Corporate Action"
+    },
+    "MarketHoliday": {
+      "en": "Market Holiday",
+      "es": "es - Market Holiday",
+      "de": "de - Market Holiday"
+    },
+    "PlatformHoliday": {
+      "en": "Platform Holiday",
+      "es": "es - Platform Holiday",
+      "de": "de - Platform Holiday"
     }
   },
   "Bodies": {
@@ -131,6 +141,16 @@
       "en": "Corporate Action",
       "es": "ES-Corporate Action",
       "de": "DE-Corporate Action"
+    },
+    "MarketHoliday": {
+      "en": "Market Holiday",
+      "es": "es - Market Holiday",
+      "de": "de - Market Holiday"
+    },
+    "PlatformHoliday": {
+      "en": "Platform Holiday",
+      "es": "es - Platform Holiday",
+      "de": "de - Platform Holiday"
     }
   }
 }
