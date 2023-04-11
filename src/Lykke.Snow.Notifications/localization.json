@@ -138,7 +138,7 @@
       "de": "Die Auszahlung in Höhe von {0} {1} wurde vom Konto {2} abgebucht."
     },
     "CAPositionAboutToClose": {
-      "en": "Corporate Action",
+      "en": "You currently have open position on {0} which is impacted by a Corporate Action scheduled for {2}.",
       "es": "ES-Corporate Action",
       "de": "DE-Corporate Action"
     },
