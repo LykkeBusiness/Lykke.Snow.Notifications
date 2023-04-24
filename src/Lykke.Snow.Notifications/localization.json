@@ -62,8 +62,8 @@
     },
     "PriceAlertTriggered": {
       "en": "Price Alert",
-      "es": "es- Price Alert",
-      "de": "de- Price Alert"
+      "es": "(TBD) es- Price Alert",
+      "de": "(TBD) de- Price Alert"
     }
   },
   "Bodies": {
@@ -129,8 +129,8 @@
     },
     "PriceAlertTriggered": {
       "en": "{0}'s {1} price has crossed {2} {3} {4}.",
-      "es": "es-{0}'s {1} price has crossed {2} {3} {4}.",
-      "de": "de-{0}'s {1} price has crossed {2} {3} {4}."
+      "es": "(TBD) es-{0}'s {1} price has crossed {2} {3} {4}.",
+      "de": "(TBD) de-{0}'s {1} price has crossed {2} {3} {4}."
     }
   }
 }
