@@ -8,6 +8,7 @@ using Lykke.Snow.FirebaseIntegration.Exceptions;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Repositories;
 using Lykke.Snow.Notifications.Domain.Services;
+using Lykke.Snow.Notifications.DomainServices.Mapping;
 using Lykke.Snow.Notifications.DomainServices.Projections;
 using Microsoft.Extensions.Logging;
 
@@ -25,30 +26,22 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
         private readonly ILocalizationService _localizationService;
 
-        private readonly IReadOnlyDictionary<ActivityTypeContract, NotificationType> _notificationTypeMapping;
-
-        private readonly IReadOnlyDictionary<ActivityTypeContract, Func<ActivityEvent, string[]>> _descriptionEnrichments;
-
         public ActivityHandler(ILogger<ActivityProjection> logger,
             INotificationService notificationService,
             IDeviceRegistrationService deviceRegistrationService,
             ILocalizationService localizationService,
-            IDeviceConfigurationRepository deviceConfigurationRepository,
-            IReadOnlyDictionary<ActivityTypeContract, NotificationType> notificationTypeMapping,
-            IReadOnlyDictionary<ActivityTypeContract, Func<ActivityEvent, string[]>> descriptionEnrichments)
+            IDeviceConfigurationRepository deviceConfigurationRepository)
         {
             _logger = logger;
             _notificationService = notificationService;
             _deviceRegistrationService = deviceRegistrationService;
             _deviceConfigurationRepository = deviceConfigurationRepository;
             _localizationService = localizationService;
-            _notificationTypeMapping = notificationTypeMapping;
-            _descriptionEnrichments = descriptionEnrichments;
         }
 
         public async Task Handle(ActivityEvent e)
         {
-            if(!TryGetNotificationType(_notificationTypeMapping, activityType: e.Activity.Event, out var notificationType))
+            if(!TryGetNotificationType(ActivityTypeMapping.NotificationTypeMapping, activityType: e.Activity.Event, out var notificationType))
                 return;
 
             var deviceRegistrationsResult = await _deviceRegistrationService.GetDeviceRegistrationsAsync(accountId: e.Activity.AccountId);
@@ -61,7 +54,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             
             // Not all activities have enough number of description attributes
             // to fill in localization template. Here we enrich them.
-            var notificationArguments = EnrichActivityDescriptions(_descriptionEnrichments, e);
+            var notificationArguments = EnrichActivityDescriptions(ActivityTypeMapping.DescriptionEnrichments, e);
 
             foreach(var deviceRegistration in deviceRegistrationsResult.Value)
             {

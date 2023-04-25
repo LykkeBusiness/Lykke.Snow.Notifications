@@ -339,9 +339,7 @@ namespace Lykke.Snow.Notifications.Tests
         private ActivityHandler CreateSut(INotificationService? notificationServiceArg = null,
             IDeviceRegistrationService? deviceRegistrationServiceArg = null,
             ILocalizationService? localizationServiceArg = null,
-            IDeviceConfigurationRepository? deviceConfigurationRepositoryArg = null,
-            Dictionary<ActivityTypeContract, NotificationType> notificationTypeMappingArg = null,
-            Dictionary<ActivityTypeContract, Func<ActivityEvent, string[]>> descriptionEnrichmentsArg = null)
+            IDeviceConfigurationRepository? deviceConfigurationRepositoryArg = null)
         {
             var mockLogger = new Mock<ILogger<ActivityProjection>>();
 
@@ -349,33 +347,6 @@ namespace Lykke.Snow.Notifications.Tests
             IDeviceRegistrationService deviceRegistrationService = new Mock<IDeviceRegistrationService>().Object;
             ILocalizationService localizationService = new Mock<ILocalizationService>().Object;
             IDeviceConfigurationRepository deviceConfigurationRepository = new Mock<IDeviceConfigurationRepository>().Object;
-            Dictionary<ActivityTypeContract, NotificationType> notificationTypeMapping = new Dictionary<ActivityTypeContract, NotificationType>
-            {
-                { ActivityTypeContract.AccountTradingDisabled, NotificationType.AccountLocked },
-                { ActivityTypeContract.AccountTradingEnabled, NotificationType.AccountUnlocked },
-                { ActivityTypeContract.AccountDepositSucceeded, NotificationType.DepositSucceeded },
-                { ActivityTypeContract.AccountWithdrawalSucceeded, NotificationType.WithdrawalSucceeded },
-                { ActivityTypeContract.AccountWithdrawalEnabled, NotificationType.CashUnlocked },
-                { ActivityTypeContract.AccountWithdrawalDisabled, NotificationType.CashLocked },
-                { ActivityTypeContract.Liquidation, NotificationType.Liquidation },
-                { ActivityTypeContract.MarginCall1, NotificationType.MarginCall1 },
-                { ActivityTypeContract.MarginCall2, NotificationType.MarginCall2 },
-                { ActivityTypeContract.OrderExecution, NotificationType.OrderExecuted },
-                { ActivityTypeContract.OrderAcceptanceAndExecution, NotificationType.OrderExecuted },
-                { ActivityTypeContract.OrderExpiry, NotificationType.OrderExpired },
-                { ActivityTypeContract.PositionClosing, NotificationType.PositionClosed },
-                { ActivityTypeContract.PositionPartialClosing, NotificationType.PositionClosed }
-            };
-
-            Dictionary<ActivityTypeContract, Func<ActivityEvent, string[]>> descriptionEnrichments = new Dictionary<ActivityTypeContract, Func<ActivityEvent, string[]>>
-            {
-                {ActivityTypeContract.AccountWithdrawalSucceeded, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }},
-                {ActivityTypeContract.AccountDepositSucceeded, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }},
-                {ActivityTypeContract.AccountWithdrawalEnabled, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }},
-                {ActivityTypeContract.AccountWithdrawalDisabled, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }},
-                {ActivityTypeContract.AccountTradingEnabled, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }},
-                {ActivityTypeContract.AccountTradingDisabled, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }}
-            };
 
             if (notificationServiceArg != null)
             {
@@ -397,22 +368,7 @@ namespace Lykke.Snow.Notifications.Tests
                 deviceConfigurationRepository = deviceConfigurationRepositoryArg;
             }
 
-            if (notificationTypeMappingArg != null)
-            {
-                notificationTypeMapping = notificationTypeMappingArg;
-            }
-
-            if (descriptionEnrichmentsArg != null)
-            {
-                descriptionEnrichments = descriptionEnrichmentsArg;
-            }
-
-            return new ActivityHandler(mockLogger.Object,
-                notificationService,
-                deviceRegistrationService,
-                localizationService,
-                deviceConfigurationRepository,
-                notificationTypeMapping, descriptionEnrichments);
+            return new ActivityHandler(mockLogger.Object, notificationService, deviceRegistrationService, localizationService, deviceConfigurationRepository);
         }
     }
 }
