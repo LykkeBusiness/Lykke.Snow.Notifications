@@ -50,45 +50,10 @@ namespace Lykke.Snow.Notifications.Modules
 
             builder.RegisterType<ActivityHandler>()
                 .As<IActivityHandler>()
-                .WithParameter("notificationTypeMapping", new Dictionary<ActivityTypeContract, NotificationType>
-                {
-                    { ActivityTypeContract.AccountTradingDisabled, NotificationType.AccountLocked },
-                    { ActivityTypeContract.AccountTradingEnabled, NotificationType.AccountUnlocked },
-                    { ActivityTypeContract.AccountDepositSucceeded, NotificationType.DepositSucceeded },
-                    { ActivityTypeContract.AccountWithdrawalSucceeded, NotificationType.WithdrawalSucceeded },
-                    { ActivityTypeContract.AccountWithdrawalEnabled, NotificationType.CashUnlocked },
-                    { ActivityTypeContract.AccountWithdrawalDisabled, NotificationType.CashLocked },
-                    { ActivityTypeContract.Liquidation, NotificationType.Liquidation },
-                    { ActivityTypeContract.MarginCall1, NotificationType.MarginCall1 },
-                    { ActivityTypeContract.MarginCall2, NotificationType.MarginCall2 },
-                    { ActivityTypeContract.OrderExecution, NotificationType.OrderExecuted },
-                    { ActivityTypeContract.OrderAcceptanceAndExecution, NotificationType.OrderExecuted },
-                    { ActivityTypeContract.OrderExpiry, NotificationType.OrderExpired },
-                    { ActivityTypeContract.PositionClosing, NotificationType.PositionClosed },
-                    { ActivityTypeContract.PositionPartialClosing, NotificationType.PositionClosed }
-                } as IReadOnlyDictionary<ActivityTypeContract, NotificationType>)
-
-                .WithParameter("descriptionEnrichments", new Dictionary<ActivityTypeContract, Func<ActivityEvent, string[]>>
-                {
-                    {ActivityTypeContract.AccountWithdrawalSucceeded, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }},
-                    {ActivityTypeContract.AccountDepositSucceeded, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }},
-                    {ActivityTypeContract.AccountWithdrawalEnabled, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }},
-                    {ActivityTypeContract.AccountWithdrawalDisabled, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }},
-                    {ActivityTypeContract.AccountTradingEnabled, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }},
-                    {ActivityTypeContract.AccountTradingDisabled, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }}
-                } as IReadOnlyDictionary<ActivityTypeContract, Func<ActivityEvent, string[]>>)
                 .SingleInstance();
 
             builder.RegisterType<MessagePreviewEventHandler>()
                 .As<IMessagePreviewEventHandler>()
-                .WithParameter("notificationTypeMapping", new Dictionary<MessageEventType, NotificationType>
-                {
-                    { MessageEventType.Custom, NotificationType.InboxMessage },
-                    { MessageEventType.PositionsAboutToClose, NotificationType.CAPositionAboutToClose },
-                    { MessageEventType.PositionsAboutToClose_871m, NotificationType.CAPositionAboutToClose },
-                    { MessageEventType.MarketHoliday, NotificationType.MarketHoliday },
-                    { MessageEventType.PlatformHoliday, NotificationType.PlatformHoliday }
-                } as IReadOnlyDictionary<MessageEventType, NotificationType>)
                 .SingleInstance();
         }
     }
