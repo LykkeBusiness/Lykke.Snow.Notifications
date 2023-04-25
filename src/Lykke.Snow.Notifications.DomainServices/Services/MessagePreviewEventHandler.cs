@@ -26,8 +26,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             IDeviceRegistrationService deviceRegistrationService,
             INotificationService notificationService,
             IDeviceConfigurationRepository deviceConfigurationRepository,
-            ILocalizationService localizationService,
-            IReadOnlyDictionary<MessageEventType, NotificationType> notificationTypeMapping)
+            ILocalizationService localizationService) 
         {
             _logger = logger;
             _deviceRegistrationService = deviceRegistrationService;
