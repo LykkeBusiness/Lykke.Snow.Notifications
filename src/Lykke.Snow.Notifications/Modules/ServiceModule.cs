@@ -1,16 +1,10 @@
 // Copyright (c) 2020 Lykke Corp.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Autofac;
-using Lykke.MarginTrading.Activities.Contracts.Models;
 using Lykke.Middlewares.Mappers;
-using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Services;
 using Lykke.Snow.Notifications.DomainServices.Services;
-using Meteor.Client.Models;
 using Microsoft.Extensions.Internal;
 
 namespace Lykke.Snow.Notifications.Modules
