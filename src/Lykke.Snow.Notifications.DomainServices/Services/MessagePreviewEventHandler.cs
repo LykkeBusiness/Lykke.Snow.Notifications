@@ -9,6 +9,7 @@ using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Repositories;
 using Lykke.Snow.Notifications.Domain.Services;
+using Lykke.Snow.Notifications.DomainServices.Mapping;
 using Meteor.Client.Models;
 using Microsoft.Extensions.Logging;
 
@@ -21,8 +22,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
         private readonly IDeviceConfigurationRepository _deviceConfigurationRepository;
         private readonly ILogger<MessagePreviewEventHandler> _logger;
         private readonly ILocalizationService _localizationService;
-        private readonly IReadOnlyDictionary<MessageEventType, NotificationType> _notificationTypeMapping;
-
         public MessagePreviewEventHandler(ILogger<MessagePreviewEventHandler> logger,
             IDeviceRegistrationService deviceRegistrationService,
             INotificationService notificationService,
@@ -35,7 +34,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             _notificationService = notificationService;
             _deviceConfigurationRepository = deviceConfigurationRepository;
             _localizationService = localizationService;
-            _notificationTypeMapping = notificationTypeMapping;
         }
 
         public async Task Handle(MessagePreviewEvent e)
@@ -45,7 +43,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             if(e == null || e.Recipients == null)
                 return;
 
-            if(!TryGetNotificationType(_notificationTypeMapping, e.Event, out var notificationType))
+            if(!TryGetNotificationType(MeteorMessageMapping.NotificationTypeMapping, e.Event, out var notificationType))
             {
                 _logger.LogWarning("Could not find a notification type for the event type {EventType}", e.Event);
                 return;
