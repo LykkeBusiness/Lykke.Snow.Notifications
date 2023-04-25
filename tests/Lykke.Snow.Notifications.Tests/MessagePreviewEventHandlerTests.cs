@@ -106,18 +106,11 @@ namespace Lykke.Snow.Notifications.Tests
             var mockDeviceConfigurationRepository = new Mock<IDeviceConfigurationRepository>();
             var mockLocalizationService = new Mock<ILocalizationService>();
             
-            // Create a mapping without the all the messageType mappings
-            var notificationTypeMapping = new Dictionary<MessageEventType, NotificationType>()
-            {
-                { MessageEventType.MarketHoliday, NotificationType.MarketHoliday }
-            };
-
             var sut = CreateSut(notificationServiceArg: mockNotificationService.Object,
                 deviceRegistrationServiceArg: mockDeviceRegistrationService.Object,
                 deviceConfigurationRepositoryArg: mockDeviceConfigurationRepository.Object,
-                localizationServiceArg: mockLocalizationService.Object,
-                notificationTypeMappingArg: notificationTypeMapping as IReadOnlyDictionary<MessageEventType, NotificationType>);
-            
+                localizationServiceArg: mockLocalizationService.Object);            
+
             var e = new MessagePreviewEvent()
             {
                 Recipients = new List<string> { "account-id-1" },
@@ -322,8 +315,7 @@ namespace Lykke.Snow.Notifications.Tests
         private MessagePreviewEventHandler CreateSut(INotificationService? notificationServiceArg = null,
             IDeviceRegistrationService? deviceRegistrationServiceArg = null,
             IDeviceConfigurationRepository? deviceConfigurationRepositoryArg = null,
-            ILocalizationService? localizationServiceArg = null,
-            IReadOnlyDictionary<MessageEventType, NotificationType>? notificationTypeMappingArg = null)
+            ILocalizationService? localizationServiceArg = null)
         {
             var mockLogger = new Mock<ILogger<MessagePreviewEventHandler>>();
 
@@ -360,17 +352,11 @@ namespace Lykke.Snow.Notifications.Tests
                 localizationService = localizationServiceArg;
             }
             
-            if(notificationTypeMappingArg != null)
-            {
-                notificationTypeMapping = notificationTypeMappingArg;
-            }
-            
             return new MessagePreviewEventHandler(mockLogger.Object,
                 deviceRegistrationService, 
                 notificationService,
                 deviceConfigurationRepository,
-                localizationService,
-                notificationTypeMapping);
+                localizationService);
         }
     }
 }
