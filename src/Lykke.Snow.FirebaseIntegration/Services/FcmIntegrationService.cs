@@ -5,6 +5,7 @@ using FirebaseAdmin.Messaging;
 using Lykke.Snow.Common.Model;
 using Lykke.Snow.FirebaseIntegration.Exceptions;
 using Lykke.Snow.FirebaseIntegration.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace Lykke.Snow.FirebaseIntegration.Services
 {
@@ -13,9 +14,12 @@ namespace Lykke.Snow.FirebaseIntegration.Services
     /// </summary>
     public class FcmIntegrationService : IFcmIntegrationService
     {
-        public FcmIntegrationService(IFcmOptionsFactory optionsFactory)
+        private readonly ILogger<FcmIntegrationService> _logger;
+
+        public FcmIntegrationService(IFcmOptionsFactory optionsFactory, ILogger<FcmIntegrationService> logger)
         {
             Initialize(optionsFactory);
+            _logger = logger;
         }
 
         public async Task<Result<string, MessagingErrorCode>> SendNotification(Message fcmMessage)
@@ -62,7 +66,7 @@ namespace Lykke.Snow.FirebaseIntegration.Services
             return true;
         }
         
-        private static void Initialize(IFcmOptionsFactory optionsFactory)
+        private void Initialize(IFcmOptionsFactory optionsFactory)
         {
             if(FirebaseMessaging.DefaultInstance != null)
                 return;
@@ -72,6 +76,8 @@ namespace Lykke.Snow.FirebaseIntegration.Services
             try
             {
                 FirebaseApp.Create(options);
+
+                _logger.LogInformation("FCM initialization has successfully completed");
             }
             catch(ArgumentException)
             {
