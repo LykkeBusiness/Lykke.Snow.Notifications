@@ -1,5 +1,7 @@
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Lykke.Common.MsSql;
@@ -15,6 +17,8 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
     {
         private readonly Lykke.Common.MsSql.IDbContextFactory<NotificationsDbContext> _contextFactory;
         private readonly IMapper _mapper;
+        private readonly ConcurrentDictionary<(string accountId, string deviceToken), SemaphoreSlim> _locks =
+            new ConcurrentDictionary<(string accountId, string deviceToken), SemaphoreSlim>();
 
         public DeviceRegistrationRepository(Lykke.Common.MsSql.IDbContextFactory<NotificationsDbContext> contextFactory,
             IMapper mapper)
@@ -53,19 +57,33 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
             return entitites;
         }
 
-        public async Task AddOrUpdateAsync(DeviceRegistration deviceRegistration)
+        public async Task AddOrUpdateAsync(DeviceRegistration model)
         {
-            await using var context = _contextFactory.CreateDataContext();
-            var existingEntity = await context.DeviceRegistrations
-                .SingleOrDefaultAsync(x => x.DeviceToken == deviceRegistration.DeviceToken && x.AccountId == deviceRegistration.AccountId);
-                
-            if(existingEntity == null)
+            var lockObject = _locks.GetOrAdd(
+                (model.AccountId, model.DeviceToken),
+                _ => new SemaphoreSlim(1, 1));
+
+            await lockObject.WaitAsync();
+
+            try
             {
-                await TryAddAsync(context, deviceRegistration);
-                return;
+                await using var context = _contextFactory.CreateDataContext();
+                var existingEntity = await context.DeviceRegistrations
+                    .SingleOrDefaultAsync(x =>
+                        x.DeviceToken == model.DeviceToken && x.AccountId == model.AccountId);
+
+                if (existingEntity == null)
+                {
+                    await TryAddAsync(context, model);
+                    return;
+                }
+
+                await TryUpdateAsync(context, model, existingEntity);
             }
-            
-            await TryUpdateAsync(context, deviceRegistration, existingEntity);
+            finally
+            {
+                lockObject.Release();
+            }
         }
 
         public async Task RemoveAsync(int oid)
