@@ -79,7 +79,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                         continue;
                     }
 
-                    _logger.LogDebug("Attempting to send the notification to the device {DeviceToken}", deviceRegistration.DeviceToken);
+                    _logger.LogDebug("Attempting to send the notification to the Account {AccountId} device {DeviceToken}", deviceRegistration.AccountId, deviceRegistration.DeviceToken);
 
                     await _notificationService.SendNotification(notificationMessage, deviceToken: deviceRegistration.DeviceToken);
 
