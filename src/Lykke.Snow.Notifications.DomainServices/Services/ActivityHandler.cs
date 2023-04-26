@@ -97,8 +97,8 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
                     await _notificationService.SendNotification(notificationMessage, deviceToken: deviceRegistration.DeviceToken);
 
-                    _logger.LogInformation("Push notification has successfully been sent to the device {DeviceToken}: {PushNotificationPayload}",
-                        deviceRegistration.DeviceToken, notificationMessage.ToJson());
+                    _logger.LogInformation("Push notification has successfully been sent to the Account {AccountId} device {DeviceToken}: {PushNotificationPayload}",
+                        deviceRegistration.AccountId, deviceRegistration.DeviceToken, notificationMessage.ToJson());
                 }
                 catch(CannotSendNotificationException ex)
                 {
