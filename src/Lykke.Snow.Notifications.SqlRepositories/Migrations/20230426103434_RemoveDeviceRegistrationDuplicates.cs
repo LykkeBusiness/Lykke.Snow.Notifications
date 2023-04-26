@@ -14,8 +14,27 @@ WITH DuplicateRecords AS (
            ROW_NUMBER() OVER (PARTITION BY AccountId, DeviceToken ORDER BY RegisteredOn DESC) AS RowNumber
     FROM notifications.DeviceRegistrations
 )
+-- Delete related entries in DeviceNotificationConfigurations
+DELETE FROM notifications.DeviceNotificationConfigurations
+WHERE DeviceConfigurationId IN (
+    SELECT DC.Oid
+    FROM notifications.DeviceConfigurations AS DC
+    INNER JOIN DuplicateRecords AS DR ON DR.DeviceId = DC.DeviceId
+    WHERE DR.RowNumber > 1
+);
+
+-- Delete related entries in DeviceConfigurations
+DELETE FROM notifications.DeviceConfigurations
+WHERE DeviceId IN (
+    SELECT DeviceId
+    FROM DuplicateRecords
+    WHERE RowNumber > 1
+);
+
+-- Delete duplicates from DeviceRegistrations
 DELETE FROM DuplicateRecords
-WHERE RowNumber > 1;");
+WHERE RowNumber > 1;
+");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
