@@ -67,7 +67,6 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
 
             try
             {
-                // todo: allow duplicates since data schema allows it 
                 await using var context = _contextFactory.CreateDataContext();
                 var existingEntity = await context.DeviceRegistrations
                     .SingleOrDefaultAsync(x =>
