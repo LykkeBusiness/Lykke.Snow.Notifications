@@ -133,15 +133,22 @@ namespace Lykke.Snow.Notifications.Tests
         }
 
         [Theory]
-        [ClassData(typeof(DeviceRegistrationsTestData))]
-        public async Task Handle_ShouldExitMethod_IfDeviceConfigurationWasNotFound(List<DeviceRegistration> deviceRegistrations)
+        [ClassData(typeof(DeviceRegistrationsWithMissingConfigurationTestData))]
+        public async Task Handle_ShouldSkipSending_IfDeviceConfigurationWasNotFound(List<DeviceRegistration> deviceRegistrations,
+            List<string> deviceIdsMissingConfiguration)
         {
             var mockDeviceRegistrationService = new Mock<IDeviceRegistrationService>();
-            mockDeviceRegistrationService.Setup(x => x.GetDeviceRegistrationsAsync(It.IsAny<string>())).ReturnsAsync(deviceRegistrations);
+            mockDeviceRegistrationService.Setup(x => x.GetDeviceRegistrationsAsync(It.IsAny<string[]>())).ReturnsAsync(deviceRegistrations);
 
             var mockNotificationService = new Mock<INotificationService>();
+            mockNotificationService.Setup(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>())).Returns(true);
+
             var mockDeviceConfigurationRepository = new Mock<IDeviceConfigurationRepository>();
-            mockDeviceConfigurationRepository.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult<DeviceConfiguration>(null));
+            mockDeviceConfigurationRepository.Setup(x => x.GetAsync(It.Is<string>(x => deviceIdsMissingConfiguration.Contains(x)), It.IsAny<string>()))
+                .Returns(Task.FromResult<DeviceConfiguration>(null));
+
+            mockDeviceConfigurationRepository.Setup(x => x.GetAsync(It.Is<string>(x => !deviceIdsMissingConfiguration.Contains(x)), It.IsAny<string>()))
+                .Returns(Task.FromResult<DeviceConfiguration>(new DeviceConfiguration("device-id", "account-id")));
 
             var sut = CreateSut(notificationServiceArg: mockNotificationService.Object,
                 deviceRegistrationServiceArg: mockDeviceRegistrationService.Object,
@@ -149,16 +156,19 @@ namespace Lykke.Snow.Notifications.Tests
 
             var e = new MessagePreviewEvent() 
             {
-                Recipients = new List<string> { "account-id-1" }
+                Recipients = new List<string> { "account-id-1" },
+                Subject = "subject",
+                Content = "content"
             };
             
             await sut.Handle(e);
 
-            mockNotificationService.Verify(x => x.BuildNotificationMessage(It.IsAny<NotificationType>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Never);
-            mockDeviceConfigurationRepository.Verify(x => x.GetAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-            mockNotificationService.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Never);
-            mockNotificationService.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Never);
-            mockNotificationService.Verify(x => x.SendNotification(It.IsAny<NotificationMessage>(), It.IsAny<string>()), Times.Never);
+            var activeDeviceCount = deviceRegistrations.Count - deviceIdsMissingConfiguration.Count;
+
+            mockDeviceConfigurationRepository.Verify(x => x.GetAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(deviceRegistrations.Count));
+            mockNotificationService.Verify(x => x.BuildNotificationMessage(It.IsAny<NotificationType>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Once);
+            mockNotificationService.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Exactly(activeDeviceCount));
+            mockNotificationService.Verify(x => x.SendNotification(It.IsAny<NotificationMessage>(), It.IsAny<string>()), Times.Exactly(activeDeviceCount));
         }
 
         [Theory]

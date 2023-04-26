@@ -35,11 +35,16 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             _logger.LogInformation("A new MessagePreviewEvent has arrived {Event}", e.ToJson());
             
             if(e == null || e.Recipients == null || string.IsNullOrEmpty(e.Subject) || string.IsNullOrEmpty(e.Content))
+            {
+                _logger.LogDebug("Notification is not attempted becase Message is not valid. One of these properties might be empty: Subject, Content, Recipients");
                 return;
+            }
 
             var accountIds = e.Recipients.ToArray();
 
             var deviceRegistrationsResult = await _deviceRegistrationService.GetDeviceRegistrationsAsync(accountIds: accountIds);
+
+            _logger.LogDebug("{NumOfRegistrations} registrations found for the accounts {AccountIds}", deviceRegistrationsResult.Value.Count(), string.Join(',', accountIds));
 
             if (deviceRegistrationsResult.IsFailed)
             {
@@ -64,11 +69,17 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                     {
                         _logger.LogWarning("Device configuration could not be found for the device {DeviceId} and account {AccountId}", 
                             deviceRegistration.DeviceId, deviceRegistration.AccountId);
-                        return;
+                        continue;
                     }
                        
                     if(!_notificationService.IsDeviceTargeted(deviceConfiguration, NotificationType.InboxMessage))
+                    {
+                        _logger.LogDebug("The notification has not been sent to the device {DeviceToken} because it is not targeted for Inbox Messages",
+                            deviceRegistration.DeviceToken);
                         continue;
+                    }
+
+                    _logger.LogDebug("Attempting to send the notification to the device {DeviceToken}", deviceRegistration.DeviceToken);
 
                     await _notificationService.SendNotification(notificationMessage, deviceToken: deviceRegistration.DeviceToken);
 
@@ -79,8 +90,11 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                 {
                     if(ex.ErrorCode == MessagingErrorCode.Unregistered)
                     {
-                        _logger.LogWarning("The notification could not be delivered to the device {DeviceToken} because it is no longer active.", deviceRegistration.DeviceToken);
+                        _logger.LogDebug("The notification could not be delivered to the device {DeviceToken} because it is no longer active.", deviceRegistration.DeviceToken);
+                        return;
                     }
+                    
+                    throw;
                 }
             }
         }
