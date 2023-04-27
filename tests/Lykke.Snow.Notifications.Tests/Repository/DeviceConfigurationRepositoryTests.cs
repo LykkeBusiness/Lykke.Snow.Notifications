@@ -28,7 +28,7 @@ namespace Lykke.Snow.Notifications.Tests.Repository
         public async Task GetAsync_Should_Return_DeviceConfiguration_When_Exists()
         {
             // Arrange
-            var repo = new DeviceConfigurationRepository(new MssqlContextFactoryFake(), _mapper);
+            var repo = new DeviceConfigurationRepository(new MsSqlContextFactoryInMemory(), _mapper);
             await SeedDatabaseAsync("test-device-1", "test-account-1");
 
             // Act
@@ -42,7 +42,7 @@ namespace Lykke.Snow.Notifications.Tests.Repository
         public async Task GetAsync_ShouldReturnNull_EntityNotFoundException_When_Not_Exists()
         {
             // Arrange
-            var repo = new DeviceConfigurationRepository(new MssqlContextFactoryFake(), _mapper);
+            var repo = new DeviceConfigurationRepository(new MsSqlContextFactoryInMemory(), _mapper);
 
             // Act & Assert
             var result = await repo.GetAsync("test-device-2", "test-account-2");
@@ -53,7 +53,7 @@ namespace Lykke.Snow.Notifications.Tests.Repository
         public async Task AddOrUpdateAsync_Should_Add_New_DeviceConfiguration()
         {
             // Arrange
-            var repo = new DeviceConfigurationRepository(new MssqlContextFactoryFake(), _mapper);
+            var repo = new DeviceConfigurationRepository(new MsSqlContextFactoryInMemory(), _mapper);
             var deviceConfiguration = DeviceConfiguration.Default("device-id-3", "account-id-3");
 
             // Act
@@ -71,7 +71,7 @@ namespace Lykke.Snow.Notifications.Tests.Repository
             const string deviceId = "test-device-4";
             const string accountId = "test-device-4";
 
-            var repo = new DeviceConfigurationRepository(new MssqlContextFactoryFake(), _mapper);
+            var repo = new DeviceConfigurationRepository(new MsSqlContextFactoryInMemory(), _mapper);
             await SeedDatabaseAsync(deviceId, "test-account-4", Locale.De.ToString());
 
             var updatedDeviceConfiguration = new DeviceConfiguration(deviceId,
@@ -102,7 +102,7 @@ namespace Lykke.Snow.Notifications.Tests.Repository
             const string deviceId = "test-device-5";
             const string accountId = "test-account-5";
 
-            var repo = new DeviceConfigurationRepository(new MssqlContextFactoryFake(), _mapper);
+            var repo = new DeviceConfigurationRepository(new MsSqlContextFactoryInMemory(), _mapper);
             await SeedDatabaseAsync(deviceId, accountId);
 
             // Act
@@ -118,7 +118,7 @@ namespace Lykke.Snow.Notifications.Tests.Repository
         public async Task AddOrUpdateAsync_MultipleConfigurations_For_Same_Device_Should_Be_Possible()
         {
             // Arrange
-            var repo = new DeviceConfigurationRepository(new MssqlContextFactoryFake(), _mapper);
+            var repo = new DeviceConfigurationRepository(new MsSqlContextFactoryInMemory(), _mapper);
             var dcAccountA = DeviceConfiguration.Default("device-id-6", "account-id-a");
             var dcAccountB = new DeviceConfiguration("device-id-6",
                 "account-id-b",
@@ -140,7 +140,7 @@ namespace Lykke.Snow.Notifications.Tests.Repository
         public async Task RemoveAsync_Should_Throw_EntityNotFoundException_When_Not_Exists()
         {
             // Arrange
-            var repo = new DeviceConfigurationRepository(new MssqlContextFactoryFake(), _mapper);
+            var repo = new DeviceConfigurationRepository(new MsSqlContextFactoryInMemory(), _mapper);
 
             // Act & Assert
             await Assert.ThrowsAsync<EntityNotFoundException>(() => repo.RemoveAsync("test-device-6", "test-account-6"));
@@ -148,7 +148,7 @@ namespace Lykke.Snow.Notifications.Tests.Repository
         
         private async Task SeedDatabaseAsync(string deviceId, string accountId, string locale = "en")
         {
-            await using var context = new MssqlContextFactoryFake().CreateDataContext();
+            await using var context = new MsSqlContextFactoryInMemory().CreateDataContext();
 
             context.DeviceConfigurations.Add(new DeviceConfigurationEntity
             {

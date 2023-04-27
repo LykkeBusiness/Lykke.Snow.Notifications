@@ -43,7 +43,7 @@ namespace Lykke.Snow.Notifications.Tests.Repository
             await Task.WhenAll(tasks);
 
             // Assert
-            await using var context = new MssqlContextFactoryFake().CreateDataContext();
+            await using var context = new MsSqlContextFactoryInMemory().CreateDataContext();
             var actualCount = await context.DeviceRegistrations.CountAsync(x =>
                 x.DeviceToken == deviceRegistration.DeviceToken && x.AccountId == deviceRegistration.AccountId);
                 
@@ -56,7 +56,7 @@ namespace Lykke.Snow.Notifications.Tests.Repository
                     cfg => cfg.AddProfile(new MappingProfile()))
                 .CreateMapper();
             
-            return new DeviceRegistrationRepository(new MssqlContextFactoryFake(), mapper);
+            return new DeviceRegistrationRepository(new MsSqlContextFactoryInMemory(), mapper);
         }
     }
 }
