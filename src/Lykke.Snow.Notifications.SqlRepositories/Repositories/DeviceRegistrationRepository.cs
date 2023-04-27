@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,14 +48,15 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
             return entitites;
         }
 
-        public async Task<IReadOnlyList<DeviceRegistration>> GetDeviceRegistrationsByAccountIdsAsync(string[] accountIds)
+        public async Task<IReadOnlyList<DeviceRegistration>> GetDeviceRegistrationsByAccountIdsAsync(
+            string[] accountIds)
         {
             await using var context = _contextFactory.CreateDataContext();
 
-            var entitites = await context.DeviceRegistrations.Where(x => accountIds.Any(id => id == x.AccountId))
+            var entities = await context.DeviceRegistrations.Where(x => accountIds.Any(id => id == x.AccountId))
                 .Select(devRegEntity => _mapper.Map<DeviceRegistration>(devRegEntity)).ToListAsync();
-            
-            return entitites;
+
+            return entities;
         }
 
         public async Task AddOrUpdateAsync(DeviceRegistration model)
@@ -68,17 +70,30 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
             try
             {
                 await using var context = _contextFactory.CreateDataContext();
-                var existingEntity = await context.DeviceRegistrations
-                    .SingleOrDefaultAsync(x =>
-                        x.DeviceToken == model.DeviceToken && x.AccountId == model.AccountId);
+                await using var transaction = await context.Database.BeginTransactionAsync();
 
-                if (existingEntity == null)
+                try
                 {
-                    await TryAddAsync(context, model);
-                    return;
-                }
+                    var existingEntity = await context.DeviceRegistrations
+                        .SingleOrDefaultAsync(x =>
+                            x.DeviceToken == model.DeviceToken && x.AccountId == model.AccountId);
 
-                await TryUpdateAsync(context, model, existingEntity);
+                    if (existingEntity == null)
+                    {
+                        await TryAddAsync(context, model);
+                    }
+                    else
+                    {
+                        await TryUpdateAsync(context, model, existingEntity);
+                    }
+
+                    await transaction.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
             }
             finally
             {
