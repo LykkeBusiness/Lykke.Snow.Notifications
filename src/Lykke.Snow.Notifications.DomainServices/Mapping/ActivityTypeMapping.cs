@@ -26,6 +26,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Mapping
             { ActivityTypeContract.PositionPartialClosing, NotificationType.PositionClosed }
         };
 
+        // Activity description enrichments based on Activity type
         internal static readonly IReadOnlyDictionary<ActivityTypeContract, Func<ActivityEvent, string[]>> DescriptionEnrichments = 
             new Dictionary<ActivityTypeContract, Func<ActivityEvent, string[]>>
         {
@@ -36,5 +37,12 @@ namespace Lykke.Snow.Notifications.DomainServices.Mapping
             {ActivityTypeContract.AccountTradingEnabled, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }},
             {ActivityTypeContract.AccountTradingDisabled, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }}
         };
+        
+        // Activity description interceptors based on Notification type
+        // TODO: we might not need this
+        //internal static readonly IReadOnlyDictionary<NotificationType, Func<ActivityEvent, string[]>> DescriptionInterceptors = 
+        //    new Dictionary<NotificationType, Func<ActivityEvent, string[]>>
+        //{
+        //};
     }
 }
