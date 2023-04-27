@@ -20,7 +20,7 @@ namespace Lykke.Snow.Notifications.Startup
                 .AddUserSecrets<Program>()
                 .AddEnvironmentVariables()
                 .Build();
-            
+
             var settingsManager = configuration.LoadSettings<AppSettings>(_ => { });
 
             return (configuration, settingsManager);
