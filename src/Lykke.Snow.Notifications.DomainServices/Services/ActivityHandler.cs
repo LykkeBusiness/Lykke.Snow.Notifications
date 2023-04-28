@@ -12,6 +12,7 @@ using Lykke.Snow.Notifications.Domain.Services;
 using Lykke.Snow.Notifications.DomainServices.Mapping;
 using Lykke.Snow.Notifications.DomainServices.Projections;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace Lykke.Snow.Notifications.DomainServices.Services
 {
@@ -41,7 +42,9 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
         }
         public async Task Handle(ActivityEvent e)
         {
-            if(!TryGetNotificationType(ActivityTypeMapping.NotificationTypeMapping, activityType: e.Activity.Event, out var notificationType))
+            var isOnBehalf = IsOnBehalf(e);
+
+            if(!TryGetNotificationType(ActivityTypeMapping.NotificationTypeMapping, activityType: e.Activity.Event, isOnBehalf: isOnBehalf, out var notificationType))
             {
                 _logger.LogDebug("No notification type mapping found for the activity {Activity}", e.Activity.Event);
                 return;
@@ -113,15 +116,20 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             }
         }
 
-        public static bool TryGetNotificationType(IReadOnlyDictionary<ActivityTypeContract, NotificationType> notificationTypeMapping, ActivityTypeContract activityType, out NotificationType type)
+        public static bool TryGetNotificationType(IReadOnlyDictionary<Tuple<ActivityTypeContract, OnBehalf>, NotificationType> notificationTypeMapping, 
+            ActivityTypeContract activityType, 
+            bool isOnBehalf,
+            out NotificationType type)
         {
-            if(!notificationTypeMapping.ContainsKey(activityType))
+            var key = new Tuple<ActivityTypeContract, OnBehalf>(activityType, isOnBehalf ? OnBehalf.Yes : OnBehalf.No);
+            
+            if(!notificationTypeMapping.ContainsKey(key))
             {
                 type = NotificationType.NotSpecified;
                 return false;
             }
             
-            type = notificationTypeMapping[activityType];
+            type = notificationTypeMapping[key];
 
             return true;
         }
@@ -132,6 +140,26 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                return enrichments[e.Activity.Event](e);
             
             return e.Activity.DescriptionAttributes;
+        }
+        
+        public static bool IsOnBehalf(ActivityEvent e)
+        {
+            try
+            {
+                dynamic? additionalInfo = JsonConvert.DeserializeObject(e.Activity.AdditionalInfo);
+                
+                if(additionalInfo == null)
+                    return false;
+
+                if (additionalInfo["IsOnBehalf"] == null)
+                    return false;
+
+                return additionalInfo["IsOnBehalf"];
+            }
+            catch(Exception)
+            {
+                return false;
+            }
         }
     }
 }

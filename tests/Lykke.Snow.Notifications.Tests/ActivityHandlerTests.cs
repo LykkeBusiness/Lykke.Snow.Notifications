@@ -22,18 +22,24 @@ namespace Lykke.Snow.Notifications.Tests
     {
         public IEnumerator<object[]> GetEnumerator()
         {
-            IReadOnlyDictionary<ActivityTypeContract, NotificationType> mapping = new Dictionary<ActivityTypeContract, NotificationType>()
+            IReadOnlyDictionary<Tuple<ActivityTypeContract, OnBehalf>, NotificationType> mapping = new Dictionary<Tuple<ActivityTypeContract, OnBehalf>, NotificationType>()
             {
-                { ActivityTypeContract.AccountDepositSucceeded, NotificationType.DepositSucceeded },
-                { ActivityTypeContract.AccountTradingDisabled, NotificationType.AccountLocked },
-                { ActivityTypeContract.Liquidation, NotificationType.Liquidation },
+                { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.AccountDepositSucceeded, OnBehalf.No), NotificationType.DepositSucceeded },
+                { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.AccountTradingDisabled, OnBehalf.No), NotificationType.AccountLocked },
+                { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.Liquidation, OnBehalf.No), NotificationType.Liquidation },
+                { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.PositionClosing, OnBehalf.Yes), NotificationType.OnBehalfPositionClosing },
+                { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderAcceptanceAndActivation, OnBehalf.Yes), NotificationType.OnBehalfOrderPlacement },
             };
 
-            yield return new object[] { ActivityTypeContract.AccountDepositSucceeded, mapping, NotificationType.DepositSucceeded, true };
-            yield return new object[] { ActivityTypeContract.AccountTradingDisabled, mapping, NotificationType.AccountLocked, true };
-            yield return new object[] { ActivityTypeContract.Liquidation, mapping, NotificationType.Liquidation, true };
-            yield return new object[] { ActivityTypeContract.MarginCall1, mapping, NotificationType.NotSpecified, false };
-            yield return new object[] { ActivityTypeContract.PositionClosing, mapping, NotificationType.NotSpecified, false };
+            yield return new object[] { mapping, ActivityTypeContract.AccountDepositSucceeded, false, NotificationType.DepositSucceeded, true };
+            yield return new object[] { mapping, ActivityTypeContract.AccountDepositSucceeded, true, NotificationType.NotSpecified, false };
+            yield return new object[] { mapping, ActivityTypeContract.AccountTradingDisabled, false, NotificationType.AccountLocked, true };
+            yield return new object[] { mapping, ActivityTypeContract.Liquidation, false, NotificationType.Liquidation, true };
+            yield return new object[] { mapping, ActivityTypeContract.MarginCall1, false, NotificationType.NotSpecified, false };
+            yield return new object[] { mapping, ActivityTypeContract.MarginCall1, true, NotificationType.NotSpecified, false };
+            yield return new object[] { mapping, ActivityTypeContract.PositionClosing, false, NotificationType.NotSpecified, false };
+            yield return new object[] { mapping, ActivityTypeContract.OrderAcceptanceAndActivation, true, NotificationType.OnBehalfOrderPlacement, true };
+            yield return new object[] { mapping, ActivityTypeContract.OrderAcceptanceAndActivation, false, NotificationType.NotSpecified, false };
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -111,12 +117,13 @@ namespace Lykke.Snow.Notifications.Tests
         [Theory]
         [ClassData(typeof(ActivityEventMappingTestData))]
         public void TryGetNotificationType_ShouldMapActivity_ToNotificationType(
+            IReadOnlyDictionary<Tuple<ActivityTypeContract, OnBehalf>, NotificationType> mapping, 
             ActivityTypeContract activityType,
-            IReadOnlyDictionary<ActivityTypeContract, NotificationType> mapping, 
+            bool isOnBehalf,
             NotificationType expectedNotificationType,
             bool expectedResult)
         {
-            var result = ActivityHandler.TryGetNotificationType(mapping, activityType, out var notificationType);
+            var result = ActivityHandler.TryGetNotificationType(mapping, activityType, isOnBehalf, out var notificationType);
             
             Assert.Equal(expectedNotificationType, notificationType);
             Assert.Equal(expectedResult, result);
@@ -366,6 +373,93 @@ namespace Lykke.Snow.Notifications.Tests
             mockNotificationService.Verify(x => x.SendNotification(notificationMessage, It.IsAny<string>()), Times.Exactly(enabledDevices.Count()));
         }
         #endregion
+
+        #region On-Behalf Tests
+        [Fact]
+        public void CheckIfOnBehalf_ShouldReturnFalse_IfInputIsNotJsonString()
+        {
+            var activityEvent = CreateActivityByAdditionalInfo("some-invalid-json-string");
+            
+            var sut = CreateSut();
+            
+            var result = ActivityHandler.IsOnBehalf(activityEvent);
+            
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void CheckIfOnBehalf_ShouldReturnFalse_IfInputIsEmptyObject()
+        {
+            var activityEvent = CreateActivityByAdditionalInfo("{}");
+            
+            var sut = CreateSut();
+            
+            var result = ActivityHandler.IsOnBehalf(activityEvent);
+            
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void CheckIfOnBehalf_ShouldReturnFalse_IfIsOnBehalfPropertyDoesntExist()
+        {
+            var activityEvent = CreateActivityByAdditionalInfo(@"{ ""CreatedBy"": ""user1"", ""CreatedAt"": ""2023-04-26T09:44""}");
+            
+            var sut = CreateSut();
+            
+            var result = ActivityHandler.IsOnBehalf(activityEvent);
+            
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void CheckIfOnBehalf_ShouldReturnFalse_IfIsOnBehalfPropertyInvalid()
+        {
+            var activityEvent = CreateActivityByAdditionalInfo(@"{ ""CreatedBy"": ""user1"", ""CreatedAt"": ""2023-04-26T09:44"", ""IsOnBehalf"": """"}");
+            
+            var sut = CreateSut();
+            
+            var result = ActivityHandler.IsOnBehalf(activityEvent);
+            
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void CheckIfOnBehalf_ShouldReturnFalse_IfIsOnBehalfPropertySetToFalse()
+        {
+            var activityEvent = CreateActivityByAdditionalInfo(@"{ ""CreatedBy"": ""user1"", ""CreatedAt"": ""2023-04-26T09:44"", ""IsOnBehalf"": ""false""}");
+            
+            var sut = CreateSut();
+            
+            var result = ActivityHandler.IsOnBehalf(activityEvent);
+            
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void CheckIfOnBehalf_ShouldReturnTrue_IfIsOnBehalfPropertySetToTrue()
+        {
+            var activityEvent = CreateActivityByAdditionalInfo(@"{ ""CreatedBy"": ""user1"", ""CreatedAt"": ""2023-04-26T09:44"", ""IsOnBehalf"": ""true""}");
+            
+            var sut = CreateSut();
+            
+            var result = ActivityHandler.IsOnBehalf(activityEvent);
+            
+            Assert.True(result);
+        }
+
+        #endregion
+
+        
+        private ActivityEvent CreateActivityByAdditionalInfo(string additionalInfo)
+        {
+            var activityEvent = new ActivityEvent
+            {
+                Activity = new ActivityContract("id", "account-id", "instrument", "eventSourceId", DateTime.UtcNow, ActivityCategoryContract.Order, ActivityTypeContract.OrderExpiry,
+                    new string[] {}, new string[] {}, additionalInfo)
+            };
+            
+            return activityEvent;
+        }
 
         private ActivityHandler CreateSut(INotificationService? notificationServiceArg = null,
             IDeviceRegistrationService? deviceRegistrationServiceArg = null,
