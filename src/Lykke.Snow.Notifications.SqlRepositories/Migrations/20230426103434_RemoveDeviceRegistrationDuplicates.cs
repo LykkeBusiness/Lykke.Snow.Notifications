@@ -23,6 +23,11 @@ WHERE DeviceConfigurationId IN (
     WHERE DR.RowNumber > 1
 );
 
+WITH DuplicateRecords AS (
+    SELECT *,
+           ROW_NUMBER() OVER (PARTITION BY AccountId, DeviceToken ORDER BY RegisteredOn DESC) AS RowNumber
+    FROM notifications.DeviceRegistrations
+)
 -- Delete related entries in DeviceConfigurations
 DELETE FROM notifications.DeviceConfigurations
 WHERE DeviceId IN (
@@ -31,6 +36,11 @@ WHERE DeviceId IN (
     WHERE RowNumber > 1
 );
 
+WITH DuplicateRecords AS (
+    SELECT *,
+           ROW_NUMBER() OVER (PARTITION BY AccountId, DeviceToken ORDER BY RegisteredOn DESC) AS RowNumber
+    FROM notifications.DeviceRegistrations
+)
 -- Delete duplicates from DeviceRegistrations
 DELETE FROM DuplicateRecords
 WHERE RowNumber > 1;
