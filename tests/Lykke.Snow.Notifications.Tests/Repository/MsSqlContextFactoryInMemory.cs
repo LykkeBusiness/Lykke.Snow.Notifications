@@ -5,13 +5,13 @@ using Lykke.Snow.Notifications.SqlRepositories.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
-namespace Lykke.Snow.Notifications.Tests.Fakes
+namespace Lykke.Snow.Notifications.Tests.Repository
 {
-    public class MssqlContextFactoryFake : Lykke.Common.MsSql.IDbContextFactory<NotificationsDbContext>
+    public class MsSqlContextFactoryInMemory : Lykke.Common.MsSql.IDbContextFactory<NotificationsDbContext>
     {
         private readonly DbContextOptions<NotificationsDbContext> _options;
         
-        public MssqlContextFactoryFake()
+        public MsSqlContextFactoryInMemory()
         {
             _options = new DbContextOptionsBuilder<NotificationsDbContext>()
                 .UseInMemoryDatabase("NotificationsDbTest")

@@ -36,7 +36,4 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.2" />
     <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.3.2" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
 </Project>

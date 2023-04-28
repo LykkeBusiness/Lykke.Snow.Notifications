@@ -7,7 +7,7 @@ This service consumes events from the Activities producer and becomes aware of n
 
 ## How to run for debug?
 
-1. Clone the repository anwhere in filesystem.
+1. Clone the repository anywhere in filesystem.
 2. Create an `appsettings.dev.json` file in `src/Lykke.Snow.Notifications` directory. (Please refer to **Configuration** section.)
 3. Add an environment variable `SettingsUrl` with value of `appsettings.dev.json`
 4. Setup firebase service account credentials (please refer to configuration section)
