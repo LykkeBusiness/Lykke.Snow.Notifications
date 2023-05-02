@@ -85,6 +85,25 @@ namespace Lykke.Snow.Notifications.Tests
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
+    class DeviceRegistrationsWithMissingConfigurationTestData : IEnumerable<object[]>
+    {
+        public IEnumerator<object[]> GetEnumerator()
+        {
+            yield return new object[] 
+            { 
+                new List<DeviceRegistration> 
+                {
+                    new DeviceRegistration("account-id-1", "device-token-3", "device3", DateTime.UtcNow),
+                    new DeviceRegistration("account-id-1", "device-token-4", "device4", DateTime.UtcNow),
+                    new DeviceRegistration("account-id-1", "device-token-5", "device5", DateTime.UtcNow),
+                },
+                new List<string>() { "device4" }
+            };
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
 
     public class ActivityHandlerTests
     {
@@ -229,7 +248,7 @@ namespace Lykke.Snow.Notifications.Tests
                     "some-event-source-id", 
                     DateTime.UtcNow, 
                     ActivityCategoryContract.Account,
-                    ActivityTypeContract.SessionSwitchedToOnBehalfTrading, 
+                    ActivityTypeContract.OrderAcceptance, 
                     descriptionAttributes: new[] { "100", "Buy", "Market", "Facebook Inc" }, 
                     new string[]{})
             };
@@ -244,21 +263,31 @@ namespace Lykke.Snow.Notifications.Tests
         }
 
         [Theory]
-        [ClassData(typeof(DeviceRegistrationsTestData))]
-        public async Task HandleActivityEvent_ShouldExitMethod_IfDeviceConfigurationIsNotFound(List<DeviceRegistration> deviceRegistrations)
+        [ClassData(typeof(DeviceRegistrationsWithMissingConfigurationTestData))]
+        public async Task HandleActivityEvent_ShouldSkipSending_IfDeviceConfigurationIsNotFound(
+            List<DeviceRegistration> deviceRegistrations,
+            List<string> deviceIdsMissingConfiguration)
         {
             var deviceRegistrationServiceMock = new Mock<IDeviceRegistrationService>();
             deviceRegistrationServiceMock.Setup(x => x.GetDeviceRegistrationsAsync(It.IsAny<string>())).ReturnsAsync(deviceRegistrations);
             
             var deviceConfigurationRepositoryMock = new Mock<IDeviceConfigurationRepository>();
-            deviceConfigurationRepositoryMock.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult<DeviceConfiguration>(null));
-            
+            deviceConfigurationRepositoryMock.Setup(x => x.GetAsync(It.Is<string>(x => deviceIdsMissingConfiguration.Contains(x)), It.IsAny<string>()))
+                .Returns(Task.FromResult<DeviceConfiguration>(null));
+
+            deviceConfigurationRepositoryMock.Setup(x => x.GetAsync(It.Is<string>(x => !deviceIdsMissingConfiguration.Contains(x)), It.IsAny<string>()))
+                .Returns(Task.FromResult<DeviceConfiguration>(new DeviceConfiguration("device-id", "account-id")));
             
             var notificationServiceMock = new Mock<INotificationService>();
+            notificationServiceMock.Setup(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>())).Returns(true);
+
             var localizationServiceMock = new Mock<ILocalizationService>();
             
-            var sut = CreateSut(deviceRegistrationServiceArg: deviceRegistrationServiceMock.Object, 
-                localizationServiceArg: localizationServiceMock.Object);
+            var sut = CreateSut(
+                notificationServiceArg: notificationServiceMock.Object,
+                deviceRegistrationServiceArg: deviceRegistrationServiceMock.Object, 
+                localizationServiceArg: localizationServiceMock.Object,
+                deviceConfigurationRepositoryArg: deviceConfigurationRepositoryMock.Object);
 
             var activity = new ActivityEvent
             {
@@ -268,18 +297,20 @@ namespace Lykke.Snow.Notifications.Tests
                     "some-event-source-id", 
                     DateTime.UtcNow, 
                     ActivityCategoryContract.Account,
-                    ActivityTypeContract.SessionSwitchedToOnBehalfTrading, 
+                    ActivityTypeContract.PositionClosing, 
                     descriptionAttributes: new[] { "100", "Buy", "Market", "Facebook Inc" }, 
                     new string[]{})
             };
             
             await sut.Handle(activity);
             
-            deviceConfigurationRepositoryMock.Verify(x => x.GetAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-            notificationServiceMock.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Never);
-            notificationServiceMock.Verify(x => x.BuildNotificationMessage(It.IsAny<NotificationType>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Never);
-            notificationServiceMock.Verify(x => x.SendNotification(It.IsAny<NotificationMessage>(), It.IsAny<string>()), Times.Never);
-            localizationServiceMock.Verify(x => x.GetLocalizedTextAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IReadOnlyList<string>>()), Times.Never);
+            var activeDeviceCount = deviceRegistrations.Count - deviceIdsMissingConfiguration.Count;
+
+            deviceConfigurationRepositoryMock.Verify(x => x.GetAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(deviceRegistrations.Count));
+            notificationServiceMock.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Exactly(activeDeviceCount));
+            notificationServiceMock.Verify(x => x.BuildNotificationMessage(It.IsAny<NotificationType>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Exactly(activeDeviceCount));
+            notificationServiceMock.Verify(x => x.SendNotification(It.IsAny<NotificationMessage>(), It.IsAny<string>()), Times.Exactly(activeDeviceCount));
+            localizationServiceMock.Verify(x => x.GetLocalizedTextAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IReadOnlyList<string>>()), Times.Exactly(activeDeviceCount));
         }
 
         [Theory]

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Common;
 using FirebaseAdmin.Messaging;
@@ -42,9 +43,14 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
         public async Task Handle(ActivityEvent e)
         {
             if(!TryGetNotificationType(ActivityTypeMapping.NotificationTypeMapping, activityType: e.Activity.Event, out var notificationType))
+            {
+                _logger.LogDebug("No notification type mapping found for the activity {Activity}", e.Activity.Event);
                 return;
-
+            }
+            
             var deviceRegistrationsResult = await _deviceRegistrationService.GetDeviceRegistrationsAsync(accountId: e.Activity.AccountId);
+
+            _logger.LogDebug("{NumOfRegistrations} registrations found for the account {AccountId}", deviceRegistrationsResult.Value.Count(), e.Activity.AccountId);
             
             if(deviceRegistrationsResult.IsFailed)
             {
@@ -66,11 +72,15 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                     {
                         _logger.LogWarning("Device configuration could not be found for the device {DeviceId} and account {AccountId}", 
                             deviceRegistration.DeviceId, deviceRegistration.AccountId);
-                        return;
+                        continue;
                     }
                         
                     if(!_notificationService.IsDeviceTargeted(deviceConfiguration, notificationType))
+                    {
+                        _logger.LogDebug("The notification has not been sent to the device {DeviceToken} because it is not targeted for the notification type {NotificationType}",
+                            deviceRegistration.DeviceToken, notificationType);
                         continue;
+                    }
                         
                     var (title, body) = await _localizationService.GetLocalizedTextAsync(
                         Enum.GetName(notificationType), 
@@ -83,18 +93,23 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                         body,
                         new Dictionary<string, string>()
                     );
+                    
+                    _logger.LogDebug("Attempting to send the notification to the account {AccountId} device {DeviceToken}", deviceRegistration.AccountId, deviceRegistration.DeviceToken);
 
                     await _notificationService.SendNotification(notificationMessage, deviceToken: deviceRegistration.DeviceToken);
 
-                    _logger.LogInformation("Push notification has successfully been sent to the device {DeviceToken}: {PushNotificationPayload}",
-                        deviceRegistration.DeviceToken, notificationMessage.ToJson());
+                    _logger.LogInformation("Push notification has successfully been sent to the Account {AccountId} device {DeviceToken}: {PushNotificationPayload}",
+                        deviceRegistration.AccountId, deviceRegistration.DeviceToken, notificationMessage.ToJson());
                 }
                 catch(CannotSendNotificationException ex)
                 {
                     if(ex.ErrorCode == MessagingErrorCode.Unregistered)
                     {
-                        _logger.LogWarning("The notification could not be delivered to the device {DeviceToken} because it is no longer active.", deviceRegistration.DeviceToken);
+                        _logger.LogDebug("The notification could not be delivered to the device {DeviceToken} because it is no longer active.", deviceRegistration.DeviceToken);
+                        continue;
                     }
+                    
+                    _logger.LogError(ex, "The notification could not be delivered to the device {DeviceToken}. ErrorCode: {ErrorCode}", deviceRegistration.DeviceToken, ex.ErrorCode);
                 }
             }
         }

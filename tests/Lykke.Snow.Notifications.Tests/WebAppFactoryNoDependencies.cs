@@ -1,14 +1,13 @@
 using System.Net.Http;
-using Lykke.Common.MsSql;
 using Lykke.Cqrs;
 using Lykke.Snow.FirebaseIntegration.Interfaces;
 using Lykke.Snow.Notifications.Domain.Repositories;
 using Lykke.Snow.Notifications.SqlRepositories;
 using Lykke.Snow.Notifications.SqlRepositories.Repositories;
 using Lykke.Snow.Notifications.Tests.Fakes;
+using Lykke.Snow.Notifications.Tests.Repository;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 
@@ -26,12 +25,7 @@ namespace Lykke.Snow.Notifications.Tests
                 // register mocked cqrs engine
                 services.AddSingleton(new Mock<ICqrsEngine>().Object);
                 
-                // register in-memory database
-                var options = new DbContextOptionsBuilder<NotificationsDbContext>()
-                    .UseInMemoryDatabase("InMemoryNotificationsDb")
-                    .Options;
-                var contextFactory =
-                    new MsSqlContextFactory<NotificationsDbContext>(_ => new NotificationsDbContext(options), options);
+                var contextFactory = new MsSqlContextFactoryInMemory();
                 services.AddSingleton(contextFactory);
                 services.AddSingleton<Lykke.Common.MsSql.IDbContextFactory<NotificationsDbContext>>(contextFactory);
                 
