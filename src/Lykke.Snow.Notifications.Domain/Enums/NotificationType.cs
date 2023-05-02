@@ -21,5 +21,9 @@ namespace Lykke.Snow.Notifications.Domain.Enums
         MarketHoliday,
         PlatformHoliday,
         PriceAlertTriggered,
+        OnBehalfOrderPlacement,
+        OnBehalfOrderModification,
+        OnBehalfOrderCancellation,
+        OnBehalfPositionClosing,
     }
 }

@@ -79,6 +79,26 @@
       "en": "Price Alert",
       "es": "(TBD) es- Price Alert",
       "de": "(TBD) de- Price Alert"
+    },
+    "OnBehalfOrderPlacement": {
+      "en": "On Behalf",
+      "es": "En nombre de",
+      "de": "Kundenbetreuung"
+    },
+    "OnBehalfOrderModification": {
+      "en": "On Behalf",
+      "es": "En nombre de",
+      "de": "Kundenbetreuung"
+    },
+    "OnBehalfOrderCancellation": {
+      "en": "On Behalf",
+      "es": "En nombre de",
+      "de": "Kundenbetreuung"
+    },
+    "OnBehalfPositionClosing": {
+      "en": "On behalf position closing",
+      "es": "Posición cerrada en nombre de",
+      "de": "Kundenbetreuung Positionsschließung"
     }
   },
   "Bodies": {
@@ -161,6 +181,26 @@
       "en": "{0}'s {1} price has crossed {2} {3} {4}.",
       "es": "(TBD) es-{0}'s {1} price has crossed {2} {3} {4}.",
       "de": "(TBD) de-{0}'s {1} price has crossed {2} {3} {4}."
+    },
+    "OnBehalfOrderPlacement": {
+      "en": "{0} {1} order for {1} {2} has been placed.",
+      "es": "La orden {0} {1} de {2} {3} ha sido aceptada.",
+      "de": "Die {0} {1} Order für {2} {3} wurde angelegt."
+    },
+    "OnBehalfOrderModification": {
+      "en": "{0} {1} order for {1} {2} has been changed.",
+      "es": "La orden {0} {1} de {2} {3} ha sido modificada.",
+      "de": "Die {0} {1} Order für {2} {3} wurde geändert."
+    },
+    "OnBehalfOrderCancellation": {
+      "en": "{0} {1} order for {1} {2} has been cancelled.",
+      "es": "La orden {0} {1} de {2} {3} ha sido cancelada.",
+      "de": "Die {0} {1} Order für {2} {3} wurde gelöscht."
+    },
+    "OnBehalfPositionClosing": {
+      "en": "{0} position of {1} {2} has been closed. P&L of {3} {4} has been realized.",
+      "es": "La posición {0} de {1} {2} se ha cerrado. Se ha realizado una PyG de {3} {4}.",
+      "de": "Die {0} Position in {1} {2} wurde geschlossen. Eine GuV von {3} {4} wurde realisiert."
     }
   }
 }
