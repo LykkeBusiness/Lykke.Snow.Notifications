@@ -17,14 +17,24 @@ namespace Lykke.Snow.FirebaseIntegration.Services
 
         public AppOptions Create()
         {
-            var options = new AppOptions { Credential = _credentialsProvider.Get() };
-
             if (_proxyConfiguration != null)
             {
-                options.HttpClientFactory = new HttpClientFactoryWithProxy(_proxyConfiguration.Value);
-            }
+                var httpClientFactory = new HttpClientFactoryWithProxy(_proxyConfiguration.Value);
 
-            return options;
+                var options = new AppOptions 
+                { 
+                    Credential = _credentialsProvider.Get().CreateWithHttpClientFactory(httpClientFactory),
+                    HttpClientFactory = httpClientFactory
+                };
+                
+                return options;
+            }
+            else
+            {
+                var options = new AppOptions { Credential = _credentialsProvider.Get()};
+
+                return options;
+            }
         }
     }
 }
