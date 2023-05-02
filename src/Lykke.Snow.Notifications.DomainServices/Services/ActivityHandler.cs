@@ -52,13 +52,13 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             
             var deviceRegistrationsResult = await _deviceRegistrationService.GetDeviceRegistrationsAsync(accountId: e.Activity.AccountId);
 
-            _logger.LogDebug("{NumOfRegistrations} registrations found for the account {AccountId}", deviceRegistrationsResult.Value.Count(), e.Activity.AccountId);
-            
             if(deviceRegistrationsResult.IsFailed)
             {
                 _logger.LogWarning("Could not get device tokens for the account {AccountId}. ErrorCode: {ErrorCode}", e.Activity.AccountId, deviceRegistrationsResult.Error);
                 return;
             }
+
+            _logger.LogDebug("{NumOfRegistrations} registrations found for the account {AccountId}", deviceRegistrationsResult.Value.Count(), e.Activity.AccountId);
             
             // Not all activities have enough number of description attributes
             // to fill in localization template. Here we enrich them.

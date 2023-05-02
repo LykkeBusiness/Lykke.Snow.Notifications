@@ -44,8 +44,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
             var deviceRegistrationsResult = await _deviceRegistrationService.GetDeviceRegistrationsAsync(accountIds: accountIds);
 
-            _logger.LogDebug("{NumOfRegistrations} registrations found for the accounts {AccountIds}", deviceRegistrationsResult.Value.Count(), string.Join(',', accountIds));
-
             if (deviceRegistrationsResult.IsFailed)
             {
                 _logger.LogWarning("Could not get device tokens for the list of Account ids {AccountIds}. ErrorCode: {ErrorCode}",
@@ -53,6 +51,8 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
                 return;
             }
+
+            _logger.LogDebug("{NumOfRegistrations} registrations found for the accounts {AccountIds}", deviceRegistrationsResult.Value.Count(), string.Join(',', accountIds));
                
             var notificationMessage = _notificationService.BuildNotificationMessage(NotificationType.InboxMessage, 
                 title: e.Subject,

@@ -8,11 +8,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Mapping
 {
     internal static class ActivityTypeMapping
     {
-        // we may need to add more keys here
-        // for example
-        // positionClosing - not on behalf - NotificationType.PositionClosed
-        // positionClosing - on behalf - NotificationType.OnBehalfPositionClosing
-        // TODO: rename IsOnBehalf -> OnBehalf.No / OnBehalf.Yes
         internal static readonly IReadOnlyDictionary<Tuple<ActivityTypeContract, OnBehalf>, NotificationType> NotificationTypeMapping = new Dictionary<Tuple<ActivityTypeContract, OnBehalf>, NotificationType>()
         {
             { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.AccountTradingDisabled, OnBehalf.No), NotificationType.AccountLocked },
@@ -28,7 +23,23 @@ namespace Lykke.Snow.Notifications.DomainServices.Mapping
             { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderAcceptanceAndExecution, OnBehalf.No), NotificationType.OrderExecuted },
             { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderExpiry, OnBehalf.No), NotificationType.OrderExpired },
             { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.PositionClosing, OnBehalf.No), NotificationType.PositionClosed },
-            { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.PositionPartialClosing, OnBehalf.No), NotificationType.PositionClosed }
+            { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.PositionPartialClosing, OnBehalf.No), NotificationType.PositionClosed },
+            { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderAcceptanceAndActivation, OnBehalf.Yes), NotificationType.OnBehalfOrderPlacement },
+            { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderModification, OnBehalf.Yes), NotificationType.OnBehalfOrderModification },
+            { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderModificationForceOpen, OnBehalf.Yes), NotificationType.OnBehalfOrderModification },
+            { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderModificationPrice, OnBehalf.Yes), NotificationType.OnBehalfOrderModification },
+            { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderModificationRelatedOrderRemoved, OnBehalf.Yes), NotificationType.OnBehalfOrderModification },
+            { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderModificationValidity, OnBehalf.Yes), NotificationType.OnBehalfOrderModification },
+            { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderModificationVolume, OnBehalf.Yes), NotificationType.OnBehalfOrderModification },
+            { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderCancellation, OnBehalf.Yes), NotificationType.OnBehalfOrderCancellation },
+            { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderCancellationBecauseAccountIsNotValid, OnBehalf.Yes), NotificationType.OnBehalfOrderCancellation },
+            { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderCancellationBecauseBaseOrderCancelled, OnBehalf.Yes), NotificationType.OnBehalfOrderCancellation },
+            { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderCancellationBecauseConnectedOrderExecuted, OnBehalf.Yes), NotificationType.OnBehalfOrderCancellation },
+            { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderCancellationBecauseCorporateAction, OnBehalf.Yes), NotificationType.OnBehalfOrderCancellation },
+            { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderCancellationBecauseInstrumentInNotValid, OnBehalf.Yes), NotificationType.OnBehalfOrderCancellation },
+            { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderCancellationBecausePositionClosed, OnBehalf.Yes), NotificationType.OnBehalfOrderCancellation },
+            { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.PositionClosing, OnBehalf.Yes), NotificationType.OnBehalfPositionClosing },
+            { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.PositionPartialClosing, OnBehalf.Yes), NotificationType.OnBehalfPositionClosing },
         };
 
         // Activity description enrichments based on Activity type
@@ -42,12 +53,5 @@ namespace Lykke.Snow.Notifications.DomainServices.Mapping
             {ActivityTypeContract.AccountTradingEnabled, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }},
             {ActivityTypeContract.AccountTradingDisabled, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }}
         };
-        
-        // Activity description interceptors based on Notification type
-        // TODO: we might not need this
-        //internal static readonly IReadOnlyDictionary<NotificationType, Func<ActivityEvent, string[]>> DescriptionInterceptors = 
-        //    new Dictionary<NotificationType, Func<ActivityEvent, string[]>>
-        //{
-        //};
     }
 }
