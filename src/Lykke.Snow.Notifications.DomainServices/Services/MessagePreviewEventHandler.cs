@@ -55,8 +55,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
             var deviceRegistrationsResult = await _deviceRegistrationService.GetDeviceRegistrationsAsync(accountIds: accountIds);
 
-            _logger.LogDebug("{NumOfRegistrations} registrations found for the accounts {AccountIds}", deviceRegistrationsResult.Value.Count(), string.Join(',', accountIds));
-
             if (deviceRegistrationsResult.IsFailed)
             {
                 _logger.LogWarning("Could not get device tokens for the list of Account ids {AccountIds}. ErrorCode: {ErrorCode}",
@@ -64,6 +62,8 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
                 return;
             }
+
+            _logger.LogDebug("{NumOfRegistrations} registrations found for the accounts {AccountIds}", deviceRegistrationsResult.Value.Count(), string.Join(',', accountIds));
                
             foreach(var deviceRegistration in deviceRegistrationsResult.Value)
             {
@@ -78,14 +78,14 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                         continue;
                     }
                        
-                    var notificationMessage = await BuildNotificationMessage(e, notificationType, deviceConfiguration.Locale);
-
                     if(!_notificationService.IsDeviceTargeted(deviceConfiguration, NotificationType.InboxMessage))
                     {
                         _logger.LogDebug("The notification has not been sent to the device {DeviceToken} because it is not targeted for Inbox Messages",
                             deviceRegistration.DeviceToken);
                         continue;
                     }
+
+                    var notificationMessage = await BuildNotificationMessage(e, notificationType, deviceConfiguration.Locale);
 
                     _logger.LogDebug("Attempting to send the notification to the Account {AccountId} device {DeviceToken}", deviceRegistration.AccountId, deviceRegistration.DeviceToken);
 
