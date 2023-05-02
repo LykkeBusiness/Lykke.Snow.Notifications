@@ -198,7 +198,7 @@ namespace Lykke.Snow.Notifications.Tests
             var activeDeviceCount = deviceRegistrations.Count - deviceIdsMissingConfiguration.Count;
 
             mockDeviceConfigurationRepository.Verify(x => x.GetAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(deviceRegistrations.Count));
-            mockNotificationService.Verify(x => x.BuildNotificationMessage(It.IsAny<NotificationType>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Once);
+            mockNotificationService.Verify(x => x.BuildNotificationMessage(It.IsAny<NotificationType>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Exactly(activeDeviceCount));
             mockNotificationService.Verify(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>()), Times.Exactly(activeDeviceCount));
             mockNotificationService.Verify(x => x.SendNotification(It.IsAny<NotificationMessage>(), It.IsAny<string>()), Times.Exactly(activeDeviceCount));
         }
