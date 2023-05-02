@@ -183,17 +183,17 @@
       "de": "(TBD) de-{0}'s {1} price has crossed {2} {3} {4}."
     },
     "OnBehalfOrderPlacement": {
-      "en": "{0} {1} order for {1} {2} has been placed.",
+      "en": "{0} {1} order for {2} {3} has been placed.",
       "es": "La orden {0} {1} de {2} {3} ha sido aceptada.",
       "de": "Die {0} {1} Order für {2} {3} wurde angelegt."
     },
     "OnBehalfOrderModification": {
-      "en": "{0} {1} order for {1} {2} has been changed.",
+      "en": "{0} {1} order for {2} {3} has been changed.",
       "es": "La orden {0} {1} de {2} {3} ha sido modificada.",
       "de": "Die {0} {1} Order für {2} {3} wurde geändert."
     },
     "OnBehalfOrderCancellation": {
-      "en": "{0} {1} order for {1} {2} has been cancelled.",
+      "en": "{0} {1} order for {2} {3} has been cancelled.",
       "es": "La orden {0} {1} de {2} {3} ha sido cancelada.",
       "de": "Die {0} {1} Order für {2} {3} wurde gelöscht."
     },
