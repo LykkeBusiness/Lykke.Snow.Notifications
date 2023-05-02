@@ -74,6 +74,11 @@
       "en": "Platform Holiday",
       "es": "es - Platform Holiday",
       "de": "de - Platform Holiday"
+    },
+    "PriceAlertTriggered": {
+      "en": "Price Alert",
+      "es": "(TBD) es- Price Alert",
+      "de": "(TBD) de- Price Alert"
     }
   },
   "Bodies": {
@@ -151,6 +156,11 @@
       "en": "Platform Holiday",
       "es": "es - Platform Holiday",
       "de": "de - Platform Holiday"
+    },
+    "PriceAlertTriggered": {
+      "en": "{0}'s {1} price has crossed {2} {3} {4}.",
+      "es": "(TBD) es-{0}'s {1} price has crossed {2} {3} {4}.",
+      "de": "(TBD) de-{0}'s {1} price has crossed {2} {3} {4}."
     }
   }
 }

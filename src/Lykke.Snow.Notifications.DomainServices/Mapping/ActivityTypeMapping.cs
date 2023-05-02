@@ -23,7 +23,8 @@ namespace Lykke.Snow.Notifications.DomainServices.Mapping
             { ActivityTypeContract.OrderAcceptanceAndExecution, NotificationType.OrderExecuted },
             { ActivityTypeContract.OrderExpiry, NotificationType.OrderExpired },
             { ActivityTypeContract.PositionClosing, NotificationType.PositionClosed },
-            { ActivityTypeContract.PositionPartialClosing, NotificationType.PositionClosed }
+            { ActivityTypeContract.PositionPartialClosing, NotificationType.PositionClosed },
+            { ActivityTypeContract.PriceAlertTriggered, NotificationType.PriceAlertTriggered }
         };
 
         internal static readonly IReadOnlyDictionary<ActivityTypeContract, Func<ActivityEvent, string[]>> DescriptionEnrichments =
