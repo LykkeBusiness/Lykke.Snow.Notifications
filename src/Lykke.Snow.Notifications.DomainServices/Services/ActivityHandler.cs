@@ -42,9 +42,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
         }
         public async Task Handle(ActivityEvent e)
         {
-            var isOnBehalf = IsOnBehalf(e);
-
-            if(!TryGetNotificationType(ActivityTypeMapping.NotificationTypeMapping, activityType: e.Activity.Event, isOnBehalf: isOnBehalf, out var notificationType))
+            if(!TryGetNotificationType(ActivityTypeMapping.NotificationTypeMapping, activityType: e.Activity.Event, isOnBehalf: e.Activity.IsOnBehalf, out var notificationType))
             {
                 _logger.LogDebug("No notification type mapping found for the activity {Activity}", e.Activity.Event);
                 return;
@@ -140,26 +138,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                return enrichments[e.Activity.Event](e);
             
             return e.Activity.DescriptionAttributes;
-        }
-        
-        public static bool IsOnBehalf(ActivityEvent e)
-        {
-            try
-            {
-                dynamic? additionalInfo = JsonConvert.DeserializeObject(e.Activity.AdditionalInfo);
-                
-                if(additionalInfo == null)
-                    return false;
-
-                if (additionalInfo["IsOnBehalf"] == null)
-                    return false;
-
-                return additionalInfo["IsOnBehalf"];
-            }
-            catch(Exception)
-            {
-                return false;
-            }
         }
     }
 }
