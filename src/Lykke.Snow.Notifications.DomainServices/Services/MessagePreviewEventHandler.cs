@@ -78,10 +78,10 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                         continue;
                     }
                        
-                    if(!_notificationService.IsDeviceTargeted(deviceConfiguration, NotificationType.InboxMessage))
+                    if(!_notificationService.IsDeviceTargeted(deviceConfiguration, notificationType))
                     {
-                        _logger.LogDebug("The notification has not been sent to the device {DeviceToken} because it is not targeted for Inbox Messages",
-                            deviceRegistration.DeviceToken);
+                        _logger.LogDebug("The notification has not been sent to the device {DeviceToken} because it is not targeted for notification type {NotificationType}",
+                            deviceRegistration.DeviceToken, notificationType);
                         continue;
                     }
 
