@@ -47,7 +47,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
             if(!TryGetNotificationType(MeteorMessageMapping.NotificationTypeMapping, e.Event, out var notificationType))
             {
-                _logger.LogWarning("Could not find a notification type for the event type {EventType}", e.Event);
+                _logger.LogDebug("Could not find a notification type for the event type {EventType}", e.Event);
                 return;
             }
 
