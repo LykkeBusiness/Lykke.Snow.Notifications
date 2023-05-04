@@ -40,6 +40,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Mapping
             { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderCancellationBecausePositionClosed, OnBehalf.Yes), NotificationType.OnBehalfOrderCancellation },
             { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.PositionClosing, OnBehalf.Yes), NotificationType.OnBehalfPositionClosing },
             { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.PositionPartialClosing, OnBehalf.Yes), NotificationType.OnBehalfPositionClosing },
+            { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.PriceAlertTriggered, OnBehalf.No), NotificationType.PriceAlertTriggered },
         };
 
         // Activity description enrichments based on Activity type
