@@ -12,7 +12,6 @@ using Lykke.Snow.Notifications.Domain.Services;
 using Lykke.Snow.Notifications.DomainServices.Mapping;
 using Lykke.Snow.Notifications.DomainServices.Projections;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace Lykke.Snow.Notifications.DomainServices.Services
 {
