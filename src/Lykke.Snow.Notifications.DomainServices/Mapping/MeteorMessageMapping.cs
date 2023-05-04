@@ -10,6 +10,8 @@ namespace Lykke.Snow.Notifications.DomainServices.Mapping
         internal static readonly IReadOnlyDictionary<MessageEventType, NotificationType> NotificationTypeMapping = new Dictionary<MessageEventType, NotificationType>()
         {
             { MessageEventType.Custom, NotificationType.InboxMessage },
+            { MessageEventType.MarketHoliday, NotificationType.MarketHoliday },
+            { MessageEventType.PlatformHoliday, NotificationType.PlatformHoliday },
             { MessageEventType.PositionsAboutToClose, NotificationType.CAPositionAboutToClose },
             { MessageEventType.PositionsAboutToClose_871m, NotificationType.CAPositionAboutToClose }
         };
