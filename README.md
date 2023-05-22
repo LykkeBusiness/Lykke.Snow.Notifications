@@ -19,6 +19,7 @@ This service consumes events from the Activities producer and becomes aware of n
 - MSSQL
 - RabbitMQ broker
 - Firebase Cloud Messaging.
+- Mdm service
 
 ## Configuration
 
@@ -77,6 +78,26 @@ And the languages should be put in lowercase format. (i.e. `en`, `es`, `de`)
 
 All notification types can be found at [here](./src/Lykke.Snow.Notifications.Domain/Enums/NotificationType.cs). 
 
+
+### 3.1. Mdm Service Integration
+
+Starting from 34th release, localization files are loaded from Mdm service.
+
+In order to specify the platform key for the file that's been uploaded through Mdm Service, use the **LocalizationPlatformKey** configuration in the following configuration section.
+
+Localization files are cached in Notification Service for given amount of time. This period is 5 minutes as default, and can be adjusted within the same configuration section.
+
+```json
+{
+  "Localization": {
+    "LocalizationPlatformKey": "NotificationService",
+    "LocalizationFileCache": {
+      "ExpirationPeriod": "00:01:00"
+    }
+  }
+}
+```
+
 ### 4. Proxy
 
 Proxy is optional. Being set, it will be used for all FCM outgoing requests.
@@ -99,6 +120,21 @@ Device configurations are cached in memory. The cache is invalidated on any chan
 {
   "ConfigurationCache": {
     "ExpirationPeriod": "00:01:00"
+  }
+}
+```
+
+### 6. External Services
+
+1. Mdm Service
+
+Please specify the base url and api key for Mdm Service within the following configuration section.
+
+```json
+{
+  "MdmServiceClient": {
+    "ServiceUrl": "",
+    "ApiKey": ""
   }
 }
 ```
@@ -153,6 +189,16 @@ Settings schema is
         "RoutingKey": "",
         "ExchangeName": "",
         "IsDurable": true
+      }
+    },
+    "MdmServiceClient": {
+      "ServiceUrl": "",
+      "ApiKey": ""
+    },
+    "Localization": {
+      "LocalizationPlatformKey": "NotificationService",
+      "LocalizationFileCache": {
+        "ExpirationPeriod": "00:01:00"
       }
     }
   }

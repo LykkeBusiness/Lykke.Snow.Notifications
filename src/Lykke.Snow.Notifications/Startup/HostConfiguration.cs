@@ -32,8 +32,9 @@ namespace Lykke.Snow.Notifications.Startup
                 .ConfigureContainer<ContainerBuilder>((ctx, cBuilder) =>
                 {
                     // register Autofac modules here
-                    cBuilder.RegisterModule(new ServiceModule());
+                    cBuilder.RegisterModule(new ServiceModule(settings.CurrentValue.NotificationService));
                     cBuilder.RegisterModule(new NotificationsModule(settings.CurrentValue.NotificationService));
+                    cBuilder.RegisterModule(new ExternalServicesModule(settings.CurrentValue.NotificationService));
                     
                     // @atarutin: Due to a known bug in ASP.NET Core since version 3.0 ConfigureTestContainer is not
                     // being called when using WebApplicationFactory for integration testing, therefore "environment
