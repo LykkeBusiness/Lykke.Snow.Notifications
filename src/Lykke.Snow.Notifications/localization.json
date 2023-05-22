@@ -1,4 +1,56 @@
 {
+  "Attributes": {
+    "BUY": {
+      "en":"BUY",
+      "es":"COMPRAR",
+      "de":"KAUF"
+    },
+    "SELL": {
+      "en":"SELL",
+      "es":"VENDER",
+      "de":"VERKAUF"
+    },
+    "LONG": {
+      "en":"LONG",
+      "es":"LARGO",
+      "de":""
+    },
+    "SHORT": {
+      "en":"SHORT",
+      "es":"CORTO",
+      "de":""
+    },
+    "MARKET": {
+      "en":"MARKET",
+      "es":"MERCADO",
+      "de":""
+    },
+    "LIMIT": {
+      "en":"LIMIT",
+      "es":"LIMITE",
+      "de":""
+    },
+    "STOP": {
+      "en":"STOP",
+      "es":"STOP",
+      "de":""
+    },
+    "TAKEPROFIT": {
+      "en":"TAKEPROFIT",
+      "es":"Toma de beneficios",
+      "de":""
+    },
+    "STOPLOSS": {
+      "en":"STOPLOSS",
+      "es":"Stop de pérdidas",
+      "de":""
+    },
+    "TRAILINGSTOP": {
+      "en":"",
+      "es":"",
+      "de":""
+    }
+  },
   "Titles": {
     "AccountLocked": {
       "en": "Account locked",

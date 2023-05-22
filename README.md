@@ -93,7 +93,8 @@ Localization files are cached in Notification Service for given amount of time. 
     "LocalizationPlatformKey": "NotificationService",
     "LocalizationFileCache": {
       "ExpirationPeriod": "00:01:00"
-    }
+    },
+    "TranslateAttributes": ["BUY", "SELL", "LONG", "SHORT"]
   }
 }
 ```
@@ -199,7 +200,8 @@ Settings schema is
       "LocalizationPlatformKey": "NotificationService",
       "LocalizationFileCache": {
         "ExpirationPeriod": "00:01:00"
-      }
+      },
+      "TranslateAttributes": ["BUY", "SELL", "LONG", "SHORT"]
     }
   }
 }
