@@ -44,6 +44,8 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             {
                 _localizationData = await LoadFromMdm();
                 _lastUpdatedAt = _systemClock.UtcNow.DateTime;
+
+                _logger.LogDebug("Localization data has been loaded from Mdm Service and cache has been updated.");
             }   
             
             return _localizationData;
