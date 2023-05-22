@@ -6,6 +6,11 @@ namespace Lykke.Snow.Notifications.Settings
     {
         [Optional]
         public CacheSettings? LocalizationFileCache { get; set; }
+        
+        /// <summary>
+        /// The platform key used when uploading the localization file through mdm service.
+        /// </summary>
+        /// <value></value>
         public string LocalizationPlatformKey { get; set; } = "";
     }
 }
