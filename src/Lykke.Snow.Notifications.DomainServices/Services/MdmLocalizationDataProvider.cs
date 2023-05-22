@@ -71,13 +71,13 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             }
             catch(JsonReaderException e)
             {
-                _logger.LogError(e, e.Message);
+                _logger.LogError(e, "Could not parse the json string into localization data.");
 
                 throw;
             }
             catch(LocalizationFileParsingException e)
             {
-                _logger.LogError(e, e.Message);
+                _logger.LogError(e, "Could not parse the json string into localization data.");
 
                 throw;
             }
