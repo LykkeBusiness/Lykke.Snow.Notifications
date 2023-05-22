@@ -11,9 +11,15 @@ namespace Lykke.Snow.Notifications.Settings
         public CqrsSettings Cqrs { get; set; } = new CqrsSettings();
         public FcmSettings Fcm { get; set; } = new FcmSettings();
         public SubscribersSettings? Subscribers { get; set; }
+
         [Optional]
         public CacheSettings? ConfigurationCache { get; set; }
+
         [Optional]
         public ProxySettings? Proxy { get; set; }
+        
+        public ClientSettings MdmServiceClient { get; set; } = new ClientSettings();
+        
+        public LocalizationSettings Localization { get; set; } = new LocalizationSettings();
     }
 }
