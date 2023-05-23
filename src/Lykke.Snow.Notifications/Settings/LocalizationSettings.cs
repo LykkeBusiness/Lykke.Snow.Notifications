@@ -12,5 +12,12 @@ namespace Lykke.Snow.Notifications.Settings
         /// </summary>
         /// <value></value>
         public string LocalizationPlatformKey { get; set; } = "";
+
+        /// <summary>
+        /// Not all notification attributes should be translated.
+        /// This configuration determines the attributes that are eligible for translation.
+        /// </summary>
+        /// <value></value>
+        public string[] TranslateAttributes { get; set; } = new string[] { };
     }
 }
