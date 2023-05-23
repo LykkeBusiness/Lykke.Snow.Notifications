@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
@@ -21,12 +23,12 @@ namespace Lykke.Snow.Notifications.Tests
                     ""BUY"": {
                        ""en"": ""BUY"", 
                        ""es"": ""COMPRAR"", 
-                       ""de"": ""BESORGEN"", 
+                       ""de"": ""KAUF"", 
                     },
                     ""SELL"": {
                        ""en"": ""SELL"", 
                        ""es"": ""VENDER"", 
-                       ""de"": ""VERKAUFEN"", 
+                       ""de"": ""VERKAUF"", 
                     },
                     ""LONG"": {
                        ""en"": ""LONG"", 
@@ -180,7 +182,7 @@ namespace Lykke.Snow.Notifications.Tests
             public IEnumerator<object[]> GetEnumerator()
             {
                 string[] translateAttributes = new string[] { "BUY", "SELL", "LONG", "SHORT" };
-                var translateAttributesHashset = new HashSet<string>(translateAttributes);
+                var translateAttributesHashset = new HashSet<string>(translateAttributes, StringComparer.OrdinalIgnoreCase);
 
                 yield return new object[]
                 {
@@ -189,7 +191,17 @@ namespace Lykke.Snow.Notifications.Tests
                 
                 yield return new object[]
                 {
-                    translateAttributesHashset, new [] { "SELL", "5", "SHORT", "PRODUCT B" }, "de", new [] { "VERKAUFEN", "5", "KURZ", "PRODUCT B" }
+                    translateAttributesHashset, new [] { "SELL", "5", "SHORT", "PRODUCT B" }, "de", new [] { "VERKAUF", "5", "KURZ", "PRODUCT B" }
+                };
+
+                yield return new object[]
+                {
+                    translateAttributesHashset, new [] { "Buy", "15", "PRODUCT C" }, "de", new [] { "KAUF", "15", "PRODUCT C" }
+                };
+                
+                yield return new object[]
+                {
+                    translateAttributesHashset, new [] { "5", "lOnG", "PRODUCT D" }, "es", new [] { "5", "LARGO", "PRODUCT D" }
                 };
             }
 
@@ -269,6 +281,31 @@ namespace Lykke.Snow.Notifications.Tests
             var result = sut.TranslateParametersIfApplicable(localizationData, translateAttributes, inputParameters, lang);
 
             Assert.Equal(expectedParameters, result);
+        }
+        
+        [Fact]
+        public void TranslateAttributesArgument_ShouldBeTransformedToUpperCase_DuringInitialization()
+        {
+            var translateAttributes = new string[] { "Buy", "selL", "lOng", "sHort" };
+
+            var localizationData = JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!;
+            
+            var sut = CreateSut(translateAttributesArg: translateAttributes, data: localizationData);
+
+            var translateAttributesField = sut
+                .GetType()
+                .GetField("_translateAttributes", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.GetValue(sut);
+            
+            if(translateAttributesField == null)
+                throw new NullReferenceException(nameof(translateAttributesField));
+
+            var translateAttributesTypedField = (HashSet<string>) translateAttributesField;
+            
+            Assert.Equal(translateAttributes.Length, translateAttributesTypedField.Count);
+            
+            foreach(var a in translateAttributes)
+                Assert.Contains(a.ToUpper(), translateAttributesTypedField);
         }
         
         private LocalizationService CreateSut(LocalizationData data, string[] translateAttributesArg = null)

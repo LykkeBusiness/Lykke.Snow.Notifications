@@ -53,6 +53,18 @@ The file has the following format.
 
 ```json
 {
+  "Attributes": {
+    "BUY": {
+      "en": "Buy",
+      "es": "Comprar",
+      "de": "Kauf"
+    },
+    "SELL": {
+      "en": "Sell",
+      "es": "Vender",
+      "de": "Verkauf"
+    }
+  },
   "Titles": {
     "AccountLocked": {
       "en": "English text for notification title with {0} placeholders {1}.",
@@ -98,6 +110,14 @@ Localization files are cached in Notification Service for given amount of time. 
   }
 }
 ```
+
+### 3.2. Translating Attributes
+
+Starting from 34th release, attributes are translated. (e.g. `BUY`, `SELL`, `STOPLOSS`, `SHORT`).
+
+Please use the `Attributes` section in localization file to provide translation per language for individual attributes.
+
+To make them eligible for translation, it's required to define them in `TranslateAttributes` section in `appsettings.json`. The attributes that's not defined in `TranslateAttributes` section won't be translated.
 
 ### 4. Proxy
 

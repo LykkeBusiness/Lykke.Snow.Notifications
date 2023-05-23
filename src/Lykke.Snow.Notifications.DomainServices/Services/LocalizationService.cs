@@ -21,7 +21,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
         {
             _logger = logger;
             _localizationDataProvider = localizationDataProvider;
-            _translateAttributes = new HashSet<string>(translateAttributes);
+            _translateAttributes = new HashSet<string>(translateAttributes.Select(x => x.ToUpper()));
         }
 
         public async Task<(string, string)> GetLocalizedTextAsync(string? notificationType, string? language, IList<string> parameters)
@@ -85,6 +85,8 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             for(int i = 0; i < parametersArg.Count; i++)
             {
                 var p = parametersArg[i];
+                
+                p = p.ToUpper();
                 
                 if(translateAttributes.Contains(p))
                     parametersArg[i] = localizationData.Attributes[p][lang];

@@ -1,54 +1,54 @@
 {
   "Attributes": {
     "BUY": {
-      "en":"BUY",
-      "es":"COMPRAR",
-      "de":"KAUF"
+      "en": "Buy",
+      "es": "Comprar",
+      "de": "Kauf"
     },
     "SELL": {
-      "en":"SELL",
-      "es":"VENDER",
-      "de":"VERKAUF"
+      "en": "Sell",
+      "es": "Vender",
+      "de": "Verkauf"
     },
     "LONG": {
-      "en":"LONG",
-      "es":"LARGO",
-      "de":""
+      "en": "Long",
+      "es": "Largo",
+      "de": "Long"
     },
     "SHORT": {
-      "en":"SHORT",
-      "es":"CORTO",
-      "de":""
+      "en": "Short",
+      "es": "Corto",
+      "de": "Short"
     },
     "MARKET": {
-      "en":"MARKET",
-      "es":"MERCADO",
-      "de":""
+      "en": "MARKET",
+      "es": "MERCADO",
+      "de": "MARKET"
     },
     "LIMIT": {
-      "en":"LIMIT",
-      "es":"LIMITE",
-      "de":""
+      "en": "LIMIT",
+      "es": "LIMITE",
+      "de": "LIMIT"
     },
     "STOP": {
-      "en":"STOP",
-      "es":"STOP",
-      "de":""
+      "en": "STOP",
+      "es": "STOP",
+      "de": "STOP"
     },
     "TAKEPROFIT": {
-      "en":"TAKEPROFIT",
-      "es":"Toma de beneficios",
-      "de":""
+      "en": "Take profit",
+      "es": "Toma de beneficios",
+      "de": "Take profit"
     },
     "STOPLOSS": {
-      "en":"STOPLOSS",
-      "es":"Stop de pérdidas",
-      "de":""
+      "en": "Stop loss",
+      "es": "Stop de pérdidas",
+      "de": "Stop loss"
     },
     "TRAILINGSTOP": {
-      "en":"",
-      "es":"",
-      "de":""
+      "en": "Trailing stop",
+      "es": "Stop dinámico",
+      "de": "Trailing stop"
     }
   },
   "Titles": {
