@@ -23,7 +23,6 @@ namespace Lykke.Snow.Notifications.Modules
                 .WithOptionalApiKey(_settings.MdmServiceClient.ApiKey)
                 .Create();
             
-            
             builder.RegisterInstance(mdmClientGenerator.Generate<ILocalizationFilesBinaryApi>());
         }
     }

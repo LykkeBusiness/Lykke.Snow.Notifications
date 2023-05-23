@@ -11,35 +11,12 @@ namespace Lykke.Snow.Notifications.Tests.Fakes
     public class LocalizationFilesBinaryApiStub : ILocalizationFilesBinaryApi
     {
         public int NumOfCalls { get; private set; } = 0;
-        private string LocalizationJsonText = @"
-                {
-                    ""Titles"": {
-                        ""AccountLocked"": {
-                           ""en"": ""Account locked"", 
-                           ""es"": ""Coenta bloqueada"", 
-                           ""de"": ""Konto gesperrt"", 
-                        },
-                        ""DepositSucceeded"": {
-                           ""en"": ""Deposit Succeeded"", 
-                           ""es"": ""Depósito exitoso"", 
-                           ""de"": ""Einzahlung erfolgreich"", 
-                        }
-                    },
-                    ""Bodies"": {
-                       ""AccountLocked"": {
-                           ""en"": ""Account has been locked."",
-                           ""es"": ""La cuenta ha sido bloqueada"",
-                           ""de"": ""Konto wurde gesperrt""
-                       }, 
-                       ""DepositSucceeded"": {
-                           ""en"": ""{0}{1} has been deposited to the account {2}."",
-                           ""es"": ""{0}{1} se ha depositado en la cuenta {2}."",
-                           ""de"": ""{0}{1} wurde auf das Konto {2} eingezahlt.""
-                       } 
-                    }
-                }
-            ";
+        private string LocalizationJsonText; 
 
+        public LocalizationFilesBinaryApiStub(string localizationDataJson)
+        {
+            LocalizationJsonText = localizationDataJson;
+        }
         public Task<ErrorCodeResponse<LocalizationFileErrorCodesContract>> DeleteLocalizationFileAsync(string fileId, [Body] DeleteLocalizationFileRequest request)
         {
             throw new System.NotImplementedException();
