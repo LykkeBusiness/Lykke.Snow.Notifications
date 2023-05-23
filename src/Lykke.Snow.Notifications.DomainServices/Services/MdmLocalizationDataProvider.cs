@@ -4,7 +4,7 @@ using Lykke.Snow.Mdm.Contracts.Api;
 using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Services;
-using Microsoft.Extensions.Internal;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -12,43 +12,43 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 {
     public class MdmLocalizationDataProvider : ILocalizationDataProvider
     {
-        private LocalizationData? _localizationData;
-        private DateTime _lastUpdatedAt;
-
         private readonly TimeSpan DefaultCacheExpirationPeriod = TimeSpan.FromMinutes(5);
         private readonly ILogger<MdmLocalizationDataProvider> _logger;
         private readonly ILocalizationFilesBinaryApi _localizationFilesBinaryApi;
-        private readonly ISystemClock _systemClock;
         private readonly string _localizationPlatformKey;
-        private readonly TimeSpan _cacheExpirationPeriod;
+        private const string _cacheKey = "LocalizationFile_Mdm";
+        private readonly MemoryCacheEntryOptions _cacheOptions;
+        private readonly IMemoryCache _cache;
 
         public MdmLocalizationDataProvider(ILogger<MdmLocalizationDataProvider> logger,
             ILocalizationFilesBinaryApi localizationFilesBinaryApi,
             TimeSpan? cacheExpirationPeriod,
-            ISystemClock systemClock,
-            string localizationPlatformKey)
+            string localizationPlatformKey,
+            IMemoryCache cache)
         {
-            if(string.IsNullOrEmpty(localizationPlatformKey))
+            if (string.IsNullOrEmpty(localizationPlatformKey))
                 throw new ArgumentNullException(nameof(localizationPlatformKey));
 
             _localizationPlatformKey = localizationPlatformKey;
             _logger = logger;
             _localizationFilesBinaryApi = localizationFilesBinaryApi;
-            _cacheExpirationPeriod = cacheExpirationPeriod ?? DefaultCacheExpirationPeriod;
-            _systemClock = systemClock;
+            _cache = cache;
+            _cacheOptions = new MemoryCacheEntryOptions()
+                .SetAbsoluteExpiration(cacheExpirationPeriod ?? DefaultCacheExpirationPeriod);
         }
 
         public async Task<LocalizationData> Load()
         {
-            if(_localizationData == null || _systemClock.UtcNow.DateTime - _lastUpdatedAt > _cacheExpirationPeriod)
-            {
-                _localizationData = await LoadFromMdm();
-                _lastUpdatedAt = _systemClock.UtcNow.DateTime;
+            if(_cache.TryGetValue(_cacheKey, out LocalizationData localizationData))
+                return localizationData;
 
-                _logger.LogDebug("Localization data has been loaded from Mdm Service and cache has been updated.");
-            }   
+            localizationData = await LoadFromMdm();
             
-            return _localizationData;
+            _cache.Set(_cacheKey, localizationData, _cacheOptions);
+
+            _logger.LogDebug("Localization data has been loaded from Mdm Service and cache has been updated.");
+            
+            return localizationData;
         }
         
         public async Task<LocalizationData> LoadFromMdm()
