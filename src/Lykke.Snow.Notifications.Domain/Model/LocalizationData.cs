@@ -19,9 +19,6 @@ namespace Lykke.Snow.Notifications.Domain.Model
             if(bodies == null || bodies.Count == 0)
                 throw new LocalizationFileParsingException();
             
-            if(attributes == null || attributes.Count == 0)
-                throw new LocalizationFileParsingException();
-            
             Titles = titles;
             Bodies = bodies;
             Attributes = attributes;
