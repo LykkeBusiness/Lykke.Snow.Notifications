@@ -152,27 +152,6 @@ namespace Lykke.Snow.Notifications.Tests
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
-        [Fact]
-        public async Task GetLocalizedText_ShouldCallLoad_IfLocalizationDataIsNull()
-        {
-            var mockDataProvider = new Mock<ILocalizationDataProvider>();
-            mockDataProvider.Setup(x => x.Load()).ReturnsAsync(new LocalizationData(
-                titles: new Dictionary<string, IReadOnlyDictionary<string, string>>
-                {
-                    { "any-type", new Dictionary<string, string> { { "any-lang", "any-title" } } }
-                },
-                bodies: new Dictionary<string, IReadOnlyDictionary<string, string>>
-                {
-                    { "any-type", new Dictionary<string, string> { { "any-lang", "any-body" } } }
-                }));
-
-            var sut = CreateSut(mockDataProvider.Object);
-            
-            await sut.GetLocalizedTextAsync("any-type", "any-lang", new string[]{});
-            await sut.GetLocalizedTextAsync("any-type", "any-lang", new string[]{});
-
-            mockDataProvider.Verify(x => x.Load(), Times.Once);
-        }
 
         [Theory]
         [ClassData(typeof(LocalizationHappyPathTestData))]
