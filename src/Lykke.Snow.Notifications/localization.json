@@ -112,6 +112,11 @@
       "es": "Retiradas de efectivo",
       "de": "Auszahlung"
     },
+    "PriceAlertTriggered": {
+      "en": "Price Alert",
+      "es": "(TBD) es- Price Alert",
+      "de": "(TBD) de- Price Alert"
+    },
     "OnBehalfOrderPlacement": {
       "en": "On Behalf",
       "es": "En nombre de",
@@ -208,6 +213,11 @@
       "en": "{0} {1} has been debited from the account {2}.",
       "es": "La retirada de {0} {1} se ha completado con éxito de la cuenta {2}.",
       "de": "Die Auszahlung in Höhe von {0} {1} wurde vom Konto {2} abgebucht."
+    },
+    "PriceAlertTriggered": {
+      "en": "{0}'s {1} price has crossed {2} {3} {4}.",
+      "es": "(TBD) es-{0}'s {1} price has crossed {2} {3} {4}.",
+      "de": "(TBD) de-{0}'s {1} price has crossed {2} {3} {4}."
     },
     "OnBehalfOrderPlacement": {
       "en": "{0} {1} order for {2} {3} has been placed.",
