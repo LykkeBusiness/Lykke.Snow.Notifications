@@ -31,7 +31,7 @@
     <PackageReference Include="LykkeBiz.SettingsReader" Version="7.1.0" />
     <PackageReference Include="LykkeBiz.RabbitMqBroker" Version="11.3.0" />
     <PackageReference Include="LykkeBiz.Snow.Cqrs" Version="2.1.0" />
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.20.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
     <PackageReference Include="Lykke.Middlewares" Version="3.6.1" />
     <PackageReference Include="LykkeBiz.Logs.Serilog" Version="3.3.1" />
     <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
