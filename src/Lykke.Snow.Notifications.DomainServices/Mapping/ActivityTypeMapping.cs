@@ -26,7 +26,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Mapping
             { ActivityTypeContract.PositionPartialClosing, NotificationType.PositionClosed }
         };
 
-        internal static readonly IReadOnlyDictionary<ActivityTypeContract, Func<ActivityEvent, string[]>> DescriptionEnrichments = 
+        internal static readonly IReadOnlyDictionary<ActivityTypeContract, Func<ActivityEvent, string[]>> DescriptionEnrichments =
             new Dictionary<ActivityTypeContract, Func<ActivityEvent, string[]>>
         {
             {ActivityTypeContract.AccountWithdrawalSucceeded, (e) => { return e.Activity.DescriptionAttributes.ToList().Append(e.Activity.AccountId).ToArray(); }},

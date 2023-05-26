@@ -59,6 +59,21 @@
       "en": "Withdrawal",
       "es": "Retiradas de efectivo",
       "de": "Auszahlung"
+    },
+    "CAPositionAboutToClose": {
+      "en": "Corporate Action",
+      "es": "ES-Corporate Action",
+      "de": "DE-Corporate Action"
+    },
+    "MarketHoliday": {
+      "en": "Market Holiday",
+      "es": "es - Market Holiday",
+      "de": "de - Market Holiday"
+    },
+    "PlatformHoliday": {
+      "en": "Platform Holiday",
+      "es": "es - Platform Holiday",
+      "de": "de - Platform Holiday"
     }
   },
   "Bodies": {
@@ -121,6 +136,21 @@
       "en": "{0} {1} has been debited from the account {2}.",
       "es": "La retirada de {0} {1} se ha completado con éxito de la cuenta {2}.",
       "de": "Die Auszahlung in Höhe von {0} {1} wurde vom Konto {2} abgebucht."
+    },
+    "CAPositionAboutToClose": {
+      "en": "You currently have open position on {0} which is impacted by a Corporate Action scheduled for {2}.",
+      "es": "ES-Corporate Action",
+      "de": "DE-Corporate Action"
+    },
+    "MarketHoliday": {
+      "en": "Tomorrow ({1}) will be a holiday for market '{0}'. Trading for that market will be suspended during the period.",
+      "es": "(TBD) es - Market Holiday body",
+      "de": "(TBD) de - Market Holiday body"
+    },
+    "PlatformHoliday": {
+      "en": "Tomorrow ({0}) will be a holiday for the entire platform. All trading will be suspended during the period.",
+      "es": "(TBD) es - Platform Holiday body",
+      "de": "(TBD) de - Platform Holiday body"
     }
   }
 }

@@ -39,6 +39,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             _deviceConfigurationRepository = deviceConfigurationRepository;
             _localizationService = localizationService;
         }
+
         public async Task Handle(ActivityEvent e)
         {
             if(!TryGetNotificationType(ActivityTypeMapping.NotificationTypeMapping, activityType: e.Activity.Event, out var notificationType))

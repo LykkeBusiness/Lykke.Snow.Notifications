@@ -378,27 +378,27 @@ namespace Lykke.Snow.Notifications.Tests
             IDeviceRegistrationService deviceRegistrationService = new Mock<IDeviceRegistrationService>().Object;
             ILocalizationService localizationService = new Mock<ILocalizationService>().Object;
             IDeviceConfigurationRepository deviceConfigurationRepository = new Mock<IDeviceConfigurationRepository>().Object;
-            
-            if(notificationServiceArg != null)
+
+            if (notificationServiceArg != null)
             {
                 notificationService = notificationServiceArg;
             }
-            
-            if(deviceRegistrationServiceArg != null)
+
+            if (deviceRegistrationServiceArg != null)
             {
                 deviceRegistrationService = deviceRegistrationServiceArg;
             }
-            
-            if(localizationServiceArg != null)
+
+            if (localizationServiceArg != null)
             {
                 localizationService = localizationServiceArg;
             }
-            
-            if(deviceConfigurationRepositoryArg != null)
+
+            if (deviceConfigurationRepositoryArg != null)
             {
                 deviceConfigurationRepository = deviceConfigurationRepositoryArg;
             }
-            
+
             return new ActivityHandler(mockLogger.Object, notificationService, deviceRegistrationService, localizationService, deviceConfigurationRepository);
         }
     }
