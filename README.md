@@ -7,7 +7,7 @@ This service consumes events from the Activities producer and becomes aware of n
 
 ## How to run for debug?
 
-1. Clone the repository anwhere in filesystem.
+1. Clone the repository anywhere in filesystem.
 2. Create an `appsettings.dev.json` file in `src/Lykke.Snow.Notifications` directory. (Please refer to **Configuration** section.)
 3. Add an environment variable `SettingsUrl` with value of `appsettings.dev.json`
 4. Setup firebase service account credentials (please refer to configuration section)
@@ -19,6 +19,7 @@ This service consumes events from the Activities producer and becomes aware of n
 - MSSQL
 - RabbitMQ broker
 - Firebase Cloud Messaging.
+- Mdm service
 
 ## Configuration
 
@@ -52,6 +53,18 @@ The file has the following format.
 
 ```json
 {
+  "Attributes": {
+    "BUY": {
+      "en": "Buy",
+      "es": "Comprar",
+      "de": "Kauf"
+    },
+    "SELL": {
+      "en": "Sell",
+      "es": "Vender",
+      "de": "Verkauf"
+    }
+  },
   "Titles": {
     "AccountLocked": {
       "en": "English text for notification title with {0} placeholders {1}.",
@@ -77,6 +90,35 @@ And the languages should be put in lowercase format. (i.e. `en`, `es`, `de`)
 
 All notification types can be found at [here](./src/Lykke.Snow.Notifications.Domain/Enums/NotificationType.cs). 
 
+
+### 3.1. Mdm Service Integration
+
+Starting from 34th release, localization files are loaded from Mdm service.
+
+In order to specify the platform key for the file that's been uploaded through Mdm Service, use the **LocalizationPlatformKey** configuration in the following configuration section.
+
+Localization files are cached in Notification Service for given amount of time. This period is 5 minutes as default, and can be adjusted within the same configuration section.
+
+```json
+{
+  "Localization": {
+    "LocalizationPlatformKey": "NotificationService",
+    "LocalizationFileCache": {
+      "ExpirationPeriod": "00:01:00"
+    },
+    "TranslateAttributes": ["BUY", "SELL", "LONG", "SHORT"]
+  }
+}
+```
+
+### 3.2. Translating Attributes
+
+Starting from 34th release, attributes are translated. (e.g. `BUY`, `SELL`, `STOPLOSS`, `SHORT`).
+
+Please use the `Attributes` section in localization file to provide translation per language for individual attributes.
+
+To make them eligible for translation, it's required to define them in `TranslateAttributes` section in `appsettings.json`. The attributes that's not defined in `TranslateAttributes` section won't be translated.
+
 ### 4. Proxy
 
 Proxy is optional. Being set, it will be used for all FCM outgoing requests.
@@ -99,6 +141,21 @@ Device configurations are cached in memory. The cache is invalidated on any chan
 {
   "ConfigurationCache": {
     "ExpirationPeriod": "00:01:00"
+  }
+}
+```
+
+### 6. External Services
+
+1. Mdm Service
+
+Please specify the base url and api key for Mdm Service within the following configuration section.
+
+```json
+{
+  "MdmServiceClient": {
+    "ServiceUrl": "",
+    "ApiKey": ""
   }
 }
 ```
@@ -154,6 +211,17 @@ Settings schema is
         "ExchangeName": "",
         "IsDurable": true
       }
+    },
+    "MdmServiceClient": {
+      "ServiceUrl": "",
+      "ApiKey": ""
+    },
+    "Localization": {
+      "LocalizationPlatformKey": "NotificationService",
+      "LocalizationFileCache": {
+        "ExpirationPeriod": "00:01:00"
+      },
+      "TranslateAttributes": ["BUY", "SELL", "LONG", "SHORT"]
     }
   }
 }

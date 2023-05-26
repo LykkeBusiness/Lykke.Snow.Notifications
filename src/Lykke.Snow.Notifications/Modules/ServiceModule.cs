@@ -1,16 +1,25 @@
 // Copyright (c) 2020 Lykke Corp.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using Autofac;
 using Lykke.Middlewares.Mappers;
 using Lykke.Snow.Notifications.Domain.Services;
 using Lykke.Snow.Notifications.DomainServices.Services;
+using Lykke.Snow.Notifications.Settings;
 using Microsoft.Extensions.Internal;
 
 namespace Lykke.Snow.Notifications.Modules
 {
     internal class ServiceModule : Module
     {
+        private readonly NotificationServiceSettings _notificationServiceSettings;
+
+        public ServiceModule(NotificationServiceSettings notificationServiceSettings)
+        {
+            _notificationServiceSettings = notificationServiceSettings;
+        }
+
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<DefaultHttpStatusCodeMapper>()
@@ -35,11 +44,13 @@ namespace Lykke.Snow.Notifications.Modules
 
             builder.RegisterType<LocalizationService>()
                 .As<ILocalizationService>()
+                .WithParameter(new TypedParameter(typeof(string[]), _notificationServiceSettings.Localization.TranslateAttributes))
                 .SingleInstance();
 
-            builder.RegisterType<FileSystemLocalizationDataProvider>()
+            builder.RegisterType<MdmLocalizationDataProvider>()
                 .As<ILocalizationDataProvider>()
-                .WithParameter("localizationFilePath", "localization.json")
+                .WithParameter(new TypedParameter(typeof(TimeSpan?), _notificationServiceSettings.Localization.LocalizationFileCache?.ExpirationPeriod))
+                .WithParameter(new TypedParameter(typeof(string), _notificationServiceSettings.Localization.LocalizationPlatformKey))
                 .SingleInstance();
 
             builder.RegisterType<ActivityHandler>()

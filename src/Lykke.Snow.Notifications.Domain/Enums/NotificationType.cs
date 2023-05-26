@@ -18,5 +18,12 @@ namespace Lykke.Snow.Notifications.Domain.Enums
         PositionClosed,
         WithdrawalSucceeded,
         PriceAlertTriggered,
+        OnBehalfOrderPlacement,
+        OnBehalfOrderModification,
+        OnBehalfOrderCancellation,
+        OnBehalfPositionClosing,
+        CAPositionAboutToClose,
+        MarketHoliday,
+        PlatformHoliday,
     }
 }

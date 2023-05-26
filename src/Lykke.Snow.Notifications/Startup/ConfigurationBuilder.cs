@@ -1,6 +1,5 @@
 using System.IO;
 using System.Reflection;
-using Lykke.Logs.Serilog;
 using Lykke.SettingsReader;
 using Lykke.Snow.Notifications.Settings;
 using Microsoft.AspNetCore.Builder;
@@ -16,11 +15,10 @@ namespace Lykke.Snow.Notifications.Startup
 
             var configuration = builder.Configuration
                 .SetBasePath(builder.Environment.ContentRootPath)
-                .AddSerilogJson(builder.Environment)
                 .AddUserSecrets<Program>()
                 .AddEnvironmentVariables()
                 .Build();
-            
+
             var settingsManager = configuration.LoadSettings<AppSettings>(_ => { });
 
             return (configuration, settingsManager);

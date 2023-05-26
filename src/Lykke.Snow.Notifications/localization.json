@@ -1,4 +1,56 @@
 {
+  "Attributes": {
+    "BUY": {
+      "en": "Buy",
+      "es": "Comprar",
+      "de": "Kauf"
+    },
+    "SELL": {
+      "en": "Sell",
+      "es": "Vender",
+      "de": "Verkauf"
+    },
+    "LONG": {
+      "en": "Long",
+      "es": "Largo",
+      "de": "Long"
+    },
+    "SHORT": {
+      "en": "Short",
+      "es": "Corto",
+      "de": "Short"
+    },
+    "MARKET": {
+      "en": "MARKET",
+      "es": "MERCADO",
+      "de": "MARKET"
+    },
+    "LIMIT": {
+      "en": "LIMIT",
+      "es": "LIMITE",
+      "de": "LIMIT"
+    },
+    "STOP": {
+      "en": "STOP",
+      "es": "STOP",
+      "de": "STOP"
+    },
+    "TAKEPROFIT": {
+      "en": "Take profit",
+      "es": "Toma de beneficios",
+      "de": "Take profit"
+    },
+    "STOPLOSS": {
+      "en": "Stop loss",
+      "es": "Stop de pérdidas",
+      "de": "Stop loss"
+    },
+    "TRAILINGSTOP": {
+      "en": "Trailing stop",
+      "es": "Stop dinámico",
+      "de": "Trailing stop"
+    }
+  },
   "Titles": {
     "AccountLocked": {
       "en": "Account locked",
@@ -64,6 +116,41 @@
       "en": "Price Alert",
       "es": "(TBD) es- Price Alert",
       "de": "(TBD) de- Price Alert"
+    },
+    "OnBehalfOrderPlacement": {
+      "en": "On Behalf",
+      "es": "En nombre de",
+      "de": "Kundenbetreuung"
+    },
+    "OnBehalfOrderModification": {
+      "en": "On Behalf",
+      "es": "En nombre de",
+      "de": "Kundenbetreuung"
+    },
+    "OnBehalfOrderCancellation": {
+      "en": "On Behalf",
+      "es": "En nombre de",
+      "de": "Kundenbetreuung"
+    },
+    "OnBehalfPositionClosing": {
+      "en": "On behalf position closing",
+      "es": "Posición cerrada en nombre de",
+      "de": "Kundenbetreuung Positionsschließung"
+    },
+    "CAPositionAboutToClose": {
+      "en": "Corporate Action",
+      "es": "ES-Corporate Action",
+      "de": "DE-Corporate Action"
+    },
+    "MarketHoliday": {
+      "en": "Market Holiday",
+      "es": "es - Market Holiday",
+      "de": "de - Market Holiday"
+    },
+    "PlatformHoliday": {
+      "en": "Platform Holiday",
+      "es": "es - Platform Holiday",
+      "de": "de - Platform Holiday"
     }
   },
   "Bodies": {
@@ -131,6 +218,41 @@
       "en": "{0}'s {1} price has crossed {2} {3} {4}.",
       "es": "(TBD) es-{0}'s {1} price has crossed {2} {3} {4}.",
       "de": "(TBD) de-{0}'s {1} price has crossed {2} {3} {4}."
+    },
+    "OnBehalfOrderPlacement": {
+      "en": "{0} {1} order for {2} {3} has been placed.",
+      "es": "La orden {0} {1} de {2} {3} ha sido aceptada.",
+      "de": "Die {0} {1} Order für {2} {3} wurde angelegt."
+    },
+    "OnBehalfOrderModification": {
+      "en": "{0} {1} order for {2} {3} has been changed.",
+      "es": "La orden {0} {1} de {2} {3} ha sido modificada.",
+      "de": "Die {0} {1} Order für {2} {3} wurde geändert."
+    },
+    "OnBehalfOrderCancellation": {
+      "en": "{0} {1} order for {2} {3} has been cancelled.",
+      "es": "La orden {0} {1} de {2} {3} ha sido cancelada.",
+      "de": "Die {0} {1} Order für {2} {3} wurde gelöscht."
+    },
+    "OnBehalfPositionClosing": {
+      "en": "{0} position of {1} {2} has been closed. P&L of {3} {4} has been realized.",
+      "es": "La posición {0} de {1} {2} se ha cerrado. Se ha realizado una PyG de {3} {4}.",
+      "de": "Die {0} Position in {1} {2} wurde geschlossen. Eine GuV von {3} {4} wurde realisiert."
+    },
+    "CAPositionAboutToClose": {
+      "en": "You currently have open position on {0} which is impacted by a Corporate Action scheduled for {2}.",
+      "es": "ES-Corporate Action",
+      "de": "DE-Corporate Action"
+    },
+    "MarketHoliday": {
+      "en": "Tomorrow ({1}) will be a holiday for market '{0}'. Trading for that market will be suspended during the period.",
+      "es": "(TBD) es - Market Holiday body",
+      "de": "(TBD) de - Market Holiday body"
+    },
+    "PlatformHoliday": {
+      "en": "Tomorrow ({0}) will be a holiday for the entire platform. All trading will be suspended during the period.",
+      "es": "(TBD) es - Platform Holiday body",
+      "de": "(TBD) de - Platform Holiday body"
     }
   }
 }

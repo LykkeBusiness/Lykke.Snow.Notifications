@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Common;
 using FirebaseAdmin.Messaging;
@@ -41,16 +42,21 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
         public async Task Handle(ActivityEvent e)
         {
-            if(!TryGetNotificationType(ActivityTypeMapping.NotificationTypeMapping, activityType: e.Activity.Event, out var notificationType))
+            if(!TryGetNotificationType(ActivityTypeMapping.NotificationTypeMapping, activityType: e.Activity.Event, isOnBehalf: e.Activity.IsOnBehalf, out var notificationType))
+            {
+                _logger.LogDebug("No notification type mapping found for the activity {Activity}", e.Activity.Event);
                 return;
-
-            var deviceRegistrationsResult = await _deviceRegistrationService.GetDeviceRegistrationsAsync(accountId: e.Activity.AccountId);
+            }
             
+            var deviceRegistrationsResult = await _deviceRegistrationService.GetDeviceRegistrationsAsync(accountId: e.Activity.AccountId);
+
             if(deviceRegistrationsResult.IsFailed)
             {
                 _logger.LogWarning("Could not get device tokens for the account {AccountId}. ErrorCode: {ErrorCode}", e.Activity.AccountId, deviceRegistrationsResult.Error);
                 return;
             }
+
+            _logger.LogDebug("{NumOfRegistrations} registrations found for the account {AccountId}", deviceRegistrationsResult.Value.Count(), e.Activity.AccountId);
             
             // Not all activities have enough number of description attributes
             // to fill in localization template. Here we enrich them.
@@ -66,11 +72,15 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                     {
                         _logger.LogWarning("Device configuration could not be found for the device {DeviceId} and account {AccountId}", 
                             deviceRegistration.DeviceId, deviceRegistration.AccountId);
-                        return;
+                        continue;
                     }
                         
                     if(!_notificationService.IsDeviceTargeted(deviceConfiguration, notificationType))
+                    {
+                        _logger.LogDebug("The notification has not been sent to the device {DeviceToken} because it is not targeted for the notification type {NotificationType}",
+                            deviceRegistration.DeviceToken, notificationType);
                         continue;
+                    }
                         
                     var (title, body) = await _localizationService.GetLocalizedTextAsync(
                         Enum.GetName(notificationType), 
@@ -83,31 +93,41 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                         body,
                         new Dictionary<string, string>()
                     );
+                    
+                    _logger.LogDebug("Attempting to send the notification to the account {AccountId} device {DeviceToken}", deviceRegistration.AccountId, deviceRegistration.DeviceToken);
 
                     await _notificationService.SendNotification(notificationMessage, deviceToken: deviceRegistration.DeviceToken);
 
-                    _logger.LogInformation("Push notification has successfully been sent to the device {DeviceToken}: {PushNotificationPayload}",
-                        deviceRegistration.DeviceToken, notificationMessage.ToJson());
+                    _logger.LogInformation("Push notification has successfully been sent to the Account {AccountId} device {DeviceToken}: {PushNotificationPayload}",
+                        deviceRegistration.AccountId, deviceRegistration.DeviceToken, notificationMessage.ToJson());
                 }
                 catch(CannotSendNotificationException ex)
                 {
                     if(ex.ErrorCode == MessagingErrorCode.Unregistered)
                     {
-                        _logger.LogWarning("The notification could not be delivered to the device {DeviceToken} because it is no longer active.", deviceRegistration.DeviceToken);
+                        _logger.LogDebug("The notification could not be delivered to the device {DeviceToken} because it is no longer active.", deviceRegistration.DeviceToken);
+                        continue;
                     }
+                    
+                    _logger.LogError(ex, "The notification could not be delivered to the device {DeviceToken}. ErrorCode: {ErrorCode}", deviceRegistration.DeviceToken, ex.ErrorCode);
                 }
             }
         }
 
-        public static bool TryGetNotificationType(IReadOnlyDictionary<ActivityTypeContract, NotificationType> notificationTypeMapping, ActivityTypeContract activityType, out NotificationType type)
+        public static bool TryGetNotificationType(IReadOnlyDictionary<Tuple<ActivityTypeContract, OnBehalf>, NotificationType> notificationTypeMapping, 
+            ActivityTypeContract activityType, 
+            bool isOnBehalf,
+            out NotificationType type)
         {
-            if(!notificationTypeMapping.ContainsKey(activityType))
+            var key = new Tuple<ActivityTypeContract, OnBehalf>(activityType, isOnBehalf ? OnBehalf.Yes : OnBehalf.No);
+            
+            if(!notificationTypeMapping.ContainsKey(key))
             {
                 type = NotificationType.NotSpecified;
                 return false;
             }
             
-            type = notificationTypeMapping[activityType];
+            type = notificationTypeMapping[key];
 
             return true;
         }

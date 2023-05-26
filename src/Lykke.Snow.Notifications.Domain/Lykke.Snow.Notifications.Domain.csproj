@@ -7,7 +7,8 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Lykke.MarginTrading.Activities.Contracts" Version="1.3.0" />
+    <PackageReference Include="Lykke.MarginTrading.Activities.Contracts" Version="1.5.0" />
+    <PackageReference Include="Meteor.Client" Version="1.3.0" />
     <PackageReference Include="Lykke.Snow.Common" Version="1.57.0" />
     <PackageReference Include="LykkeBiz.Common" Version="8.1.0" />
   </ItemGroup>

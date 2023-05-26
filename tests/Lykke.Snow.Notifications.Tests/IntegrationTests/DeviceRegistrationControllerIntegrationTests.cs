@@ -58,8 +58,11 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
         {
             FcmIntegrationServiceFake.SetIsDeviceTokenValid(true);
 
-            var registerDeviceRequest = new RegisterDeviceRequest(accountId: Guid.NewGuid().ToString(), deviceToken: Guid.NewGuid().ToString(), 
-                    deviceId: Guid.NewGuid().ToString(), "lang-invalid");
+            var registerDeviceRequest = new RegisterDeviceRequest(
+                accountId: Guid.NewGuid().ToString(),
+                deviceToken: Guid.NewGuid().ToString(),
+                deviceId: Guid.NewGuid().ToString(),
+                locale: "lang-invalid");
             
             var response = await _client.PostAsJsonAsync("/api/DeviceRegistration", registerDeviceRequest);
 
