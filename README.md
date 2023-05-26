@@ -102,7 +102,7 @@ Localization files are cached in Notification Service for given amount of time. 
 ```json
 {
   "Localization": {
-    "LocalizationPlatformKey": "NotificationService",
+    "LocalizationPlatformKey": "PushNotification",
     "LocalizationFileCache": {
       "ExpirationPeriod": "00:01:00"
     },
@@ -217,7 +217,7 @@ Settings schema is
       "ApiKey": ""
     },
     "Localization": {
-      "LocalizationPlatformKey": "NotificationService",
+      "LocalizationPlatformKey": "PushNotifications",
       "LocalizationFileCache": {
         "ExpirationPeriod": "00:01:00"
       },
