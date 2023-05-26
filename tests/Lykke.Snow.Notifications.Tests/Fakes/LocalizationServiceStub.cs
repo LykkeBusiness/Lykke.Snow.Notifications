@@ -9,7 +9,7 @@ namespace Lykke.Snow.Notifications.Tests.Fakes
     {
         public int NumOfGetLocalizedTextAsyncCalls { get; private set; }
 
-        public async Task<(string, string)> GetLocalizedTextAsync(string? notificationType, string? language, IReadOnlyList<string> parameters)
+        public async Task<(string, string)> GetLocalizedTextAsync(string? notificationType, string? language, IList<string> parameters)
         {
             NumOfGetLocalizedTextAsyncCalls++;
 

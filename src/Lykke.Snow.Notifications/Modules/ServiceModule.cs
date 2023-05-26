@@ -44,6 +44,7 @@ namespace Lykke.Snow.Notifications.Modules
 
             builder.RegisterType<LocalizationService>()
                 .As<ILocalizationService>()
+                .WithParameter(new TypedParameter(typeof(string[]), _notificationServiceSettings.Localization.TranslateAttributes))
                 .SingleInstance();
 
             builder.RegisterType<MdmLocalizationDataProvider>()

@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 using Lykke.Snow.Notifications.Domain.Exceptions;
 using Lykke.Snow.Notifications.Domain.Model;
@@ -17,6 +19,28 @@ namespace Lykke.Snow.Notifications.Tests
     {
         const string LocalizationJsonText = @"
             {
+                ""Attributes"": {
+                    ""BUY"": {
+                       ""en"": ""BUY"", 
+                       ""es"": ""COMPRAR"", 
+                       ""de"": ""KAUF"", 
+                    },
+                    ""SELL"": {
+                       ""en"": ""SELL"", 
+                       ""es"": ""VENDER"", 
+                       ""de"": ""VERKAUF"", 
+                    },
+                    ""LONG"": {
+                       ""en"": ""LONG"", 
+                       ""es"": ""LARGO"", 
+                       ""de"": ""LANGE"", 
+                    },
+                    ""SHORT"": {
+                       ""en"": ""SHORT"", 
+                       ""es"": ""CORTO"", 
+                       ""de"": ""KURZ"", 
+                    }
+                },
                 ""Titles"": {
                     ""AccountLocked"": {
                        ""en"": ""Account locked"", 
@@ -153,6 +177,37 @@ namespace Lykke.Snow.Notifications.Tests
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
 
+        class TranslateParametersTestData : IEnumerable<object[]>
+        {
+            public IEnumerator<object[]> GetEnumerator()
+            {
+                string[] translateAttributes = new string[] { "BUY", "SELL", "LONG", "SHORT" };
+                var translateAttributesHashset = new HashSet<string>(translateAttributes, StringComparer.OrdinalIgnoreCase);
+
+                yield return new object[]
+                {
+                    translateAttributesHashset, new [] { "BUY", "10", "PRODUCT A" }, "es", new [] { "COMPRAR", "10", "PRODUCT A" },
+                };
+                
+                yield return new object[]
+                {
+                    translateAttributesHashset, new [] { "SELL", "5", "SHORT", "PRODUCT B" }, "de", new [] { "VERKAUF", "5", "KURZ", "PRODUCT B" }
+                };
+
+                yield return new object[]
+                {
+                    translateAttributesHashset, new [] { "Buy", "15", "PRODUCT C" }, "de", new [] { "KAUF", "15", "PRODUCT C" }
+                };
+                
+                yield return new object[]
+                {
+                    translateAttributesHashset, new [] { "5", "lOnG", "PRODUCT D" }, "es", new [] { "5", "LARGO", "PRODUCT D" }
+                };
+            }
+
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        }
+
         [Theory]
         [ClassData(typeof(LocalizationHappyPathTestData))]
         public async Task GetLocalizedText_HappyPath_ShouldReturnTranslatedMessage(LocalizationData data,
@@ -209,22 +264,79 @@ namespace Lykke.Snow.Notifications.Tests
             Assert.ThrowsAsync<LocalizationFormatException>(() =>
                 sut.GetLocalizedTextAsync(notificationType, language, args));
         }
-
-        private LocalizationService CreateSut(LocalizationData data)
+        
+        [Theory]
+        [ClassData(typeof(TranslateParametersTestData))]
+        public void TranslateParametersIfApplicable_ShouldTranslateParameters_GivenInTheTranslateAttributesCollection(
+            HashSet<string> translateAttributes,
+            string[] inputParameters,
+            string lang,
+            string[] expectedParameters
+        )
         {
+            var localizationData = JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!;
+            
+            var sut = CreateSut(data: localizationData);
+            
+            var result = sut.TranslateParametersIfApplicable(localizationData, translateAttributes, inputParameters, lang);
+
+            Assert.Equal(expectedParameters, result);
+        }
+        
+        [Fact]
+        public void TranslateAttributesArgument_ShouldBeTransformedToUpperCase_DuringInitialization()
+        {
+            var translateAttributes = new string[] { "Buy", "selL", "lOng", "sHort" };
+
+            var localizationData = JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!;
+            
+            var sut = CreateSut(translateAttributesArg: translateAttributes, data: localizationData);
+
+            var translateAttributesField = sut
+                .GetType()
+                .GetField("_translateAttributes", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.GetValue(sut);
+            
+            if(translateAttributesField == null)
+                throw new NullReferenceException(nameof(translateAttributesField));
+
+            var translateAttributesTypedField = (HashSet<string>) translateAttributesField;
+            
+            Assert.Equal(translateAttributes.Length, translateAttributesTypedField.Count);
+            
+            foreach(var a in translateAttributes)
+                Assert.Contains(a.ToUpper(), translateAttributesTypedField);
+        }
+        
+        private LocalizationService CreateSut(LocalizationData data, string[] translateAttributesArg = null)
+        {
+            string[] translateAttributes = new string[]{};
+            
+            if(translateAttributesArg != null)
+            {
+                translateAttributes = translateAttributesArg;
+            }
+
             var mockLogger = new Mock<ILogger<LocalizationService>>();
 
             var mockProvider = new Mock<ILocalizationDataProvider>();
             mockProvider.Setup(x => x.Load()).Returns(Task.FromResult(data));
 
-            return new LocalizationService(mockLogger.Object, mockProvider.Object);
+            return new LocalizationService(mockLogger.Object, mockProvider.Object, translateAttributes);
         }
 
-        private LocalizationService CreateSut(ILocalizationDataProvider dataProvider)
+        private LocalizationService CreateSut(ILocalizationDataProvider dataProvider, string[] translateAttributesArg = null)
         {
+            string[] translateAttributes = new string[]{};
+            
+            if(translateAttributesArg != null)
+            {
+                translateAttributes = translateAttributesArg;
+            }
+
             var mockLogger = new Mock<ILogger<LocalizationService>>();
 
-            return new LocalizationService(mockLogger.Object, dataProvider);
+            return new LocalizationService(mockLogger.Object, dataProvider, translateAttributes);
         }
     }
 }
