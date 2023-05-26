@@ -12,7 +12,6 @@ using Lykke.Snow.Notifications.Domain.Services;
 using Lykke.Snow.Notifications.DomainServices.Mapping;
 using Lykke.Snow.Notifications.DomainServices.Projections;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace Lykke.Snow.Notifications.DomainServices.Services
 {
@@ -117,10 +116,10 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
         public static bool TryGetNotificationType(IReadOnlyDictionary<Tuple<ActivityTypeContract, OnBehalf>, NotificationType> notificationTypeMapping, 
             ActivityTypeContract activityType, 
-            bool isOnBehalf,
+            bool? isOnBehalf,
             out NotificationType type)
         {
-            var key = new Tuple<ActivityTypeContract, OnBehalf>(activityType, isOnBehalf ? OnBehalf.Yes : OnBehalf.No);
+            var key = new Tuple<ActivityTypeContract, OnBehalf>(activityType, (isOnBehalf.HasValue && isOnBehalf.Value) ? OnBehalf.Yes : OnBehalf.No);
             
             if(!notificationTypeMapping.ContainsKey(key))
             {

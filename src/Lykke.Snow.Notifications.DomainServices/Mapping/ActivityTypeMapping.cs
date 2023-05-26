@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Lykke.MarginTrading.Activities.Contracts.Models;
 using Lykke.Snow.Notifications.Domain.Enums;
 
@@ -44,7 +43,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Mapping
         };
 
         // Activity description enrichments based on Activity type
-        internal static readonly IReadOnlyDictionary<ActivityTypeContract, Func<ActivityEvent, string[]>> DescriptionEnrichments = 
+        internal static readonly IReadOnlyDictionary<ActivityTypeContract, Func<ActivityEvent, string[]>> DescriptionEnrichments =
             new Dictionary<ActivityTypeContract, Func<ActivityEvent, string[]>>
         {
         };
