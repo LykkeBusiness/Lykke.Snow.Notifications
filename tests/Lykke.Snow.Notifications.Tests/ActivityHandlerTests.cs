@@ -40,6 +40,8 @@ namespace Lykke.Snow.Notifications.Tests
             yield return new object[] { mapping, ActivityTypeContract.PositionClosing, false, NotificationType.NotSpecified, false };
             yield return new object[] { mapping, ActivityTypeContract.OrderAcceptanceAndActivation, true, NotificationType.OnBehalfOrderPlacement, true };
             yield return new object[] { mapping, ActivityTypeContract.OrderAcceptanceAndActivation, false, NotificationType.NotSpecified, false };
+            yield return new object[] { mapping, ActivityTypeContract.AccountDepositSucceeded, null, NotificationType.DepositSucceeded, true };
+            yield return new object[] { mapping, ActivityTypeContract.OrderAcceptanceAndActivation, null, NotificationType.NotSpecified, false };
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -119,7 +121,7 @@ namespace Lykke.Snow.Notifications.Tests
         public void TryGetNotificationType_ShouldMapActivity_ToNotificationType(
             IReadOnlyDictionary<Tuple<ActivityTypeContract, OnBehalf>, NotificationType> mapping, 
             ActivityTypeContract activityType,
-            bool isOnBehalf,
+            bool? isOnBehalf,
             NotificationType expectedNotificationType,
             bool expectedResult)
         {
