@@ -79,6 +79,21 @@
       "en": "On behalf position closing",
       "es": "Posición cerrada en nombre de",
       "de": "Kundenbetreuung Positionsschließung"
+    },
+    "CAPositionAboutToClose": {
+      "en": "Corporate Action",
+      "es": "ES-Corporate Action",
+      "de": "DE-Corporate Action"
+    },
+    "MarketHoliday": {
+      "en": "Market Holiday",
+      "es": "es - Market Holiday",
+      "de": "de - Market Holiday"
+    },
+    "PlatformHoliday": {
+      "en": "Platform Holiday",
+      "es": "es - Platform Holiday",
+      "de": "de - Platform Holiday"
     }
   },
   "Bodies": {
@@ -161,6 +176,21 @@
       "en": "{0} position of {1} {2} has been closed. P&L of {3} {4} has been realized.",
       "es": "La posición {0} de {1} {2} se ha cerrado. Se ha realizado una PyG de {3} {4}.",
       "de": "Die {0} Position in {1} {2} wurde geschlossen. Eine GuV von {3} {4} wurde realisiert."
+    },
+    "CAPositionAboutToClose": {
+      "en": "You currently have open position on {0} which is impacted by a Corporate Action scheduled for {2}.",
+      "es": "ES-Corporate Action",
+      "de": "DE-Corporate Action"
+    },
+    "MarketHoliday": {
+      "en": "Tomorrow ({1}) will be a holiday for market '{0}'. Trading for that market will be suspended during the period.",
+      "es": "(TBD) es - Market Holiday body",
+      "de": "(TBD) de - Market Holiday body"
+    },
+    "PlatformHoliday": {
+      "en": "Tomorrow ({0}) will be a holiday for the entire platform. All trading will be suspended during the period.",
+      "es": "(TBD) es - Platform Holiday body",
+      "de": "(TBD) de - Platform Holiday body"
     }
   }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lykke.Snow.Notifications.Domain.Exceptions;
-using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.Domain.Services;
 using Microsoft.Extensions.Logging;
 
@@ -14,8 +13,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
         private readonly ILocalizationDataProvider _localizationDataProvider;
         private ILogger<LocalizationService> _logger;
         
-        private LocalizationData? _localizationData;
-
         public LocalizationService(ILogger<LocalizationService> logger, 
             ILocalizationDataProvider localizationDataProvider)
         {
@@ -25,8 +22,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
         public async Task<(string, string)> GetLocalizedTextAsync(string? notificationType, string? language, IReadOnlyList<string> parameters)
         {
-            if(_localizationData == null)
-                _localizationData = await _localizationDataProvider.Load();
+            var localizationData = await _localizationDataProvider.Load();
             
             if(notificationType == null)
                 throw new ArgumentNullException(nameof(notificationType));
@@ -38,8 +34,8 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             {
                 language = language.ToLower();
 
-                var title = _localizationData.Titles[notificationType][language];
-                var body = _localizationData.Bodies[notificationType][language];
+                var title = localizationData.Titles[notificationType][language];
+                var body = localizationData.Bodies[notificationType][language];
                 
                 body = string.Format(body, parameters.ToArray());
                 
@@ -59,7 +55,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             }
             catch(FormatException)
             {
-                var ex = new LocalizationFormatException(notificationType, language, _localizationData.Bodies[notificationType][language], parameters);
+                var ex = new LocalizationFormatException(notificationType, language, localizationData.Bodies[notificationType][language], parameters);
                 _logger.LogError(ex, ex.Message);
                 throw ex;
             }
