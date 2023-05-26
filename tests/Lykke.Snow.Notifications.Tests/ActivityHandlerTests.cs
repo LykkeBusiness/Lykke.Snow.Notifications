@@ -22,18 +22,24 @@ namespace Lykke.Snow.Notifications.Tests
     {
         public IEnumerator<object[]> GetEnumerator()
         {
-            IReadOnlyDictionary<ActivityTypeContract, NotificationType> mapping = new Dictionary<ActivityTypeContract, NotificationType>()
+            IReadOnlyDictionary<Tuple<ActivityTypeContract, OnBehalf>, NotificationType> mapping = new Dictionary<Tuple<ActivityTypeContract, OnBehalf>, NotificationType>()
             {
-                { ActivityTypeContract.AccountDepositSucceeded, NotificationType.DepositSucceeded },
-                { ActivityTypeContract.AccountTradingDisabled, NotificationType.AccountLocked },
-                { ActivityTypeContract.Liquidation, NotificationType.Liquidation },
+                { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.AccountDepositSucceeded, OnBehalf.No), NotificationType.DepositSucceeded },
+                { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.AccountTradingDisabled, OnBehalf.No), NotificationType.AccountLocked },
+                { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.Liquidation, OnBehalf.No), NotificationType.Liquidation },
+                { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.PositionClosing, OnBehalf.Yes), NotificationType.OnBehalfPositionClosing },
+                { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderAcceptanceAndActivation, OnBehalf.Yes), NotificationType.OnBehalfOrderPlacement },
             };
 
-            yield return new object[] { ActivityTypeContract.AccountDepositSucceeded, mapping, NotificationType.DepositSucceeded, true };
-            yield return new object[] { ActivityTypeContract.AccountTradingDisabled, mapping, NotificationType.AccountLocked, true };
-            yield return new object[] { ActivityTypeContract.Liquidation, mapping, NotificationType.Liquidation, true };
-            yield return new object[] { ActivityTypeContract.MarginCall1, mapping, NotificationType.NotSpecified, false };
-            yield return new object[] { ActivityTypeContract.PositionClosing, mapping, NotificationType.NotSpecified, false };
+            yield return new object[] { mapping, ActivityTypeContract.AccountDepositSucceeded, false, NotificationType.DepositSucceeded, true };
+            yield return new object[] { mapping, ActivityTypeContract.AccountDepositSucceeded, true, NotificationType.NotSpecified, false };
+            yield return new object[] { mapping, ActivityTypeContract.AccountTradingDisabled, false, NotificationType.AccountLocked, true };
+            yield return new object[] { mapping, ActivityTypeContract.Liquidation, false, NotificationType.Liquidation, true };
+            yield return new object[] { mapping, ActivityTypeContract.MarginCall1, false, NotificationType.NotSpecified, false };
+            yield return new object[] { mapping, ActivityTypeContract.MarginCall1, true, NotificationType.NotSpecified, false };
+            yield return new object[] { mapping, ActivityTypeContract.PositionClosing, false, NotificationType.NotSpecified, false };
+            yield return new object[] { mapping, ActivityTypeContract.OrderAcceptanceAndActivation, true, NotificationType.OnBehalfOrderPlacement, true };
+            yield return new object[] { mapping, ActivityTypeContract.OrderAcceptanceAndActivation, false, NotificationType.NotSpecified, false };
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -111,12 +117,13 @@ namespace Lykke.Snow.Notifications.Tests
         [Theory]
         [ClassData(typeof(ActivityEventMappingTestData))]
         public void TryGetNotificationType_ShouldMapActivity_ToNotificationType(
+            IReadOnlyDictionary<Tuple<ActivityTypeContract, OnBehalf>, NotificationType> mapping, 
             ActivityTypeContract activityType,
-            IReadOnlyDictionary<ActivityTypeContract, NotificationType> mapping, 
+            bool isOnBehalf,
             NotificationType expectedNotificationType,
             bool expectedResult)
         {
-            var result = ActivityHandler.TryGetNotificationType(mapping, activityType, out var notificationType);
+            var result = ActivityHandler.TryGetNotificationType(mapping, activityType, isOnBehalf, out var notificationType);
             
             Assert.Equal(expectedNotificationType, notificationType);
             Assert.Equal(expectedResult, result);
