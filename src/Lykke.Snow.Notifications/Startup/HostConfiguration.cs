@@ -1,7 +1,10 @@
 using System;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Lykke.SettingsReader;
+using Lykke.Snow.Notifications.Extensions;
 using Lykke.Snow.Notifications.Modules;
 using Lykke.Snow.Notifications.Settings;
 using Microsoft.AspNetCore.Builder;
@@ -35,7 +38,7 @@ namespace Lykke.Snow.Notifications.Startup
                     cBuilder.RegisterModule(new ServiceModule(settings.CurrentValue.NotificationService));
                     cBuilder.RegisterModule(new NotificationsModule(settings.CurrentValue.NotificationService));
                     cBuilder.RegisterModule(new ExternalServicesModule(settings.CurrentValue.NotificationService));
-                    
+
                     // @atarutin: Due to a known bug in ASP.NET Core since version 3.0 ConfigureTestContainer is not
                     // being called when using WebApplicationFactory for integration testing, therefore "environment
                     // name" approach is used here to not register environment-specific modules in test environment.
@@ -49,8 +52,23 @@ namespace Lykke.Snow.Notifications.Startup
                         cBuilder.RegisterModule(new FirebaseModule(settings.CurrentValue.NotificationService));
                     }
                 })
-                .UseSerilog((_, cfg) => cfg.ReadFrom.Configuration(configuration));
-            
+                .UseSerilog((_, cfg) =>
+                {
+                    var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+                    var assembly = typeof(Program).Assembly;
+                    var title = assembly.Attribute<AssemblyTitleAttribute>(attribute => attribute.Title);
+                    var version = assembly.Attribute<AssemblyInformationalVersionAttribute>(attribute => attribute.InformationalVersion);
+                    var copyright = assembly.Attribute<AssemblyCopyrightAttribute>(attribute => attribute.Copyright);
+
+                    cfg.ReadFrom.Configuration(configuration)
+                        .Enrich.WithProperty("Application", title)
+                        .Enrich.WithProperty("Version", version)
+                        .Enrich.WithProperty("Environment", environmentName ?? "Development");
+                    
+                     Log.Information($"{title} [{version}] {copyright}");
+                     Log.Information($"Running on: {RuntimeInformation.OSDescription}");
+                });
+
             return hostBuilder;
         }
     }
