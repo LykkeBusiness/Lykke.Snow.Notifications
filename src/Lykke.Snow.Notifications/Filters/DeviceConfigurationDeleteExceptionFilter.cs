@@ -1,4 +1,4 @@
-﻿using Lykke.Snow.Contracts.Responses;
+﻿using Lykke.Contracts.Responses;
 using Lykke.Snow.Notifications.Client.Models;
 using Lykke.Snow.Notifications.Controllers;
 using Lykke.Snow.Notifications.Domain.Exceptions;

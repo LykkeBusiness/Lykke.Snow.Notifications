@@ -1,6 +1,6 @@
 using System;
 using JetBrains.Annotations;
-using Lykke.Snow.Contracts.Responses;
+using Lykke.Contracts.Responses;
 using Newtonsoft.Json;
 
 namespace Lykke.Snow.Notifications.Client.Models
