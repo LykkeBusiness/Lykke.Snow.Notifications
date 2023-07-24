@@ -1,5 +1,6 @@
 using System.Net.Http;
 using System.Threading.Tasks;
+using Lykke.Contracts.Responses;
 using Lykke.Snow.Mdm.Contracts.Api;
 using Lykke.Snow.Mdm.Contracts.Models.Contracts;
 using Lykke.Snow.Mdm.Contracts.Models.Requests;
@@ -54,7 +55,7 @@ namespace Lykke.Snow.Notifications.Tests.Fakes
             throw new System.NotImplementedException();
         }
 
-        public Task<PaginatedResponseContract<LocalizationFileMetadataContract>> GetLocalizationFileInfosAsync([Query] GetLocalizationFileInfoRequest request)
+        public Task<PaginatedResponse<LocalizationFileMetadataContract>> GetLocalizationFileInfosAsync([Query] GetLocalizationFileInfoRequest request)
         {
             throw new System.NotImplementedException();
         }
