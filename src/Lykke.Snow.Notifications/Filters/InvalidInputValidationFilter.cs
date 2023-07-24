@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using Lykke.Contracts.Responses;
+using Lykke.Snow.Contracts.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 

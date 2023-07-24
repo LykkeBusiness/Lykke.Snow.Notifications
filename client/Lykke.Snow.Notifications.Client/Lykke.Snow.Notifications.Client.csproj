@@ -24,8 +24,8 @@
     <None Remove="Lykke.Snow.Notifications.Client.xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Lykke.Contracts" Version="2.0.0" />
-    <PackageReference Include="LykkeBiz.HttpClientGenerator" Version="5.6.0" />
+    <PackageReference Include="Lykke.Snow.Contracts" Version="1.49.0" />
+    <PackageReference Include="LykkeBiz.HttpClientGenerator" Version="5.5.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />

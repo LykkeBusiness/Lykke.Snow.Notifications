@@ -11,7 +11,8 @@
     <ProjectReference Include="..\Lykke.Snow.FirebaseIntegration\Lykke.Snow.FirebaseIntegration.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Lykke.Snow.Mdm.Contracts" Version="4.3.0" />
+    <PackageReference Include="Lykke.Snow.Contracts" Version="1.48.0" />
+    <PackageReference Include="Lykke.Snow.Mdm.Contracts" Version="4.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.3" />
   </ItemGroup>
 </Project>

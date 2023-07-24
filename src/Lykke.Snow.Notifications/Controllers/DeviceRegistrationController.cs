@@ -1,8 +1,8 @@
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
-using Lykke.Contracts.Responses;
 using Lykke.Snow.Common.Model;
+using Lykke.Snow.Contracts.Responses;
 using Lykke.Snow.Notifications.Client;
 using Lykke.Snow.Notifications.Client.Model;
 using Lykke.Snow.Notifications.Client.Model.Requests;
