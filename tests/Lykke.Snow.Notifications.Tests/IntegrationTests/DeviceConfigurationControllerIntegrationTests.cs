@@ -3,7 +3,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Lykke.Snow.Contracts.Responses;
+using Lykke.Contracts.Responses;
 using Lykke.Snow.Notifications.Client.Models;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Tests.Extensions;
