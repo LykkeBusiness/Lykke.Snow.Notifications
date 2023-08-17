@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using JetBrains.Annotations;
-using Lykke.Snow.Contracts.Responses;
+using Lykke.Contracts.Responses;
 using Lykke.Snow.Notifications.Client.Model;
 using Lykke.Snow.Notifications.Client.Model.Requests;
 using Refit;
