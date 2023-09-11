@@ -3,6 +3,7 @@ using Lykke.Common.Api.Contract.Responses;
 using Lykke.HttpClientGenerator;
 using Lykke.Snow.Mdm.Contracts.Api;
 using Lykke.Snow.Notifications.Settings;
+using MarginTrading.AssetService.Contracts;
 
 namespace Lykke.Snow.Notifications.Modules
 {
@@ -24,6 +25,14 @@ namespace Lykke.Snow.Notifications.Modules
                 .Create();
             
             builder.RegisterInstance(mdmClientGenerator.Generate<ILocalizationFilesBinaryApi>());
+            
+            var assetServiceClientGenerator = HttpClientGenerator.HttpClientGenerator
+                .BuildForUrl(_settings.AssetServiceClient.ServiceUrl)
+                .WithServiceName<ErrorResponse>("MT Core Asset Service")
+                .WithOptionalApiKey(_settings.AssetServiceClient.ApiKey)
+                .Create();
+            
+            builder.RegisterInstance(assetServiceClientGenerator.Generate<IAssetsApi>());
         }
     }
 }

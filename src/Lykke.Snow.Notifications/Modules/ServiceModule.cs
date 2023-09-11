@@ -60,6 +60,10 @@ namespace Lykke.Snow.Notifications.Modules
             builder.RegisterType<MessagePreviewEventHandler>()
                 .As<IMessagePreviewEventHandler>()
                 .SingleInstance();
+
+            builder.RegisterType<AssetService>()
+                .As<IAssetService>()
+                .SingleInstance();
         }
     }
 }

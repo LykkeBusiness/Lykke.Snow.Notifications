@@ -379,7 +379,8 @@ namespace Lykke.Snow.Notifications.Tests
         private ActivityHandler CreateSut(INotificationService? notificationServiceArg = null,
             IDeviceRegistrationService? deviceRegistrationServiceArg = null,
             ILocalizationService? localizationServiceArg = null,
-            IDeviceConfigurationRepository? deviceConfigurationRepositoryArg = null)
+            IDeviceConfigurationRepository? deviceConfigurationRepositoryArg = null,
+            IAssetService? assetServiceArg = null)
         {
             var mockLogger = new Mock<ILogger<ActivityProjection>>();
 
@@ -387,6 +388,7 @@ namespace Lykke.Snow.Notifications.Tests
             IDeviceRegistrationService deviceRegistrationService = new Mock<IDeviceRegistrationService>().Object;
             ILocalizationService localizationService = new Mock<ILocalizationService>().Object;
             IDeviceConfigurationRepository deviceConfigurationRepository = new Mock<IDeviceConfigurationRepository>().Object;
+            IAssetService assetService = new Mock<IAssetService>().Object;
 
             if (notificationServiceArg != null)
             {
@@ -408,7 +410,12 @@ namespace Lykke.Snow.Notifications.Tests
                 deviceConfigurationRepository = deviceConfigurationRepositoryArg;
             }
 
-            return new ActivityHandler(mockLogger.Object, notificationService, deviceRegistrationService, localizationService, deviceConfigurationRepository);
+            if (assetServiceArg != null)
+            {
+                assetService = assetServiceArg;
+            }
+
+            return new ActivityHandler(mockLogger.Object, notificationService, deviceRegistrationService, localizationService, deviceConfigurationRepository, assetService);
         }
     }
 }
