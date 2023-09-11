@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Common;
 using FirebaseAdmin.Messaging;
+using Lykke.MarginTrading.Activities.Contracts.Helpers;
 using Lykke.MarginTrading.Activities.Contracts.Models;
+using Lykke.Snow.Domain.Math;
 using Lykke.Snow.FirebaseIntegration.Exceptions;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Repositories;
@@ -27,21 +29,27 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
         private readonly ILocalizationService _localizationService;
 
+        private readonly IAssetService _assetService;
+
         public ActivityHandler(ILogger<ActivityProjection> logger,
             INotificationService notificationService,
             IDeviceRegistrationService deviceRegistrationService,
             ILocalizationService localizationService,
-            IDeviceConfigurationRepository deviceConfigurationRepository)
+            IDeviceConfigurationRepository deviceConfigurationRepository,
+            IAssetService assetService)
         {
             _logger = logger;
             _notificationService = notificationService;
             _deviceRegistrationService = deviceRegistrationService;
             _deviceConfigurationRepository = deviceConfigurationRepository;
             _localizationService = localizationService;
+            _assetService = assetService;
         }
 
         public async Task Handle(ActivityEvent e)
         {
+            e.Activity = await ConvertQuantitiesToUserFriendlyFormatIfNeeded(e.Activity);
+            
             if(!TryGetNotificationType(ActivityTypeMapping.NotificationTypeMapping, activityType: e.Activity.Event, isOnBehalf: e.Activity.IsOnBehalf, out var notificationType))
             {
                 _logger.LogDebug("No notification type mapping found for the activity {Activity}", e.Activity.Event);
@@ -112,6 +120,55 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
                     _logger.LogError(ex, "The notification could not be delivered to the device {DeviceToken}. ErrorCode: {ErrorCode}", deviceRegistration.DeviceToken, ex.ErrorCode);
                 }
             }
+        }
+        
+        public async Task<ActivityContract> ConvertQuantitiesToUserFriendlyFormatIfNeeded(ActivityContract activity)
+        {
+            var indexesToFix = DescriptionAttributesHelper.GetQtyIndexes(activity);
+
+            if (!indexesToFix.Any())
+            {
+                return activity;
+            }
+            
+            var assetId = activity.Instrument;
+            var contractSize = await _assetService.GetContractSize(assetId);
+            if (!contractSize.HasValue)
+            {
+                _logger.LogWarning($"Couldn't find asset with id {assetId} in cache for activity {activity.ToJson()}");
+                return activity;
+            }
+            
+            if (contractSize < 1)
+            {
+                _logger.LogWarning($"Invalid contract size for asset {assetId}.");
+                return activity;
+            }
+
+            if (contractSize == 1)
+            {
+                return activity;
+            }
+
+            foreach (int index in indexesToFix)
+            {
+                if (index >= activity.DescriptionAttributes.Length)
+                {
+                    _logger.LogWarning($"Couldn't find index {index} in description attributes for activity {activity.ToJson()}");
+                    continue;
+                }
+                
+                if (!int.TryParse(activity.DescriptionAttributes[index], out int qty))
+                {
+                    _logger.LogWarning($"Couldn't parse quantity with {index} in description attributes for activity {activity.ToJson()}");
+                    continue;
+                }
+                
+                var userFriendlyQty = QuantityMath.Compute(qty, contractSize);
+                activity.DescriptionAttributes[index] = userFriendlyQty.ToString();
+            }
+
+            return activity;
         }
 
         public static bool TryGetNotificationType(IReadOnlyDictionary<Tuple<ActivityTypeContract, OnBehalf>, NotificationType> notificationTypeMapping, 

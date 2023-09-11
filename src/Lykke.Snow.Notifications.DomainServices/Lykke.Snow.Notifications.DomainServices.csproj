@@ -11,6 +11,10 @@
     <ProjectReference Include="..\Lykke.Snow.FirebaseIntegration\Lykke.Snow.FirebaseIntegration.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Lykke.MarginTrading.Activities.Contracts" Version="1.6.2" />
+    <PackageReference Include="Lykke.MarginTrading.AssetService.Contracts" Version="11.7.6" />
+    <PackageReference Include="Lykke.Snow.Common" Version="3.0.20" />
+    <PackageReference Include="Lykke.Snow.Domain" Version="2.0.3" />
     <PackageReference Include="Lykke.Snow.Mdm.Contracts" Version="4.3.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.3" />
   </ItemGroup>
