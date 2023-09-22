@@ -109,6 +109,44 @@ namespace Lykke.Snow.Notifications.Tests
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
 
+        class OnBehalfTargetingTestData : IEnumerable<object[]>
+        {
+            public IEnumerator<object[]> GetEnumerator()
+            {
+                // The parent type "OnBehalfAction" is not enabled 
+                // So the expected outcome is 'TRUE' for all onbehalf notifications 
+                var dc1 = new DeviceConfiguration("any-device-id", "any-account-id", "en",
+                    new List<DeviceConfiguration.Notification>
+                    {
+                        new DeviceConfiguration.Notification("OnBehalfAction"),
+                    });
+
+                yield return new object[] { dc1, NotificationType.OnBehalfOrderPlacement, true };
+                yield return new object[] { dc1, NotificationType.OnBehalfOrderCancellation, true };
+                yield return new object[] { dc1, NotificationType.OnBehalfOrderModification, true };
+                yield return new object[] { dc1, NotificationType.OnBehalfPositionClosing, true };
+
+                // The parent type "OnBehalfAction" is not enabled 
+                // So the expected outcome is 'FALSE' for all onbehalf notifications 
+                // Despite that they are in the enabled notification list
+                var dc2 = new DeviceConfiguration("any-device-id", "any-account-id", "en",
+                    new List<DeviceConfiguration.Notification>
+                    {
+                        new DeviceConfiguration.Notification("OnBehalfOrderPlacement"),
+                        new DeviceConfiguration.Notification("OnBehalfOrderCancellation"),
+                        new DeviceConfiguration.Notification("OnBehalfPositionClosing"),
+                        new DeviceConfiguration.Notification("OnBehalfOrderModification"),
+                    });
+
+                yield return new object[] { dc2, NotificationType.OnBehalfOrderPlacement, false };
+                yield return new object[] { dc2, NotificationType.OnBehalfOrderCancellation, false };
+                yield return new object[] { dc2, NotificationType.OnBehalfPositionClosing, false };
+                yield return new object[] { dc2, NotificationType.OnBehalfOrderModification, false };
+            }
+
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        }
+
         #region NotificationMessage model test
 
         [Fact]
@@ -172,6 +210,7 @@ namespace Lykke.Snow.Notifications.Tests
         #endregion
 
         #region IsDeviceTargeted
+
         [Theory]
         [ClassData(typeof(TargetingTestData))]
         public void IsDeviceTargeted_ShouldReturnIfDeviceTargeted_ByDeviceConfiguration(
@@ -185,6 +224,21 @@ namespace Lykke.Snow.Notifications.Tests
             
             Assert.Equal(expected, result);
         }
+        
+        [Theory]
+        [ClassData(typeof(OnBehalfTargetingTestData))]
+        public void IsDeviceTargeted_ShouldReturnIfDeviceIsTargeted_BasedOnOnBehalfProperty(
+            DeviceConfiguration deviceConfiguration, 
+            NotificationType notificationType,
+            bool expected)
+        {
+            var sut = CreateSut();
+            
+            var result = sut.IsDeviceTargeted(deviceConfiguration, notificationType);
+            
+            Assert.Equal(expected, result);
+        }
+
         #endregion
 
         #region BuildNotificationMessage
