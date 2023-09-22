@@ -11,8 +11,25 @@ namespace Lykke.Snow.Notifications.Domain.Model
     /// </summary>
     public sealed class DeviceConfiguration : IEquatable<DeviceConfiguration>
     {
+        public string DeviceId { get; }
+        public string AccountId { get; }
+        public Locale Locale { get; }
+        public IReadOnlyList<Notification> Notifications { get; }
+        public DateTime LastUpdated { get; set; }
+
+        /// <summary>
+        /// The list of enabled notification types. Potentially, can be replaced
+        /// with the list of enabled notifications if and when we have additional
+        /// properties for a notification 
+        /// </summary>
+        public HashSet<NotificationType> EnabledNotificationTypes =>
+            Notifications.Where(n => n.Enabled).Select(n => n.Type).ToHashSet();
+
         public sealed class Notification : IEquatable<Notification>
         {
+            public NotificationType Type { get; }
+            public bool Enabled { get; }
+
             /// <summary>
             /// Creates a new notification
             /// </summary>
@@ -52,9 +69,6 @@ namespace Lykke.Snow.Notifications.Domain.Model
                 return $"{Type} - {Enabled}";
             }
 
-            public NotificationType Type { get; }
-            public bool Enabled { get; }
-
             public bool Equals(Notification? other)
             {
                 if (ReferenceEquals(null, other)) return false;
@@ -75,18 +89,6 @@ namespace Lykke.Snow.Notifications.Domain.Model
                 return HashCode.Combine((int)Type, Enabled);
             }
         }
-        public string DeviceId { get; }
-        public string AccountId { get; }
-        public Locale Locale { get; }
-        public IReadOnlyList<Notification> Notifications { get; }
-
-        /// <summary>
-        /// The list of enabled notification types. Potentially, can be replaced
-        /// with the list of enabled notifications if and when we have additional
-        /// properties for a notification 
-        /// </summary>
-        public HashSet<NotificationType> EnabledNotificationTypes =>
-            Notifications.Where(n => n.Enabled).Select(n => n.Type).ToHashSet();
 
         /// <summary>
         /// Returns true if notification type is enabled
