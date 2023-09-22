@@ -1,5 +1,6 @@
 #nullable disable
 
+using System;
 using System.ComponentModel.DataAnnotations;
 using JetBrains.Annotations;
 
@@ -33,5 +34,10 @@ namespace Lykke.Snow.Notifications.Client.Models
         /// Notification types that are enabled
         /// </summary>
         public string[] NotificationsOn { get; set; }
+
+        /// <summary>
+        /// Notification types that are enabled
+        /// </summary>
+        public DateTime LastUpdated { get; set; }
     }
 }

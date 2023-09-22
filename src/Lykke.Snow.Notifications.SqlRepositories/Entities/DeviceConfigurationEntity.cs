@@ -11,9 +11,9 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Entities
         public int Oid { get; set; }
         public string DeviceId { get; set; }
         public string AccountId { get; set; }
-        
         public string Locale { get; set; }
         public DateTime CreatedOn { get; set; }
+        public DateTime LastUpdated { get; set; }
         public ICollection<DeviceNotificationConfigurationEntity> Notifications { get; set; }
     }
 }
