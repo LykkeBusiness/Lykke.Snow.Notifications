@@ -24,6 +24,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Mapping
             { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.PositionClosing, OnBehalf.No), NotificationType.PositionClosed },
             { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.PositionPartialClosing, OnBehalf.No), NotificationType.PositionClosed },
             { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderAcceptanceAndActivation, OnBehalf.Yes), NotificationType.OnBehalfOrderPlacement },
+            { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderAcceptanceAndExecution, OnBehalf.Yes), NotificationType.OnBehalfOrderPlacement },
             { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderModification, OnBehalf.Yes), NotificationType.OnBehalfOrderModification },
             { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderModificationForceOpen, OnBehalf.Yes), NotificationType.OnBehalfOrderModification },
             { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderModificationPrice, OnBehalf.Yes), NotificationType.OnBehalfOrderModification },
