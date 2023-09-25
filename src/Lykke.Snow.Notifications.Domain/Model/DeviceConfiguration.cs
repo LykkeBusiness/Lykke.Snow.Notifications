@@ -90,12 +90,6 @@ namespace Lykke.Snow.Notifications.Domain.Model
             }
         }
 
-        /// <summary>
-        /// Returns true if notification type is enabled
-        /// </summary>
-        /// <param name="type">Notification type enum</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
         public bool IsNotificationEnabled(NotificationType type)
         {
             if (Enum.IsDefined(typeof(NotificationType), type))
@@ -104,11 +98,6 @@ namespace Lykke.Snow.Notifications.Domain.Model
             throw new ArgumentException($"Notification type [{type}] is not supported");
         }
 
-        /// <summary>
-        /// Returns true if notification type is enabled
-        /// </summary>
-        /// <param name="type">Notification type string</param>
-        /// <returns></returns>
         public bool IsNotificationEnabled(string type) =>
             IsNotificationEnabled(Enum.Parse<NotificationType>(type, true));
 

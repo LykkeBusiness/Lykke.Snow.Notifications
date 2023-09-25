@@ -6,6 +6,7 @@ using Lykke.Snow.Notifications.Domain.Services;
 using FirebaseAdmin.Messaging;
 using Lykke.Snow.Notifications.Domain.Enums;
 using System.Collections.Generic;
+using Lykke.Snow.Notifications.Domain;
 
 namespace Lykke.Snow.Notifications.DomainServices.Services
 {
@@ -68,6 +69,11 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
         public bool IsDeviceTargeted(DeviceConfiguration deviceConfiguration, NotificationType type)
         {
+            if(type.IsOnBehalfNotification())
+            {
+                return deviceConfiguration.EnabledNotificationTypes.Contains(NotificationType.OnBehalfAction);
+            }
+
             return deviceConfiguration.IsNotificationEnabled(type);
         }
 
