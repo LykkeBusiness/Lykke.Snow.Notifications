@@ -20,6 +20,8 @@ namespace Lykke.Snow.Notifications.Settings
         
         public ClientSettings MdmServiceClient { get; set; } = new ClientSettings();
         
+        public ClientSettings AssetServiceClient { get; set; } = new ClientSettings();
+        
         public LocalizationSettings Localization { get; set; } = new LocalizationSettings();
     }
 }
