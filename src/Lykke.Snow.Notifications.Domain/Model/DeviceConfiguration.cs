@@ -148,7 +148,6 @@ namespace Lykke.Snow.Notifications.Domain.Model
             AccountId = accountId;
             Locale = localeParsed;
             Notifications = notifications ?? new List<Notification>();
-            LastUpdated = DateTime.UtcNow;
         }
 
         public override string ToString()

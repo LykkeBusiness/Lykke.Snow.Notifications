@@ -16,6 +16,8 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Migrations
                 type: "datetime2",
                 nullable: false,
                 defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+            
+            migrationBuilder.Sql("update [notifications].DeviceConfigurations set LastUpdated = CreatedOn");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

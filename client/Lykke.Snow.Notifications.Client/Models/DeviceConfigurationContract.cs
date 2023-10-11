@@ -36,7 +36,7 @@ namespace Lykke.Snow.Notifications.Client.Models
         public string[] NotificationsOn { get; set; }
 
         /// <summary>
-        /// Notification types that are enabled
+        /// Last updated timestamp
         /// </summary>
         public DateTime LastUpdated { get; set; }
     }

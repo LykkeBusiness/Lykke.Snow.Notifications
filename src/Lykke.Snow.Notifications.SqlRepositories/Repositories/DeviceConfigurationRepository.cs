@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using AutoMapper;
 using Lykke.Common.MsSql;
 using Lykke.Snow.Notifications.Domain.Exceptions;
@@ -102,6 +103,7 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
         private async Task TryAddAsync(NotificationsDbContext context, DeviceConfiguration deviceConfiguration)
         {
             var entity = _mapper.Map<DeviceConfigurationEntity>(deviceConfiguration);
+            entity.CreatedOn = entity.LastUpdated = DateTime.UtcNow;
             await context.DeviceConfigurations.AddAsync(entity);
             try
             {
@@ -123,6 +125,7 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
             DeviceConfigurationEntity existingEntity)
         {
             _mapper.Map(deviceConfiguration, existingEntity);
+            existingEntity.LastUpdated = DateTime.UtcNow;
             context.DeviceConfigurations.Update(existingEntity);
             try
             {
