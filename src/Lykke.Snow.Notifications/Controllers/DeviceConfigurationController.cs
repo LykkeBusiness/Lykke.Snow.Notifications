@@ -81,8 +81,6 @@ namespace Lykke.Snow.Notifications.Controllers
         {
             var dc = _mapper.Map<DeviceConfiguration>(deviceConfiguration);
             
-            dc.LastUpdated = DateTime.UtcNow;
-
             await _repository.AddOrUpdateAsync(dc);
 
             return DeviceConfigurationErrorCodeContract.None;
