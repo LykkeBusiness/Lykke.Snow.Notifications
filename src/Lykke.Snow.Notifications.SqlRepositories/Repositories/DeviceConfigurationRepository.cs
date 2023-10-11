@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Lykke.Common.MsSql;
@@ -12,9 +13,28 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
 {
     public class DeviceConfigurationRepository : IDeviceConfigurationRepository
     {
+        /// <summary>
+        /// The specification is used to express the unique entity constraint.
+        /// Important note: it might not be implemented by particular database provider
+        /// so be cautious when using it in code. Accept multiple entities having the same
+        /// values for the properties specified in the specification.
+        /// </summary>
+        private sealed class UniqueEntitySpecification : Specification<DeviceConfigurationEntity>
+        {
+            public UniqueEntitySpecification(string deviceId, string accountId)
+            {
+                AddCriteria(x => x.DeviceId == deviceId && x.AccountId == accountId);
+            }
+
+            public UniqueEntitySpecification(DeviceConfiguration deviceConfiguration) : this(
+                deviceConfiguration.DeviceId, deviceConfiguration.AccountId)
+            {
+            }
+        }
+        
         private readonly Lykke.Common.MsSql.IDbContextFactory<NotificationsDbContext> _contextFactory;
         private readonly IMapper _mapper;
-
+        
         public DeviceConfigurationRepository(
             Lykke.Common.MsSql.IDbContextFactory<NotificationsDbContext> contextFactory,
             IMapper mapper)
@@ -27,6 +47,7 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
         /// Gets device configuration by device id
         /// </summary>
         /// <param name="deviceId">Teh device id</param>
+        /// <param name="accountId">Account id</param>
         /// <returns></returns>
         /// <exception cref="EntityNotFoundException">When there is no device configuration for device id</exception>
         public async Task<DeviceConfiguration> GetAsync(string deviceId, string accountId)
@@ -35,7 +56,7 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
 
             var entity = await context.DeviceConfigurations
                 .Include(x => x.Notifications)
-                .SingleOrDefaultAsync(x => x.DeviceId == deviceId && x.AccountId == accountId);
+                .FirstOrDefaultAsync(new UniqueEntitySpecification(deviceId, accountId));
             
             return _mapper.Map<DeviceConfiguration>(entity);
         }
@@ -58,7 +79,7 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
 
             var existingEntity = await context.DeviceConfigurations
                 .Include(x => x.Notifications)
-                .SingleOrDefaultAsync(x => x.DeviceId == deviceConfiguration.DeviceId && x.AccountId == deviceConfiguration.AccountId);
+                .FirstOrDefaultAsync(new UniqueEntitySpecification(deviceConfiguration));
 
             if (existingEntity == null)
             {
@@ -81,14 +102,15 @@ namespace Lykke.Snow.Notifications.SqlRepositories.Repositories
         {
             await using var context = _contextFactory.CreateDataContext();
 
-            var entity = await context.DeviceConfigurations
+            var entities = await context.DeviceConfigurations
                 .Include(x => x.Notifications)
-                .SingleOrDefaultAsync(x => x.DeviceId == deviceId && x.AccountId == accountId);
+                .Where(new UniqueEntitySpecification(deviceId, accountId))
+                .ToListAsync();
 
-            if (entity == null)
+            if (entities.Count == 0)
                 throw new EntityNotFoundException(deviceId);
 
-            context.DeviceConfigurations.Remove(entity);
+            context.DeviceConfigurations.RemoveRange(entities);
 
             try
             {
