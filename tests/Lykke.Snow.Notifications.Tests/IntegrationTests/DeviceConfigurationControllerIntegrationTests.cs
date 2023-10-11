@@ -147,6 +147,10 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
 
                 var addOrUpdateResponse =
                     await _client.PostAsJsonAsync("/api/DeviceConfiguration", deviceConfiguration);
+                
+                Assert.True(addOrUpdateResponse.IsSuccessStatusCode, 
+                    "AddOrUpdateAsync should return success status code");
+                
                 var addOrUpdateResult = await addOrUpdateResponse.Content
                     .ReadAsAsync<ErrorCodeResponse<DeviceConfigurationErrorCodeContract>>();
                 return addOrUpdateResult.ErrorCode;
