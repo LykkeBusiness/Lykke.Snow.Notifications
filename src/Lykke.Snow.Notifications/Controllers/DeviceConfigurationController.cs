@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using Lykke.Contracts.Responses;
@@ -79,6 +80,7 @@ namespace Lykke.Snow.Notifications.Controllers
             DeviceConfigurationContract deviceConfiguration)
         {
             var dc = _mapper.Map<DeviceConfiguration>(deviceConfiguration);
+            
             await _repository.AddOrUpdateAsync(dc);
 
             return DeviceConfigurationErrorCodeContract.None;

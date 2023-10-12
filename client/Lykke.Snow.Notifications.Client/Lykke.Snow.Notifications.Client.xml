@@ -168,6 +168,11 @@
             Notification types that are enabled
             </summary>
         </member>
+        <member name="P:Lykke.Snow.Notifications.Client.Models.DeviceConfigurationContract.LastUpdated">
+            <summary>
+            Last updated timestamp
+            </summary>
+        </member>
         <member name="T:Lykke.Snow.Notifications.Client.Models.DeviceConfigurationErrorCodeContract">
             <summary>
             Device configuration error codes

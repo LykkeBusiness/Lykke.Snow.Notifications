@@ -21,17 +21,20 @@ namespace Lykke.Snow.Notifications.Filters
                 ArgumentNullException _ => DeviceConfigurationErrorCodeContract.InvalidInput,
                 UnsupportedLocaleException _ => DeviceConfigurationErrorCodeContract.UnsupportedLocale,
                 DuplicateNotificationException _ => DeviceConfigurationErrorCodeContract.DuplicateNotificationType,
-                UnsupportedNotificationTypeException _ => DeviceConfigurationErrorCodeContract.UnsupportedNotificationType,
+                UnsupportedNotificationTypeException _ => DeviceConfigurationErrorCodeContract
+                    .UnsupportedNotificationType,
                 EntityNotFoundException _ => DeviceConfigurationErrorCodeContract.Conflict,
                 EntityAlreadyExistsException _ => DeviceConfigurationErrorCodeContract.Conflict,
-                AutoMapperMappingException { InnerException: ArgumentNullException _ } => DeviceConfigurationErrorCodeContract.InvalidInput,
-                AutoMapperMappingException { InnerException: UnsupportedLocaleException _ } => DeviceConfigurationErrorCodeContract.UnsupportedLocale,
-                AutoMapperMappingException { InnerException: DuplicateNotificationException _ } => DeviceConfigurationErrorCodeContract.DuplicateNotificationType,
-                AutoMapperMappingException { InnerException: UnsupportedNotificationTypeException _ } => DeviceConfigurationErrorCodeContract.UnsupportedNotificationType,
-                _ => null
+                AutoMapperMappingException { InnerException: ArgumentNullException _ } =>
+                    DeviceConfigurationErrorCodeContract.InvalidInput,
+                AutoMapperMappingException { InnerException: UnsupportedLocaleException _ } =>
+                    DeviceConfigurationErrorCodeContract.UnsupportedLocale,
+                AutoMapperMappingException { InnerException: DuplicateNotificationException _ } =>
+                    DeviceConfigurationErrorCodeContract.DuplicateNotificationType,
+                AutoMapperMappingException { InnerException: UnsupportedNotificationTypeException _ } =>
+                    DeviceConfigurationErrorCodeContract.UnsupportedNotificationType,
+                _ => throw context.Exception
             };
-
-            if (errorCode == null) return;
 
             ErrorCodeResponse<DeviceConfigurationErrorCodeContract> response = errorCode.Value;
             context.ExceptionHandled = true;

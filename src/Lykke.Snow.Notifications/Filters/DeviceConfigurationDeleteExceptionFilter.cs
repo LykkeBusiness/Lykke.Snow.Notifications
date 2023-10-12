@@ -17,11 +17,9 @@ namespace Lykke.Snow.Notifications.Filters
             DeviceConfigurationErrorCodeContract? errorCode = context.Exception switch
             {
                 EntityNotFoundException _ => DeviceConfigurationErrorCodeContract.DoesNotExist,
-                _ => null
+                _ => throw context.Exception
             };
             
-            if (errorCode == null) return;
-
             ErrorCodeResponse<DeviceConfigurationErrorCodeContract> response = errorCode.Value;
             context.ExceptionHandled = true;
             context.Result = new OkObjectResult(response);
