@@ -19,6 +19,7 @@ namespace Lykke.Snow.Notifications.DomainServices.Mapping
             { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.MarginCall1, OnBehalf.No), NotificationType.MarginCall1 },
             { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.MarginCall2, OnBehalf.No), NotificationType.MarginCall2 },
             { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderExecution, OnBehalf.No), NotificationType.OrderExecuted },
+            { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderAcceptanceAndExecution, OnBehalf.Yes), NotificationType.OnBehalfOrderExecution },
             { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderAcceptanceAndExecution, OnBehalf.No), NotificationType.OrderExecuted },
             { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.OrderExpiry, OnBehalf.No), NotificationType.OrderExpired },
             { new Tuple<ActivityTypeContract, OnBehalf>(ActivityTypeContract.PositionClosing, OnBehalf.No), NotificationType.PositionClosed },

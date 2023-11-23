@@ -151,6 +151,11 @@
       "en": "Platform Holiday",
       "es": "es - Platform Holiday",
       "de": "de - Platform Holiday"
+    },
+    "OnBehalfOrderExecution": {
+      "de": "(DE) On Behalf Order Execution",
+      "en": "On Behalf Order Execution",
+      "es": "(ES) On Behalf Order Execution"
     }
   },
   "Bodies": {
@@ -253,6 +258,11 @@
       "en": "Tomorrow ({0}) will be a holiday for the entire platform. All trading will be suspended during the period.",
       "es": "(TBD) es - Platform Holiday body",
       "de": "(TBD) de - Platform Holiday body"
+    },
+    "OnBehalfOrderExecution": {
+      "de": "(DE) {0} {1} order for {2} {3} has been executed.",
+      "en": "{0} {1} order for {2} {3} has been executed.",
+      "es": "(ES) {0} {1} order for {2} {3} has been executed."
     }
   }
 }
