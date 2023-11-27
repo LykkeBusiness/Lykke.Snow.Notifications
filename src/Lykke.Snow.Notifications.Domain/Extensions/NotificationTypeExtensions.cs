@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using Lykke.Snow.Notifications.Domain.Enums;
 
-namespace Lykke.Snow.Notifications.Domain
+namespace Lykke.Snow.Notifications.Domain.Extensions
 {
     public static class NotificationTypeExtensions
     {
@@ -19,7 +18,8 @@ namespace Lykke.Snow.Notifications.Domain
                 NotificationType.OnBehalfOrderPlacement,
                 NotificationType.OnBehalfOrderModification,
                 NotificationType.OnBehalfOrderCancellation,
-                NotificationType.OnBehalfPositionClosing
+                NotificationType.OnBehalfPositionClosing,
+                NotificationType.OnBehalfOrderExecution
             };
             
             return onBehalfNotifications.Contains(notificationType);

@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using Lykke.Common.MsSql;
+using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.SqlRepositories;
 using Lykke.Snow.Notifications.SqlRepositories.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -44,6 +46,23 @@ namespace Lykke.Snow.Notifications.Tests.Repository
                     RegisteredOn = DateTime.UtcNow
                 });
 
+            context.DeviceConfigurations.Add(
+                new DeviceConfigurationEntity
+                {
+                    AccountId = "account-id-1",
+                    DeviceId = "device-id",
+                    Locale = Locale.En.ToString(),
+                    Notifications = new List<DeviceNotificationConfigurationEntity>
+                    {
+                        new DeviceNotificationConfigurationEntity
+                        {
+                            DeviceConfigurationId = 1,
+                            NotificationType = NotificationType.OnBehalfAction.ToString(),
+                            Enabled = true
+                        }
+                    }
+                });
+            
             context.SaveChanges();
         }
     }

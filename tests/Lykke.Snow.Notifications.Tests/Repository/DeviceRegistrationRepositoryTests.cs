@@ -5,7 +5,6 @@ using AutoMapper;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.MappingProfiles;
 using Lykke.Snow.Notifications.SqlRepositories.Repositories;
-using Lykke.Snow.Notifications.Tests.Fakes;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 

@@ -7,6 +7,7 @@ using FirebaseAdmin.Messaging;
 using Lykke.Snow.Notifications.Domain.Enums;
 using System.Collections.Generic;
 using Lykke.Snow.Notifications.Domain;
+using Lykke.Snow.Notifications.Domain.Extensions;
 
 namespace Lykke.Snow.Notifications.DomainServices.Services
 {
