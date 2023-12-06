@@ -1,3 +1,5 @@
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FirebaseAdmin.Messaging;
 using Lykke.Snow.Common.Model;
@@ -8,7 +10,8 @@ namespace Lykke.Snow.Notifications.Tests.Fakes
     public class FcmIntegrationServiceFake : IFcmIntegrationService
     {
         private static bool _isDeviceTokenValid = true;
-        
+
+        public ConcurrentBag<Message> ReceivedMessages { get; } = new ConcurrentBag<Message>();
         public static void SetIsDeviceTokenValid(bool value) => _isDeviceTokenValid = value;
 
         public Task<bool> IsDeviceTokenValid(string deviceToken)
@@ -18,7 +21,8 @@ namespace Lykke.Snow.Notifications.Tests.Fakes
 
         public Task<Result<string, MessagingErrorCode>> SendNotification(Message message)
         {
-            throw new System.NotImplementedException();
+            ReceivedMessages.Add(message);
+            return new Result<string, MessagingErrorCode>(string.Empty);
         }
     }
 }

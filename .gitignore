@@ -367,4 +367,8 @@ appsettings.json
 
 
 # Auto generated xml
-Lykke.Snow.Notifications.Client.xml
+client/Lykke.Snow.Notifications.Client/Lykke.Snow.Notifications.Client.xml
+
+# JetBrains Rider
+.idea/
+

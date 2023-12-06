@@ -18,17 +18,17 @@ namespace Lykke.Snow.Notifications.Tests
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.UseEnvironment("integration-tests");
-            builder.UseSetting("SettingsUrl", "appsettings.test.json");
+            builder.UseSetting("SettingsUrl", "IntegrationTests/appsettings.integrationtests.json");
             
             builder.ConfigureServices(services =>
             {
                 // register mocked cqrs engine
                 services.AddSingleton(new Mock<ICqrsEngine>().Object);
-                
+
                 var contextFactory = new MsSqlContextFactoryInMemory();
                 services.AddSingleton(contextFactory);
                 services.AddSingleton<Lykke.Common.MsSql.IDbContextFactory<NotificationsDbContext>>(contextFactory);
-                
+
                 // register repositories manually since the DataLayer module registration was not called
                 services.AddSingleton<IDeviceRegistrationRepository, DeviceRegistrationRepository>();
                 services.AddSingleton<IDeviceConfigurationRepository, DeviceConfigurationRepository>();

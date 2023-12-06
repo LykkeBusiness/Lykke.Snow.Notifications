@@ -59,7 +59,7 @@ namespace Lykke.Snow.Notifications.Tests.Extensions
             {
                 Content = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json"),
                 Method = HttpMethod.Delete,
-                RequestUri = new Uri(uri)
+                RequestUri = new Uri(uri, UriKind.Relative)
             };
 
             return client.SendAsync(request);
