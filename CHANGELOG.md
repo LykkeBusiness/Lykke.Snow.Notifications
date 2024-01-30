@@ -1,3 +1,10 @@
+## 1.5.0 - Nova 2. Delivery 39 (January 30, 2024)
+### What's changed
+* LT-5147: Changelog.md for lykke.snow.notifications.
+
+
+
+
 ## 1.4.2 - Nova 2. Delivery 38 (December 12, 2023)
 ### What's changed
 * LT-5003: Push notification on-behalf.
