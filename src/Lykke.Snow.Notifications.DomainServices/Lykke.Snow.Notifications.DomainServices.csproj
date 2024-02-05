@@ -15,7 +15,7 @@
     <PackageReference Include="Lykke.MarginTrading.AssetService.Contracts" Version="11.7.6" />
     <PackageReference Include="Lykke.Snow.Common" Version="3.0.20" />
     <PackageReference Include="Lykke.Snow.Domain" Version="2.0.3" />
-    <PackageReference Include="Lykke.Snow.Mdm.Contracts" Version="4.3.0" />
+    <PackageReference Include="Lykke.Snow.Mdm.Contracts" Version="4.3.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.3" />
   </ItemGroup>
 </Project>
