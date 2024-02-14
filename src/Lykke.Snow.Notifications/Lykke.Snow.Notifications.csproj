@@ -15,16 +15,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference
-      Include="..\..\client\Lykke.Snow.Notifications.Client\Lykke.Snow.Notifications.Client.csproj" />
-    <ProjectReference
-      Include="..\Lykke.Snow.Notifications.Domain\Lykke.Snow.Notifications.Domain.csproj" />
-    <ProjectReference
-      Include="..\Lykke.Snow.Notifications.DomainServices\Lykke.Snow.Notifications.DomainServices.csproj" />
-    <ProjectReference
-      Include="..\Lykke.Snow.Notifications.SqlRepositories\Lykke.Snow.Notifications.SqlRepositories.csproj" />
-    <ProjectReference
-      Include="..\..\client\Lykke.Snow.Notifications.Client\Lykke.Snow.Notifications.Client.csproj" />
+    <ProjectReference Include="..\..\client\Lykke.Snow.Notifications.Client\Lykke.Snow.Notifications.Client.csproj" />
+    <ProjectReference Include="..\Lykke.Snow.Notifications.Domain\Lykke.Snow.Notifications.Domain.csproj" />
+    <ProjectReference Include="..\Lykke.Snow.Notifications.DomainServices\Lykke.Snow.Notifications.DomainServices.csproj" />
+    <ProjectReference Include="..\Lykke.Snow.Notifications.SqlRepositories\Lykke.Snow.Notifications.SqlRepositories.csproj" />
+    <ProjectReference Include="..\..\client\Lykke.Snow.Notifications.Client\Lykke.Snow.Notifications.Client.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
@@ -36,7 +31,7 @@
     <PackageReference Include="LykkeBiz.SettingsReader" Version="7.1.0" />
     <PackageReference Include="LykkeBiz.RabbitMqBroker" Version="11.3.0" />
     <PackageReference Include="LykkeBiz.Snow.Cqrs" Version="2.1.0" />
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
     <PackageReference Include="Lykke.Middlewares" Version="3.6.1" />
     <PackageReference Include="LykkeBiz.Logs.Serilog" Version="3.3.1" />
     <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
