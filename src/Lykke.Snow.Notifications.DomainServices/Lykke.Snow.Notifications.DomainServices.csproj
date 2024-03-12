@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <LangVersion>8.0</LangVersion>
-    <Version>1.5.1</Version>
+    <Version>1.6.0</Version>
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
@@ -14,9 +14,9 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Lykke.MarginTrading.Activities.Contracts" Version="1.7.0" />
-    <PackageReference Include="Lykke.MarginTrading.AssetService.Contracts" Version="11.8.4" />
+    <PackageReference Include="Lykke.MarginTrading.AssetService.Contracts" Version="11.9.2" />
     <PackageReference Include="Lykke.Snow.Common" Version="3.0.26" />
-    <PackageReference Include="Lykke.Snow.Domain" Version="2.0.3" />
+    <PackageReference Include="Lykke.Snow.Domain" Version="2.1.2" />
     <PackageReference Include="Lykke.Snow.Mdm.Contracts" Version="4.3.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.3" />
   </ItemGroup>
