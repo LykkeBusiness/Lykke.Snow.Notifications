@@ -11,8 +11,14 @@ namespace Lykke.Snow.Notifications.Startup
     {
         public static (IConfigurationRoot, IReloadingManager<AppSettings>) BuildConfiguration(this WebApplicationBuilder builder)
         {
-            builder.Environment.ContentRootPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var assemblyLocation = Assembly.GetExecutingAssembly().Location;
+            var assemblyPath = Path.GetDirectoryName(assemblyLocation);
+            if (string.IsNullOrEmpty(assemblyPath))
+            {
+                throw new DirectoryNotFoundException("Failed to get directory of the executing assembly");
+            }
 
+            builder.Environment.ContentRootPath = assemblyPath;
             var configuration = builder.Configuration
                 .SetBasePath(builder.Environment.ContentRootPath)
                 .AddUserSecrets<Program>()

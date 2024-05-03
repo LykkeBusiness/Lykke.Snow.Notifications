@@ -1,18 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <LangVersion>8.0</LangVersion>
-    <Version>1.5.3</Version>
+    <TargetFramework>net8.0</TargetFramework>
+    <Version>1.7.0</Version>
     <TreatWarningAsErrors>true</TreatWarningAsErrors>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="LykkeBiz.Common.MsSql" Version="4.1.0" />
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\Lykke.Snow.Notifications.Domain\Lykke.Snow.Notifications.Domain.csproj" />
+    <ProjectReference
+      Include="..\Lykke.Snow.Notifications.Domain\Lykke.Snow.Notifications.Domain.csproj" />
   </ItemGroup>
 </Project>
