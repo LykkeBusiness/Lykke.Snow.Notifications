@@ -11,15 +11,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Lykke.Snow.Notifications.Modules
 {
-    public class DalModule : Module
+    public class DalModule(NotificationServiceSettings notificationServiceSettings) : Module
     {
-        private readonly NotificationServiceSettings _notificationServiceSettings;
-
-        public DalModule(NotificationServiceSettings notificationServiceSettings)
-        {
-            _notificationServiceSettings = notificationServiceSettings ??
-                                           throw new ArgumentNullException(nameof(notificationServiceSettings));
-        }
+        private readonly NotificationServiceSettings _notificationServiceSettings = notificationServiceSettings ??
+            throw new ArgumentNullException(nameof(notificationServiceSettings));
 
         protected override void Load(ContainerBuilder builder)
         {

@@ -11,7 +11,7 @@ namespace Lykke.Snow.Notifications.Tests.Fakes
 {
     public class LocalizationFilesBinaryApiStub : ILocalizationFilesBinaryApi
     {
-        public int NumOfCalls { get; private set; } = 0;
+        public int NumOfCalls { get; private set; }
         private string LocalizationJsonText; 
 
         public LocalizationFilesBinaryApiStub(string localizationDataJson)

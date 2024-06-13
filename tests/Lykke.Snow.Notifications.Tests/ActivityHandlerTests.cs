@@ -281,10 +281,10 @@ namespace Lykke.Snow.Notifications.Tests
             deviceRegistrationServiceMock.Setup(x => x.GetDeviceRegistrationsAsync(It.IsAny<string>())).ReturnsAsync(deviceRegistrations);
             
             var deviceConfigurationRepositoryMock = new Mock<IDeviceConfigurationRepository>();
-            deviceConfigurationRepositoryMock.Setup(x => x.GetAsync(It.Is<string>(x => deviceIdsMissingConfiguration.Contains(x)), It.IsAny<string>()))
+            deviceConfigurationRepositoryMock.Setup(x => x.GetAsync(It.Is<string>(d => deviceIdsMissingConfiguration.Contains(d)), It.IsAny<string>()))
                 .Returns(Task.FromResult<DeviceConfiguration>(null));
 
-            deviceConfigurationRepositoryMock.Setup(x => x.GetAsync(It.Is<string>(x => !deviceIdsMissingConfiguration.Contains(x)), It.IsAny<string>()))
+            deviceConfigurationRepositoryMock.Setup(x => x.GetAsync(It.Is<string>(d => !deviceIdsMissingConfiguration.Contains(d)), It.IsAny<string>()))
                 .Returns(Task.FromResult<DeviceConfiguration>(new DeviceConfiguration("device-id", "account-id")));
             
             var notificationServiceMock = new Mock<INotificationService>();

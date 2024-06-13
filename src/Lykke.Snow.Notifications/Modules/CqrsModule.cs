@@ -23,8 +23,6 @@ namespace Lykke.Snow.Notifications.Modules
     public class CqrsModule : Module
     {
         private const string DefaultRoute = "self";
-        private const string DefaultPipeline = "commands";
-        private const string DefaultEventPipeline = "events";
         private readonly CqrsContextNamesSettings _contextNames;
         private readonly long _defaultRetryDelayMs;
         private readonly CqrsSettings _settings;
