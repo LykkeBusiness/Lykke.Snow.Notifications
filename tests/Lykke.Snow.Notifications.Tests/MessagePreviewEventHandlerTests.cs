@@ -173,10 +173,10 @@ namespace Lykke.Snow.Notifications.Tests
             mockNotificationService.Setup(x => x.IsDeviceTargeted(It.IsAny<DeviceConfiguration>(), It.IsAny<NotificationType>())).Returns(true);
 
             var mockDeviceConfigurationRepository = new Mock<IDeviceConfigurationRepository>();
-            mockDeviceConfigurationRepository.Setup(x => x.GetAsync(It.Is<string>(x => deviceIdsMissingConfiguration.Contains(x)), It.IsAny<string>()))
+            mockDeviceConfigurationRepository.Setup(x => x.GetAsync(It.Is<string>(d => deviceIdsMissingConfiguration.Contains(d)), It.IsAny<string>()))
                 .Returns(Task.FromResult<DeviceConfiguration>(null));
 
-            mockDeviceConfigurationRepository.Setup(x => x.GetAsync(It.Is<string>(x => !deviceIdsMissingConfiguration.Contains(x)), It.IsAny<string>()))
+            mockDeviceConfigurationRepository.Setup(x => x.GetAsync(It.Is<string>(d => !deviceIdsMissingConfiguration.Contains(d)), It.IsAny<string>()))
                 .Returns(Task.FromResult<DeviceConfiguration>(new DeviceConfiguration("device-id", "account-id")));
 
             var mockLocalizationService = new Mock<ILocalizationService>();

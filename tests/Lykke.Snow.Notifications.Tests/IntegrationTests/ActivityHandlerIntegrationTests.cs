@@ -32,7 +32,7 @@ namespace Lykke.Snow.Notifications.Tests.IntegrationTests
             LocalizationFilesApi.GetActiveLocalizationFileEndpoint.RespondWith(_localizations);
 
             var createdActivity = activityEvent.Activity;
-            var descriptionAttributes = Enumerable.Range(1, 4).Select(i => Guid.NewGuid().ToString()).ToArray();
+            var descriptionAttributes = Enumerable.Range(1, 4).Select(_ => Guid.NewGuid().ToString()).ToArray();
             activityEvent.Activity = new ActivityContract(createdActivity.Id, "account-id-1",
                 createdActivity.Instrument, createdActivity.EventSourceId, createdActivity.Timestamp,
                 ActivityCategoryContract.Order, ActivityTypeContract.OrderAcceptanceAndExecution,
