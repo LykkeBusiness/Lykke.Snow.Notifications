@@ -11,15 +11,8 @@ using Microsoft.Extensions.Internal;
 
 namespace Lykke.Snow.Notifications.Modules
 {
-    internal class ServiceModule : Module
+    internal class ServiceModule(NotificationServiceSettings notificationServiceSettings) : Module
     {
-        private readonly NotificationServiceSettings _notificationServiceSettings;
-
-        public ServiceModule(NotificationServiceSettings notificationServiceSettings)
-        {
-            _notificationServiceSettings = notificationServiceSettings;
-        }
-
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<DefaultHttpStatusCodeMapper>()
@@ -44,13 +37,13 @@ namespace Lykke.Snow.Notifications.Modules
 
             builder.RegisterType<LocalizationService>()
                 .As<ILocalizationService>()
-                .WithParameter(new TypedParameter(typeof(string[]), _notificationServiceSettings.Localization.TranslateAttributes))
+                .WithParameter(new TypedParameter(typeof(string[]), notificationServiceSettings.Localization.TranslateAttributes))
                 .SingleInstance();
 
             builder.RegisterType<MdmLocalizationDataProvider>()
                 .As<ILocalizationDataProvider>()
-                .WithParameter(new TypedParameter(typeof(TimeSpan?), _notificationServiceSettings.Localization.LocalizationFileCache?.ExpirationPeriod))
-                .WithParameter(new TypedParameter(typeof(string), _notificationServiceSettings.Localization.LocalizationPlatformKey))
+                .WithParameter(new TypedParameter(typeof(TimeSpan?), notificationServiceSettings.Localization.LocalizationFileCache?.ExpirationPeriod))
+                .WithParameter(new TypedParameter(typeof(string), notificationServiceSettings.Localization.LocalizationPlatformKey))
                 .SingleInstance();
 
             builder.RegisterType<ActivityHandler>()

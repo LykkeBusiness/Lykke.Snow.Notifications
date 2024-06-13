@@ -7,14 +7,10 @@ using Lykke.Snow.Notifications.Settings;
 
 namespace Lykke.Snow.Notifications.Modules
 {
-    public class FirebaseModule : Module
+    public class FirebaseModule(NotificationServiceSettings serviceSettings) : Module
     {
-        private readonly NotificationServiceSettings _serviceSettings;
-
-        public FirebaseModule(NotificationServiceSettings serviceSettings)
-        {
-            _serviceSettings = serviceSettings ?? throw new ArgumentNullException(nameof(serviceSettings));
-        }
+        private readonly NotificationServiceSettings _serviceSettings =
+            serviceSettings ?? throw new ArgumentNullException(nameof(serviceSettings));
 
         protected override void Load(ContainerBuilder builder)
         {
