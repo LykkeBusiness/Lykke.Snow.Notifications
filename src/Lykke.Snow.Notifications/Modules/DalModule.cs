@@ -23,6 +23,9 @@ namespace Lykke.Snow.Notifications.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
+            if(_notificationServiceSettings.Db.ConnectionString == null)
+                throw new ArgumentNullException(nameof(_notificationServiceSettings.Db.ConnectionString));
+            
             builder.RegisterMsSql(_notificationServiceSettings.Db.ConnectionString,
                 connStr => new NotificationsDbContext(connStr, isTracingEnabled: false), 
                 dbConnection => new NotificationsDbContext(dbConnection));
