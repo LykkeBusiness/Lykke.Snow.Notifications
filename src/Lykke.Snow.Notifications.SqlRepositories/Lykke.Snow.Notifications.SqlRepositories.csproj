@@ -9,6 +9,7 @@
     <PackageReference Include="LykkeBiz.Common.MsSql" Version="5.0.2" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Lykke.Snow.Notifications.Domain\Lykke.Snow.Notifications.Domain.csproj" />
+    <ProjectReference
+      Include="..\Lykke.Snow.Notifications.Domain\Lykke.Snow.Notifications.Domain.csproj" />
   </ItemGroup>
 </Project>
