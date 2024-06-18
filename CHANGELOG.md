@@ -1,3 +1,11 @@
+## 1.8.0 - Nova 2. Delivery 43. Hotfix 2 (June 18, 2024)
+### What's changed
+* LT-5485: Migrate to net 8.
+
+### Deployment
+Since the default port in .NET 8 has been changed from 80 to 8080, to keep the previous behaviour you might need to change the port back. It can be achieved by using the following environment variable setup: `ASPNETCORE_HTTP_PORTS=80`.
+
+
 ## 1.7.0 - Nova 2. Delivery 41 (March 29, 2024)
 ### What's changed
 * LT-5442: Update packages.
