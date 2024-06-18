@@ -6,15 +6,10 @@ using Lykke.Snow.Notifications.Subscribers;
 
 namespace Lykke.Snow.Notifications.Modules
 {
-    public class RabbitMqModule : Module
+    public class RabbitMqModule(NotificationServiceSettings notificationServiceSettings) : Module
     {
-        private readonly NotificationServiceSettings _notificationServiceSettings;
-
-        public RabbitMqModule(NotificationServiceSettings notificationServiceSettings)
-        {
-            _notificationServiceSettings = notificationServiceSettings ??
-                                           throw new ArgumentNullException(nameof(notificationServiceSettings));
-        }
+        private readonly NotificationServiceSettings _notificationServiceSettings = notificationServiceSettings ??
+            throw new ArgumentNullException(nameof(notificationServiceSettings));
 
         protected override void Load(ContainerBuilder builder)
         {

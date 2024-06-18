@@ -286,7 +286,7 @@ namespace Lykke.Snow.Notifications.Tests
         [Fact]
         public void TranslateAttributesArgument_ShouldBeTransformedToUpperCase_DuringInitialization()
         {
-            var translateAttributes = new string[] { "Buy", "selL", "lOng", "sHort" };
+            var translateAttributes = new[] { "Buy", "selL", "lOng", "sHort" };
 
             var localizationData = JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)!;
             
@@ -323,20 +323,6 @@ namespace Lykke.Snow.Notifications.Tests
             mockProvider.Setup(x => x.Load()).Returns(Task.FromResult(data));
 
             return new LocalizationService(mockLogger.Object, mockProvider.Object, translateAttributes);
-        }
-
-        private LocalizationService CreateSut(ILocalizationDataProvider dataProvider, string[] translateAttributesArg = null)
-        {
-            string[] translateAttributes = new string[]{};
-            
-            if(translateAttributesArg != null)
-            {
-                translateAttributes = translateAttributesArg;
-            }
-
-            var mockLogger = new Mock<ILogger<LocalizationService>>();
-
-            return new LocalizationService(mockLogger.Object, dataProvider, translateAttributes);
         }
     }
 }

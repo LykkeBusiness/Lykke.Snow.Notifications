@@ -14,7 +14,7 @@ namespace Lykke.Snow.Notifications.Tests
         [Fact]
         public void DeviceRegistration_Instantiation_HappyPath()
         {
-            new DeviceRegistration(accountId: "any-account-id", 
+            _ = new DeviceRegistration(accountId: "any-account-id", 
                 deviceToken: "any-device-token",
                 deviceId: "any-device-id", 
                 registeredOn: DateTime.UtcNow);

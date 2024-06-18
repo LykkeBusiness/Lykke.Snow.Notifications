@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Lykke.MarginTrading.Activities.Contracts.Models;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Meteor.Client.Models;
 

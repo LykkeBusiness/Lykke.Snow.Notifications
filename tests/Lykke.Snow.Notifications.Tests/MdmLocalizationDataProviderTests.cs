@@ -1,19 +1,15 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Lykke.Snow.Mdm.Contracts.Api;
 using Lykke.Snow.Notifications.Domain.Exceptions;
-using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.DomainServices.Services;
 using Lykke.Snow.Notifications.Tests.Fakes;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace Lykke.Snow.Notifications.Tests
@@ -48,16 +44,6 @@ namespace Lykke.Snow.Notifications.Tests
                 }
             }
         ";
-
-        class LocalizationTestData : IEnumerable<object[]>
-        {
-            public IEnumerator<object[]> GetEnumerator()
-            {
-                yield return new object[] { JsonConvert.DeserializeObject<LocalizationData>(LocalizationJsonText)! };
-            }
-
-            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        }
 
         [Fact]
         public void Initialization_ShouldThrowException_WhenPlatformKeyIsNotProvided()

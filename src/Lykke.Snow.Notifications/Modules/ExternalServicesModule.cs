@@ -7,29 +7,22 @@ using MarginTrading.AssetService.Contracts;
 
 namespace Lykke.Snow.Notifications.Modules
 {
-    internal class ExternalServicesModule : Module
+    internal class ExternalServicesModule(NotificationServiceSettings settings) : Module
     {
-        private readonly NotificationServiceSettings _settings;
-
-        public ExternalServicesModule(NotificationServiceSettings settings)
-        {
-            _settings = settings;
-        }
-
         protected override void Load(ContainerBuilder builder)
         {
             var mdmClientGenerator = HttpClientGenerator.HttpClientGenerator
-                .BuildForUrl(_settings.MdmServiceClient.ServiceUrl)
+                .BuildForUrl(settings.MdmServiceClient.ServiceUrl)
                 .WithServiceName<ErrorResponse>("Mdm Service")
-                .WithOptionalApiKey(_settings.MdmServiceClient.ApiKey)
+                .WithOptionalApiKey(settings.MdmServiceClient.ApiKey)
                 .Create();
             
             builder.RegisterInstance(mdmClientGenerator.Generate<ILocalizationFilesBinaryApi>());
             
             var assetServiceClientGenerator = HttpClientGenerator.HttpClientGenerator
-                .BuildForUrl(_settings.AssetServiceClient.ServiceUrl)
+                .BuildForUrl(settings.AssetServiceClient.ServiceUrl)
                 .WithServiceName<ErrorResponse>("MT Core Asset Service")
-                .WithOptionalApiKey(_settings.AssetServiceClient.ApiKey)
+                .WithOptionalApiKey(settings.AssetServiceClient.ApiKey)
                 .Create();
             
             builder.RegisterInstance(assetServiceClientGenerator.Generate<IAssetsApi>());

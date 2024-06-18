@@ -45,8 +45,6 @@ namespace Lykke.Snow.Notifications.DomainServices.Mapping
 
         // Activity description enrichments based on Activity type
         internal static readonly IReadOnlyDictionary<ActivityTypeContract, Func<ActivityEvent, string[]>> DescriptionEnrichments =
-            new Dictionary<ActivityTypeContract, Func<ActivityEvent, string[]>>
-        {
-        };
+            new Dictionary<ActivityTypeContract, Func<ActivityEvent, string[]>>();
     }
 }
