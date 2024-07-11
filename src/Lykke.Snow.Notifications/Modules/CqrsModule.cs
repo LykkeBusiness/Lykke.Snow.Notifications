@@ -13,6 +13,7 @@ using Lykke.Snow.Common.Correlation;
 using Lykke.Snow.Common.Correlation.Cqrs;
 using Lykke.Snow.Common.Correlation.Http;
 using Lykke.Snow.Common.Correlation.RabbitMq;
+using Lykke.Snow.Common.Startup;
 using Lykke.Snow.Cqrs;
 using Lykke.Snow.Notifications.DomainServices.Projections;
 using Lykke.Snow.Notifications.Settings;
@@ -78,17 +79,16 @@ namespace Lykke.Snow.Notifications.Modules
                 Uri = new Uri(_settings.ConnectionString ?? throw new ArgumentNullException(_settings.ConnectionString), UriKind.Absolute)
             };
             
-            var logFactory = ctx.Resolve<ILogFactory>();
-
+            var log = new LykkeLoggerAdapter<CqrsModule>(ctx.Resolve<ILogger<CqrsModule>>());
             IRegistration[] registrations = new IRegistration[] 
             {
                 Register.DefaultEndpointResolver(rabbitMqConventionEndpointResolver),
                 RegisterContext(),
-                Register.CommandInterceptors(new DefaultCommandLoggingInterceptor(logFactory)),
-                Register.EventInterceptors(new DefaultEventLoggingInterceptor(logFactory))
+                Register.CommandInterceptors(new DefaultCommandLoggingInterceptor(log)),
+                Register.EventInterceptors(new DefaultEventLoggingInterceptor(log))
             };
             
-            var engine = new RabbitMqCqrsEngine(logFactory,
+            var engine = new RabbitMqCqrsEngine(log,
                 ctx.Resolve<IDependencyResolver>(),
                 new DefaultEndpointProvider(),
                 rabbitMqSettings.Endpoint.ToString(),
