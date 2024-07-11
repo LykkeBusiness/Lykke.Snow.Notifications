@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Autofac;
+using Lykke.Common.Log;
 using Lykke.Cqrs;
 using Lykke.Cqrs.Configuration;
 using Lykke.Cqrs.Configuration.BoundedContext;
@@ -77,17 +78,17 @@ namespace Lykke.Snow.Notifications.Modules
                 Uri = new Uri(_settings.ConnectionString ?? throw new ArgumentNullException(_settings.ConnectionString), UriKind.Absolute)
             };
             
-            var loggerFactory = ctx.Resolve<ILoggerFactory>();
+            var logFactory = ctx.Resolve<ILogFactory>();
 
             IRegistration[] registrations = new IRegistration[] 
             {
                 Register.DefaultEndpointResolver(rabbitMqConventionEndpointResolver),
                 RegisterContext(),
-                Register.CommandInterceptors(new DefaultCommandLoggingInterceptor(loggerFactory)),
-                Register.EventInterceptors(new DefaultEventLoggingInterceptor(loggerFactory))
+                Register.CommandInterceptors(new DefaultCommandLoggingInterceptor(logFactory)),
+                Register.EventInterceptors(new DefaultEventLoggingInterceptor(logFactory))
             };
             
-            var engine = new RabbitMqCqrsEngine(loggerFactory,
+            var engine = new RabbitMqCqrsEngine(logFactory,
                 ctx.Resolve<IDependencyResolver>(),
                 new DefaultEndpointProvider(),
                 rabbitMqSettings.Endpoint.ToString(),
