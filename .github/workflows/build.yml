@@ -35,15 +35,6 @@ jobs:
         with:
           dotnet-version: 8.0.101
 
-      - name: Checkout nuget.config
-        uses: actions/checkout@v4
-        with:
-          repository: LykkeBusiness/.github
-          ref: master
-          sparse-checkout: |
-            nuget.config
-          sparse-checkout-cone-mode: false
-
       - name: Show list of files
         run: |
           ls -la
