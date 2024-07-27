@@ -28,6 +28,8 @@ jobs:
           echo "Event ref: ${{ github.event.ref }}"
           echo "Environment: ${{ github.event.environment }}"
 
+      - uses: actions/checkout@v4
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v2
         with:
