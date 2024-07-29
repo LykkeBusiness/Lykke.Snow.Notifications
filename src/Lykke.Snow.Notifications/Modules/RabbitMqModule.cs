@@ -1,8 +1,10 @@
 using System;
 using Autofac;
 using Lykke.RabbitMqBroker;
+using Lykke.RabbitMqBroker.Subscriber;
+using Lykke.Snow.Notifications.Domain.Model;
+using Lykke.Snow.Notifications.DomainServices.Services;
 using Lykke.Snow.Notifications.Settings;
-using Lykke.Snow.Notifications.Subscribers;
 
 namespace Lykke.Snow.Notifications.Modules
 {
@@ -13,13 +15,14 @@ namespace Lykke.Snow.Notifications.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
-            if(_notificationServiceSettings.Subscribers == null)
-                throw new ArgumentNullException(nameof(_notificationServiceSettings.Subscribers));
+            if(_notificationServiceSettings.Subscribers?.MessagePreviewSubscriber == null)
+                throw new ArgumentNullException(nameof(_notificationServiceSettings.Subscribers.MessagePreviewSubscriber));
 
-            builder.RegisterType<MessagePreviewSubscriber>()
-                .WithParameter(TypedParameter.From(_notificationServiceSettings.Subscribers.MessagePreviewSubscriber))
-                .As<IStartStop>()
-                .SingleInstance();
+            builder.AddRabbitMqConnectionProvider();
+
+            builder.AddRabbitMqListener<MessagePreviewEvent, MessagePreviewHandler>(_notificationServiceSettings.Subscribers.MessagePreviewSubscriber)
+                .AddOptions(RabbitMqListenerOptions<MessagePreviewEvent>.MessagePack.LossAcceptable)
+                .AutoStart();
         }
     }
 }
