@@ -322,12 +322,12 @@ namespace Lykke.Snow.Notifications.Tests
 
         #endregion
 
-        private MessagePreviewEventHandler CreateSut(INotificationService? notificationServiceArg = null,
+        private MessagePreviewHandler CreateSut(INotificationService? notificationServiceArg = null,
             IDeviceRegistrationService? deviceRegistrationServiceArg = null,
             IDeviceConfigurationRepository? deviceConfigurationRepositoryArg = null,
             ILocalizationService? localizationServiceArg = null)
         {
-            var mockLogger = new Mock<ILogger<MessagePreviewEventHandler>>();
+            var mockLogger = new Mock<ILogger<MessagePreviewHandler>>();
 
             INotificationService notificationService = new Mock<INotificationService>().Object;
             IDeviceRegistrationService deviceRegistrationService = new Mock<IDeviceRegistrationService>().Object;
@@ -362,7 +362,7 @@ namespace Lykke.Snow.Notifications.Tests
                 localizationService = localizationServiceArg;
             }
             
-            return new MessagePreviewEventHandler(mockLogger.Object,
+            return new MessagePreviewHandler(mockLogger.Object,
                 deviceRegistrationService, 
                 notificationService,
                 deviceConfigurationRepository,
