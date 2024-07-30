@@ -15,8 +15,8 @@ namespace Lykke.Snow.Notifications.Domain.Services
         /// </summary>
         /// <param name="message"></param>
         /// <param name="deviceToken"></param>
-        /// <returns></returns>
-        Task SendNotification(NotificationMessage message, string deviceToken);
+        /// <returns>true if successful, false when failure</returns>
+        Task<bool> SendNotification(NotificationMessage message, string deviceToken);
 
         /// <summary>
         /// Builds notification type with given title and body
