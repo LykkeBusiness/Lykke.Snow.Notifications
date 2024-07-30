@@ -96,11 +96,6 @@ public class MessagePreviewHandler : IMessageHandler<MessagePreviewEvent>
                     _logger.LogInformation("Push notification has successfully been sent to the Account {AccountId} device {DeviceToken}: {PushNotificationPayload}",
                         deviceRegistration.AccountId, deviceRegistration.DeviceToken, notificationMessage.ToJson());
                 }
-                else
-                {
-                    _logger.LogWarning("Push notification has not been sent to the Account {AccountId} device {DeviceToken}: {PushNotificationPayload}",
-                        deviceRegistration.AccountId, deviceRegistration.DeviceToken, notificationMessage.ToJson());
-                } 
             }
             catch(CannotSendNotificationException ex)
             {
