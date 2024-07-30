@@ -7,25 +7,34 @@ using FirebaseAdmin.Messaging;
 using Lykke.Snow.Notifications.Domain.Enums;
 using System.Collections.Generic;
 using Lykke.Snow.Notifications.Domain.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace Lykke.Snow.Notifications.DomainServices.Services
 {
     public class NotificationService : INotificationService
     {
         private readonly IFcmIntegrationService _fcmIntegrationService;
+        private readonly ILogger<NotificationService> _logger;
 
-        public NotificationService(IFcmIntegrationService fcmIntegrationService)
+        public NotificationService(IFcmIntegrationService fcmIntegrationService, ILogger<NotificationService> logger)
         {
             _fcmIntegrationService = fcmIntegrationService ?? throw new ArgumentNullException(nameof(fcmIntegrationService));
+            _logger = logger;
         }
 
-        public async Task SendNotification(NotificationMessage message, string deviceToken)
+        public async Task<bool> SendNotification(NotificationMessage message, string deviceToken)
         {
             ThrowIfCannotSend(message, deviceToken);
             
             var fcmMessage = MapToFcmMessage(messageArg: message, deviceToken: deviceToken);
 
-            await _fcmIntegrationService.SendNotification(message: fcmMessage);
+           var result = await _fcmIntegrationService.SendNotification(message: fcmMessage);
+           if (result.IsFailed)
+           {
+               _logger.LogWarning("Failed to send message to device {deviceToken} because {reason} - {code}", deviceToken, result.Value, result.Error);
+           }
+
+           return result.IsSuccess;
         }
         
         private void ThrowIfCannotSend(NotificationMessage message, string deviceToken)

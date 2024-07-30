@@ -8,6 +8,7 @@ using Lykke.Snow.FirebaseIntegration.Interfaces;
 using Lykke.Snow.Notifications.Domain.Enums;
 using Lykke.Snow.Notifications.Domain.Model;
 using Lykke.Snow.Notifications.DomainServices.Services;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -274,13 +275,14 @@ namespace Lykke.Snow.Notifications.Tests
         private NotificationService CreateSut(IFcmIntegrationService fcmServiceArg = null)
         {
             var fcmService = new Mock<IFcmIntegrationService>().Object;
+            var logger = new Mock<ILogger<NotificationService>>().Object;
 
             if(fcmServiceArg != null)
             {
                 fcmService = fcmServiceArg;
             }
 
-            return new NotificationService(fcmService);
+            return new NotificationService(fcmService,logger);
         }
     }
 }
