@@ -35,7 +35,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: LykkeBusiness/.github
-          path: LykkeBusinessTools
+          sparse-checkout: |
+            config/snow/nuget.config
+          sparse-checkout-cone-mode: false
+          path: .
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v2
@@ -47,7 +50,7 @@ jobs:
           ls -la
 
       - name: Restore dependencies
-        run: dotnet restore --configfile LykkeBusinessTools/config/snow/nuget.config
+        run: dotnet restore --configfile nuget.config
 
       - name: Build
         run: dotnet build --configuration Release --no-restore
