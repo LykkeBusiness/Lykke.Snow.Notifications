@@ -28,17 +28,7 @@ jobs:
           echo "Event ref: ${{ github.event.ref }}"
           echo "Environment: ${{ github.event.environment }}"
 
-      - name: Checkout source code
-        uses: actions/checkout@v4
-
-      - name: Checkout NuGet config
-        uses: actions/checkout@v4
-        with:
-          repository: LykkeBusiness/.github
-          sparse-checkout: |
-            config/snow/nuget.config
-          sparse-checkout-cone-mode: false
-          path: .
+      - uses: actions/checkout@v4
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v2
@@ -50,7 +40,7 @@ jobs:
           ls -la
 
       - name: Restore dependencies
-        run: dotnet restore --configfile nuget.config
+        run: dotnet restore --source https://api.nuget.org/v3/index.json --source https://nuget-lykkecloud.azurewebsites.net/nuget
 
       - name: Build
         run: dotnet build --configuration Release --no-restore
