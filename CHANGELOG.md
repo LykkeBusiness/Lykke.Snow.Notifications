@@ -1,3 +1,16 @@
+## 1.9.0 - Nova 2. Delivery 44 (August 16, 2024)
+### What's changed
+* LT-5622: Firebase not sending push notifications for mobile devices.
+* LT-5521: Update rabbitmq broker library with new rabbitmq.client and templates.
+
+### Deployment
+Deployment of this service might require to delete `dev.NotificationsService.queue.MessagePreview` queue since its going to be no longer a durable queue.
+
+In some cases, you may encounter an error indicating that the server-side configuration of a queue differs from the client’s expected configuration. If this occurs, please delete the queue, allowing it to be automatically recreated by the client.
+
+Please be aware that the provided queue names may include environment-specific identifiers (e.g., dev, test, prod). Be sure to replace these with the actual environment name in use. The same applies to instance names embedded within the queue names (e.g., DefaultEnv, etc.).
+
+
 ## 1.8.0 - Nova 2. Delivery 43. Hotfix 2 (June 18, 2024)
 ### What's changed
 * LT-5485: Migrate to net 8.
