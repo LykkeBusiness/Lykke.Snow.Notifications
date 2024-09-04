@@ -5,11 +5,13 @@ VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "0. Solution items", "0. Solution items", "{C4A46B7D-C4DC-43FB-BD0D-6825B45D38F9}"
 	ProjectSection(SolutionItems) = preProject
+        .editorconfig = .editorconfig
 		.gitignore = .gitignore
+        .gitattributes = .gitattributes
+		global.json = global.json
 		LICENSE = LICENSE
 		README.md = README.md
-		settings.yaml = settings.yaml
-		global.json = global.json
+        CHANGELOG.md = CHANGELOG.md
 		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
