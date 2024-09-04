@@ -39,23 +39,23 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
 
         public async Task<LocalizationData> Load()
         {
-            if(_cache.TryGetValue(_cacheKey, out LocalizationData localizationData))
-                return localizationData;
+            if (_cache.TryGetValue(_cacheKey, out LocalizationData? localizationData))
+                return localizationData!;
 
             localizationData = await LoadFromMdm();
-            
+
             _cache.Set(_cacheKey, localizationData, _cacheOptions);
 
             _logger.LogDebug("Localization data has been loaded from Mdm Service and cache has been updated.");
-            
+
             return localizationData;
         }
-        
+
         public async Task<LocalizationData> LoadFromMdm()
         {
             var response = await _localizationFilesBinaryApi.GetActiveLocalizationFileAsync(_localizationPlatformKey);
-            
-            if(!response.IsSuccessStatusCode)
+
+            if (!response.IsSuccessStatusCode)
                 throw new LocalizationFileCannotBeLoadedException($"The status code was {response.StatusCode} - Key: {_localizationPlatformKey}");
 
             var jsonText = await response.Content.ReadAsStringAsync();
@@ -64,18 +64,18 @@ namespace Lykke.Snow.Notifications.DomainServices.Services
             {
                 var result = JsonConvert.DeserializeObject<LocalizationData>(jsonText);
 
-                if(result == null)
+                if (result == null)
                     throw new LocalizationFileParsingException();
 
                 return result;
             }
-            catch(JsonReaderException e)
+            catch (JsonReaderException e)
             {
                 _logger.LogError(e, "Could not parse the json string into localization data.");
 
                 throw;
             }
-            catch(LocalizationFileParsingException e)
+            catch (LocalizationFileParsingException e)
             {
                 _logger.LogError(e, "Could not parse the json string into localization data.");
 
