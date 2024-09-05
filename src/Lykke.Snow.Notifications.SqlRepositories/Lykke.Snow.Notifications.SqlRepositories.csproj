@@ -4,6 +4,7 @@
     <Version>1.9.0</Version>
     <TreatWarningAsErrors>true</TreatWarningAsErrors>
     <Nullable>enable</Nullable>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="LykkeBiz.Common.MsSql" />
