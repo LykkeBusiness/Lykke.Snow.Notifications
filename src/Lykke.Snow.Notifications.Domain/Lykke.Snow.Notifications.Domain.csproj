@@ -11,4 +11,7 @@
     <PackageReference Include="Meteor.Client" />
     <PackageReference Include="LykkeBiz.Common" />
   </ItemGroup>
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);NU1507</NoWarn>
+  </PropertyGroup>
 </Project>
