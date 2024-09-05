@@ -13,4 +13,7 @@
     <PackageReference Include="LykkeBiz.Common" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
   </ItemGroup>
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);NU1507</NoWarn>
+  </PropertyGroup>
 </Project>

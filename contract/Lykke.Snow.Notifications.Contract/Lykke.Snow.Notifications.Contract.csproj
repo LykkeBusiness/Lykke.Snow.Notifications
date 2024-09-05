@@ -6,4 +6,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);NU1507</NoWarn>
+  </PropertyGroup>
 </Project>

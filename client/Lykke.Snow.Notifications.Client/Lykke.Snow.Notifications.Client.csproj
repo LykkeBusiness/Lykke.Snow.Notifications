@@ -27,4 +27,7 @@
   <ItemGroup>
     <Folder Include="Models\" />
   </ItemGroup>
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);NU1507</NoWarn>
+  </PropertyGroup>
 </Project>
