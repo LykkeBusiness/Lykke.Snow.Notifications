@@ -19,7 +19,7 @@ namespace Lykke.Snow.Notifications.Startup
     {
         public static IServiceCollection RegisterInfrastructureServices(this IServiceCollection services, IReloadingManager<AppSettings> settings)
         {
-            if(settings.CurrentValue.NotificationService == null)
+            if (settings.CurrentValue.NotificationService == null)
                 throw new ArgumentException($"{nameof(AppSettings.NotificationService)} settings is not configured!");
 
             services.AddSingleton(settings.CurrentValue.NotificationService);
@@ -45,7 +45,7 @@ namespace Lykke.Snow.Notifications.Startup
 
                     if (!string.IsNullOrWhiteSpace(settings.CurrentValue.NotificationService.NotificationServiceClient?.ApiKey))
                         options.AddApiKeyAwareness();
-                    
+
                     options.EnableXmlDocumentation();
                 })
                 .AddSwaggerGenNewtonsoftSupport();
