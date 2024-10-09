@@ -1,5 +1,6 @@
 using System;
 using Lykke.SettingsReader;
+using Lykke.Snow.Common.AssemblyLogging;
 using Lykke.Snow.Common.Startup;
 using Lykke.Snow.Common.Startup.ApiKey;
 using Lykke.Snow.Notifications.Client.Model;
@@ -22,6 +23,7 @@ namespace Lykke.Snow.Notifications.Startup
             if (settings.CurrentValue.NotificationService == null)
                 throw new ArgumentException($"{nameof(AppSettings.NotificationService)} settings is not configured!");
 
+            services.AddAssemblyLogger();
             services.AddSingleton(settings.CurrentValue.NotificationService);
             services
                 .AddApplicationInsightsTelemetry()

@@ -1,6 +1,10 @@
+using System;
 using Lykke.Middlewares;
+using Lykke.Snow.Common.AssemblyLogging;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Lykke.Snow.Notifications.Startup
 {
@@ -27,6 +31,23 @@ namespace Lykke.Snow.Notifications.Startup
 
              app.MapControllers();
 
+             app.Lifetime.ApplicationStarted.Register(() =>
+             {
+                 var logger = app.Services.GetRequiredService<ILogger<Program>>();
+                 try
+                 {
+                     app.Services.GetRequiredService<AssemblyLogger>()
+                         .StartLogging();
+                 }
+                 catch (Exception e)
+                 {
+                     logger.LogError(e, "Failed to start");
+                     app.Lifetime.StopApplication();
+                     return;
+                 }
+                 logger.LogInformation($"{nameof(Startup)} started");
+             });
+             
              return app;
         }
     }

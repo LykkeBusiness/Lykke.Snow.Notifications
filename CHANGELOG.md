@@ -1,3 +1,9 @@
+## 1.10.0 - Nova 2. Delivery 46 (September 27, 2024)
+### What's changed
+* LT-5674: - notifications logs version.
+* LT-5629: Add central package management.
+
+
 ## 1.9.0 - Nova 2. Delivery 44 (August 16, 2024)
 ### What's changed
 * LT-5622: Firebase not sending push notifications for mobile devices.
