@@ -1,6 +1,10 @@
+using System;
 using Lykke.Middlewares;
+using Lykke.Snow.Common.AssemblyLogging;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Lykke.Snow.Notifications.Startup
 {
@@ -26,7 +30,7 @@ namespace Lykke.Snow.Notifications.Startup
              app.UseSwaggerUI(a => a.SwaggerEndpoint("/swagger/v1/swagger.json", Program.ApiName));
 
              app.MapControllers();
-
+             
              return app;
         }
     }
