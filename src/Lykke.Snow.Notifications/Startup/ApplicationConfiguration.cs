@@ -30,23 +30,6 @@ namespace Lykke.Snow.Notifications.Startup
              app.UseSwaggerUI(a => a.SwaggerEndpoint("/swagger/v1/swagger.json", Program.ApiName));
 
              app.MapControllers();
-
-             app.Lifetime.ApplicationStarted.Register(() =>
-             {
-                 var logger = app.Services.GetRequiredService<ILogger<Program>>();
-                 try
-                 {
-                     app.Services.GetRequiredService<AssemblyLogger>()
-                         .StartLogging();
-                 }
-                 catch (Exception e)
-                 {
-                     logger.LogError(e, "Failed to start");
-                     app.Lifetime.StopApplication();
-                     return;
-                 }
-                 logger.LogInformation($"{nameof(Startup)} started");
-             });
              
              return app;
         }
