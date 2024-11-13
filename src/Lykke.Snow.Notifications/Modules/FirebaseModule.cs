@@ -1,13 +1,11 @@
 using System;
-using System.Collections.Concurrent;
-using System.Threading.Tasks;
 using Autofac;
-using FirebaseAdmin.Messaging;
-using Lykke.Snow.Common.Model;
 using Lykke.Snow.FirebaseIntegration;
 using Lykke.Snow.FirebaseIntegration.Interfaces;
 using Lykke.Snow.FirebaseIntegration.Services;
 using Lykke.Snow.Notifications.Settings;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Lykke.Snow.Notifications.Modules
 {
@@ -22,21 +20,41 @@ namespace Lykke.Snow.Notifications.Modules
                 .WithParameter("credentialsFilePath", _serviceSettings.Fcm.CredentialFilePath)
                 .As<IGoogleCredentialsProvider>()
                 .SingleInstance();
-            
-            var fcmOptionsFactoryBuilder = builder.RegisterType<FcmOptionsFactory>()
-                .As<IFcmOptionsFactory>()
-                .SingleInstance();
+
             if (_serviceSettings.Proxy != null)
             {
-                var proxyConfiguration = new ProxyConfiguration(_serviceSettings.Proxy.Address,
-                    _serviceSettings.Proxy.Username,
-                    _serviceSettings.Proxy.Password);
-                fcmOptionsFactoryBuilder.WithParameter("proxyConfiguration", proxyConfiguration);
+                RegisterFcmOptionsFactoryWithProxy(builder, _serviceSettings.Proxy);
+            }
+            else
+            {
+                builder.RegisterType<FcmOptionsFactory>()
+                    .As<IFcmOptionsFactory>()
+                    .SingleInstance();
             }
 
             builder.RegisterType<FcmIntegrationService>()
                 .As<IFcmIntegrationService>()
                 .SingleInstance();
+        }
+
+        private static void RegisterFcmOptionsFactoryWithProxy(ContainerBuilder builder, ProxySettings proxySettings)
+        {
+            var proxyConfiguration = new ProxyConfiguration(
+                proxySettings.Address,
+                proxySettings.Username,
+                proxySettings.Password);
+
+            builder.RegisterType<FcmOptionsFactoryWithProxy>()
+                .As<IFcmOptionsFactory>()
+                .WithParameter("proxyConfiguration", proxyConfiguration)
+                .SingleInstance();
+
+            builder.RegisterDecorator<IFcmOptionsFactory>((ctx, parameters, decoratee) =>
+                new FcmOptionsFactoryWithProxyLogger(
+                    decoratee,
+                    proxyConfiguration,
+                    ctx.Resolve<ILogger<FcmOptionsFactoryWithProxyLogger>>(),
+                    ctx.Resolve<IHostEnvironment>()));
         }
     }
 }

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using Serilog.Enrichers.Sensitive;
 
 namespace Lykke.Snow.Notifications.Startup
 {
@@ -48,8 +49,12 @@ namespace Lykke.Snow.Notifications.Startup
                     var title = assembly.Attribute<AssemblyTitleAttribute>(attribute => attribute.Title);
                     var version = assembly.Attribute<AssemblyInformationalVersionAttribute>(attribute => attribute.InformationalVersion);
                     var copyright = assembly.Attribute<AssemblyCopyrightAttribute>(attribute => attribute.Copyright);
-
+                
                     cfg.ReadFrom.Configuration(configuration)
+                        .Enrich.WithSensitiveDataMasking(opt => {
+                            opt.MaskProperties.Add("Username");
+                            opt.MaskProperties.Add("Password");
+                        })
                         .Enrich.WithProperty("Application", title)
                         .Enrich.WithProperty("Version", version)
                         .Enrich.WithProperty("Environment", environmentName ?? "Development");
