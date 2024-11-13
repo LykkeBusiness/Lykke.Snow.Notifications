@@ -35,6 +35,7 @@
     <PackageReference Include="Lykke.Middlewares" />
     <PackageReference Include="LykkeBiz.Logs.Serilog" />
     <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Serilog.Enrichers.Sensitive" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
     <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" />
   </ItemGroup>
