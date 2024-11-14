@@ -1,5 +1,6 @@
 using System;
 using Lykke.SettingsReader;
+using Lykke.SettingsReader.SettingsTemplate;
 using Lykke.Snow.Common.AssemblyLogging;
 using Lykke.Snow.Common.Startup;
 using Lykke.Snow.Common.Startup.ApiKey;
@@ -65,6 +66,8 @@ namespace Lykke.Snow.Notifications.Startup
             services.AddTransient<DeviceConfigurationPostExceptionFilter>();
             services.AddTransient<DeviceConfigurationDeleteExceptionFilter>();
             services.AddTransient<DeviceConfigurationGetExceptionFilter>();
+
+            services.AddSettingsTemplateGenerator();
 
             return services;
         }

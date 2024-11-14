@@ -168,61 +168,6 @@ Please specify the base url and api key for Mdm Service within the following con
 
 ### Settings 
 
-Settings schema is
-
-```json
-{
-  "NotificationService": 
-  {
-    "Db": 
-    {
-      "ConnectionString": ""
-    },
-    "Cqrs": 
-    {
-      "ConnectionString": "",
-      "RetryDelay": "00:00:02",
-      "EnvironmentName": ""
-    },
-    "Fcm": 
-    {
-      "CredentialFilePath": ""
-    },
-    "ConfigurationCache": {
-      "ExpirationPeriod": "00:01:00"
-    },
-    "Proxy": {
-      "Address": "proxy.lykke.com",
-      "UserName": "user",
-      "Password": "password"
-    },
-    "NotificationServiceClient": 
-    {
-      "Url": "",
-      "ApiKey": ""
-    },
-    "Subscribers": 
-    {
-      "MessagePreviewSubscriber": 
-      {
-        "ConnectionString": "",
-        "QueueName": "",
-        "RoutingKey": "",
-        "ExchangeName": "",
-        "IsDurable": true
-      }
-    },
-    "MdmServiceClient": {
-      "ServiceUrl": "",
-      "ApiKey": ""
-    },
-    "Localization": {
-      "LocalizationPlatformKey": "PushNotifications",
-      "LocalizationFileCache": {
-        "ExpirationPeriod": "00:01:00"
-      },
-      "TranslateAttributes": ["BUY", "SELL", "LONG", "SHORT"]
-    }
-  }
-}
-```
+Settings schema is:
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./template.json) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
