@@ -1,3 +1,9 @@
+## 1.11.0 - Nova 2. Delivery 47 (November 15, 2024)
+### What's changed
+* LT-5844: Update messagepack to 2.x version.
+* LT-5767: Add assembly load logger.
+
+
 ## 1.10.0 - Nova 2. Delivery 46 (September 27, 2024)
 ### What's changed
 * LT-5674: - notifications logs version.
