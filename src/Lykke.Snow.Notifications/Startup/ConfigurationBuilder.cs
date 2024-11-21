@@ -1,6 +1,8 @@
+using System;
 using System.IO;
 using System.Reflection;
 using Lykke.SettingsReader;
+using Lykke.SettingsReader.ConfigurationProvider;
 using Lykke.Snow.Notifications.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -19,11 +21,18 @@ namespace Lykke.Snow.Notifications.Startup
             }
 
             builder.Environment.ContentRootPath = assemblyPath;
-            var configuration = builder.Configuration
+
+            var configurationBuilder = builder.Configuration
                 .SetBasePath(builder.Environment.ContentRootPath)
                 .AddUserSecrets<Program>()
-                .AddEnvironmentVariables()
-                .Build();
+                .AddEnvironmentVariables();
+
+            if (Environment.GetEnvironmentVariable("SettingsUrl")?.StartsWith("http") ?? false)
+            {
+                configurationBuilder.AddHttpSourceConfiguration();
+            }
+
+            var configuration = configurationBuilder.Build();
 
             var settingsManager = configuration.LoadSettings<AppSettings>(_ => { });
 
