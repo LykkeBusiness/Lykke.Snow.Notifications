@@ -170,4 +170,88 @@ Please specify the base url and api key for Mdm Service within the following con
 
 Settings schema is:
 <!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./template.json) -->
+<!-- The below code snippet is automatically added from ./template.json -->
+```json
+{
+  "APP_UID": "Integer",
+  "ASPNETCORE_ENVIRONMENT": "String",
+  "ASPNETCORE_ENVIRONMENT_TEST1": "String",
+  "ENVIRONMENT": "String",
+  "ENVIRONMENT_TEST1": "String",
+  "NotificationService": {
+    "AssetServiceClient": {
+      "ApiKey": "String",
+      "ServiceUrl": "String"
+    },
+    "ConfigurationCache": {
+      "ExpirationPeriod": "DateTime"
+    },
+    "Cqrs": {
+      "ConnectionString": "String",
+      "EnvironmentName": "String",
+      "RetryDelay": "DateTime"
+    },
+    "Db": {
+      "ConnectionString": "String"
+    },
+    "Fcm": {},
+    "Localization": {
+      "LocalizationFileCache": {
+        "ExpirationPeriod": "DateTime"
+      },
+      "LocalizationPlatformKey": "String",
+      "TranslateAttributes": [
+        "String"
+      ]
+    },
+    "MdmServiceClient": {
+      "ApiKey": "String",
+      "ServiceUrl": "String"
+    },
+    "NotificationServiceClient": {
+      "ApiKey": "String",
+      "Url": "String"
+    },
+    "Subscribers": {
+      "MessagePreviewSubscriber": {
+        "ConnectionString": "String",
+        "ExchangeName": "String",
+        "IsDurable": "Boolean",
+        "QueueName": "String",
+        "RoutingKey": "String"
+      }
+    }
+  },
+  "serilog": {
+    "Enrich": [
+      "String"
+    ],
+    "minimumLevel": {
+      "default": "String"
+    },
+    "Properties": {
+      "Application": "String"
+    },
+    "Using": [
+      "String"
+    ],
+    "writeTo": [
+      {
+        "Args": {
+          "configure": [
+            {
+              "Args": {
+                "outputTemplate": "String"
+              },
+              "Name": "String"
+            }
+          ]
+        },
+        "Name": "String"
+      }
+    ]
+  },
+  "TZ": "String"
+}
+```
 <!-- MARKDOWN-AUTO-DOCS:END -->
