@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 namespace Lykke.Snow.FirebaseIntegration.Services
 {
     public sealed class FcmOptionsFactoryWithProxyLogger(
-        IFcmOptionsFactory decoratee, 
+        IFcmOptionsFactory decoratee,
         ProxyConfiguration proxyConfiguration,
         ILogger<FcmOptionsFactoryWithProxyLogger> logger,
         IHostEnvironment hostEnvironment) : IFcmOptionsFactory
@@ -18,11 +18,10 @@ namespace Lykke.Snow.FirebaseIntegration.Services
 
         public AppOptions Create()
         {
-            if (_hostEnvironment.IsProduction())
-                return _decoratee.Create();
-
-            _logger.LogWarning("Creating FCM options with proxy configuration: {@ProxyConfiguration}", _proxyConfiguration);
+            _logger.Log(LogLevel, "Creating FCM options with proxy configuration: {@ProxyConfiguration}", _proxyConfiguration);
             return _decoratee.Create();
         }
+
+        LogLevel LogLevel => _hostEnvironment.IsProduction() ? LogLevel.Information : LogLevel.Warning;
     }
 }
