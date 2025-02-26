@@ -38,14 +38,14 @@ public class MessagePreviewHandler : IMessageHandler<MessagePreviewEvent>
     public async Task Handle(MessagePreviewEvent e)
     {
         _logger.LogDebug("A new MessagePreviewEvent has arrived {Event}", e.ToJson());
-            
-        if(e == null || e.Recipients == null)
+
+        if (e == null || e.Recipients == null)
         {
             _logger.LogDebug("Notification is not attempted becase Message is not valid. One of these properties might be empty: Subject, Content, Recipients");
             return;
         }
 
-        if(!TryGetNotificationType(MeteorMessageMapping.NotificationTypeMapping, e.Event, out var notificationType))
+        if (!TryGetNotificationType(MeteorMessageMapping.NotificationTypeMapping, e.Event, out var notificationType))
         {
             _logger.LogDebug("Could not find a notification type for the event type {EventType}", e.Event);
             return;
@@ -64,21 +64,21 @@ public class MessagePreviewHandler : IMessageHandler<MessagePreviewEvent>
         }
 
         _logger.LogDebug("{NumOfRegistrations} registrations found for the accounts {AccountIds}", deviceRegistrationsResult.Value.Count(), string.Join(',', accountIds));
-               
-        foreach(var deviceRegistration in deviceRegistrationsResult.Value)
+
+        foreach (var deviceRegistration in deviceRegistrationsResult.Value)
         {
-            try 
+            try
             {
                 var deviceConfiguration = await _deviceConfigurationRepository.GetAsync(deviceId: deviceRegistration.DeviceId, accountId: deviceRegistration.AccountId);
 
-                if(deviceConfiguration == null)
+                if (deviceConfiguration == null)
                 {
-                    _logger.LogWarning("Device configuration could not be found for the device {DeviceId} and account {AccountId}", 
+                    _logger.LogWarning("Device configuration could not be found for the device {DeviceId} and account {AccountId}",
                         deviceRegistration.DeviceId, deviceRegistration.AccountId);
                     continue;
                 }
-                       
-                if(!_notificationService.IsDeviceTargeted(deviceConfiguration, notificationType))
+
+                if (!_notificationService.IsDeviceTargeted(deviceConfiguration, notificationType))
                 {
                     _logger.LogDebug("The notification has not been sent to the device {DeviceToken} because it is not targeted for notification type {NotificationType}",
                         deviceRegistration.DeviceToken, notificationType);
@@ -97,9 +97,9 @@ public class MessagePreviewHandler : IMessageHandler<MessagePreviewEvent>
                         deviceRegistration.AccountId, deviceRegistration.DeviceToken, notificationMessage.ToJson());
                 }
             }
-            catch(CannotSendNotificationException ex)
+            catch (CannotSendNotificationException ex)
             {
-                if(ex.ErrorCode == MessagingErrorCode.Unregistered)
+                if (ex.ErrorCode == MessagingErrorCode.Unregistered)
                 {
                     _logger.LogDebug("The notification could not be delivered to the device {DeviceToken} because it is no longer active.", deviceRegistration.DeviceToken);
                     continue;
@@ -112,31 +112,31 @@ public class MessagePreviewHandler : IMessageHandler<MessagePreviewEvent>
 
     public static bool TryGetNotificationType(IReadOnlyDictionary<MessageEventType, NotificationType> notificationTypeMapping, MessageEventType messageType, out NotificationType type)
     {
-        if(!notificationTypeMapping.ContainsKey(messageType))
+        if (!notificationTypeMapping.ContainsKey(messageType))
         {
             type = NotificationType.NotSpecified;
             return false;
         }
-            
+
         type = notificationTypeMapping[messageType];
 
         return true;
     }
-        
+
     public async Task<NotificationMessage> BuildNotificationMessage(MessagePreviewEvent e, NotificationType notificationType, Locale locale)
     {
         string? title = e.Subject;
         string? body = e.Content;
 
         // We don't need localization if the notification is an inbox message
-        if(notificationType != NotificationType.InboxMessage)
+        if (notificationType != NotificationType.InboxMessage)
         {
             (title, body) = await _localizationService.GetLocalizedTextAsync(
-                Enum.GetName(notificationType), 
-                Enum.GetName(locale), 
+                Enum.GetName(notificationType),
+                Enum.GetName(locale),
                 e.LocalizationAttributes ?? Array.Empty<string>());
         }
-            
+
         return _notificationService.BuildNotificationMessage(
             notificationType,
             title,
