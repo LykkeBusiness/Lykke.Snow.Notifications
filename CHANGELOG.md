@@ -1,3 +1,8 @@
+## 1.13.0 - Nova 2. Delivery 50 (March 07, 2025)
+### What's changed
+* LT-5905: Proxy configuration usage.
+
+
 ## 1.12.0 - Nova 2. Delivery 48 (December 19, 2024)
 ### What's changed
 * LT-5939: Update refit to 8.x version.
